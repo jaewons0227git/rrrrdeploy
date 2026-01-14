@@ -77,27 +77,49 @@
 
         .user-avatar { width: 24px; height: 24px; border-radius: 50%; display: none; }
 
-        /* 유저 프로필 드롭다운 카드 */
+        /* 유저 프로필 드롭다운 카드 (수정됨) */
         .user-dropdown {
-            position: absolute; top: 60px; right: 40px; width: 200px;
+            position: absolute; top: 60px; right: 40px; width: 260px; /* 너비 조금 확장 */
             background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            padding: 15px; display: none; flex-direction: column; gap: 10px; border: 1px solid #eee;
+            padding: 20px; display: none; flex-direction: column; gap: 15px; border: 1px solid #eee;
             z-index: 1002;
         }
         .user-dropdown.active { display: flex; }
-        .user-info-text { font-size: 0.9rem; font-weight: 700; color: #333; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 5px; }
+
+        /* 프로필 헤더 (아바타, 이름, ID) */
+        .dropdown-profile-header {
+            display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 15px;
+        }
+        .dropdown-avatar-large {
+            width: 50px; height: 50px; border-radius: 50%; background: #eee; object-fit: cover;
+        }
+        .dropdown-text-info {
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .dropdown-name { font-weight: 800; font-size: 1rem; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-id { font-size: 0.8rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 통계 및 장바구니 */
+        .dropdown-stats { font-size: 0.9rem; color: #333; font-weight: 600; }
+        .dropdown-stats span { color: #5865F2; }
+
+        .cart-btn {
+            width: 100%; padding: 10px; background: #f0f0f0; color: #333;
+            border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-align: center;
+            transition: 0.2s;
+        }
+        .cart-btn:hover { background: #e0e0e0; }
+
         .logout-btn {
             width: 100%; padding: 8px; background: #ff4757; color: #fff;
             border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center;
         }
         .logout-btn:hover { background: #e84118; }
 
-        /* ------------------- 배너 (모바일 가로 비율 유지 수정) ------------------- */
+        /* ------------------- 배너 ------------------- */
         .banner-container { position: relative; width: 100%; height: 320px; overflow: hidden; background: #f0f0f0; }
         .slide-wrapper { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
-        /* 패딩을 제거하여 이미지가 꽉 차게 변경, 배경색 스타일 제거 */
         .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0; }
-        /* 이미지 스타일 추가: 비율 유지하며 꽉 채우기 */
         .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
         .slider-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
@@ -165,7 +187,7 @@
         }
         .btn-discord-modal:hover { background: #4752c4; }
 
-        /* ------------------- 콘텐츠 섹션들 (기존 유지) ------------------- */
+        /* ------------------- 콘텐츠 섹션들 ------------------- */
         .recommend-section, .system-section { padding: 40px; max-width: 1100px; margin: 0 auto; }
         .recommend-section h3, .system-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
         .recommend-section h3 { border-left: 4px solid #5865F2; }
@@ -198,28 +220,25 @@
             header { height: 55px; padding: 0 20px; }
             .logo-container svg { height: 20px; }
             
-            /* 모바일에서 네비게이션 숨김 */
             .nav-links { display: none; }
-            /* 햄버거 버튼 표시 */
             .hamburger-btn { display: block; }
             
-            /* 로그인 버튼 텍스트 숨기고 작게 처리하거나 유지. 요청에 따라 로그인 버튼은 유지하되, 헤더에 둠 */
             .login-trigger-btn { padding: 6px 14px; font-size: 0.8rem; }
             
-            /* 배너 비율: 정사각형 방지하고 가로로 길게 (180px 정도 고정 혹은 aspect-ratio) */
             .banner-container { height: 180px; } 
             .slide h2 { font-size: 1.8rem; }
             
+            /* 좌우 여백을 더 작게 조정 (40px -> 20px) */
+            .recommend-section, .system-section { padding: 30px 20px; }
+
             .recommend-card { flex-direction: column; text-align: center; }
             .contact { border-radius: 30px 30px 0 0; }
 
-            /* 유저 드롭다운 위치 조정 */
-            .user-dropdown { right: 20px; width: 180px; }
+            .user-dropdown { right: 20px; width: 240px; }
 
-            /* 모바일 메뉴 위치 및 스타일 수정 */
             .mobile-menu {
-                top: 55px; /* 헤더 높이(55px)에 맞춰 틈 제거 */
-                border-radius: 0 0 20px 20px; /* 아래쪽 두 모서리 둥글게 */
+                top: 55px; 
+                border-radius: 0 0 20px 20px;
             }
         }
     </style>
@@ -273,8 +292,19 @@
 </div>
 
 <div class="user-dropdown" id="userDropdown">
-    <div class="user-info-text">내 프로필</div>
-    <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">반갑습니다!</div>
+    <div class="dropdown-profile-header">
+        <img id="dropdownAvatar" class="dropdown-avatar-large" src="" alt="Profile">
+        <div class="dropdown-text-info">
+            <div id="dropdownName" class="dropdown-name">사용자</div>
+            <div id="dropdownId" class="dropdown-id">@username</div>
+        </div>
+    </div>
+    
+    <div class="dropdown-stats">
+        내가 다운로드한 모델: <span id="downloadCount">0</span>개
+    </div>
+
+    <button class="cart-btn" onclick="alert('장바구니 기능은 추후 업데이트 예정입니다.')">🛒 장바구니</button>
     <button class="logout-btn" onclick="logout()">로그아웃</button>
 </div>
 
@@ -492,24 +522,29 @@
                 const avatar = document.getElementById('userAvatar');
                 const btn = document.getElementById('headerLoginBtn');
 
-                // 이름 표시 (CSS로 말줄임 처리됨)
+                // 헤더 버튼 업데이트
                 loginText.innerText = response.global_name || response.username;
-                
-                // 아바타 처리
                 avatar.style.display = 'block';
+                let avatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png";
                 if (response.avatar) {
-                    avatar.src = `https://cdn.discordapp.com/avatars/${response.id}/${response.avatar}.png`;
-                } else {
-                    avatar.src = "https://cdn.discordapp.com/embed/avatars/0.png";
+                    avatarUrl = `https://cdn.discordapp.com/avatars/${response.id}/${response.avatar}.png`;
                 }
+                avatar.src = avatarUrl;
 
-                // 버튼 스타일 변경 (로그인 됨)
                 btn.style.background = "transparent"; 
                 btn.style.color = "#1a1a1a";
                 btn.style.border = "1px solid #ddd";
 
+                // 드롭다운 메뉴 업데이트 (아바타, 이름, ID)
+                document.getElementById('dropdownAvatar').src = avatarUrl;
+                document.getElementById('dropdownName').innerText = response.global_name || response.username;
+                document.getElementById('dropdownId').innerText = '@' + response.username;
+                
+                // 다운로드 개수 (임시 0개)
+                document.getElementById('downloadCount').innerText = '0';
+
                 isLoggedIn = true;
-                closeLoginModal(); // 혹시 열려있으면 닫기
+                closeLoginModal(); 
             }
         })
         .catch(error => {
@@ -537,6 +572,9 @@
             openLoginModal();
         } else {
             alert(`🎉 '${fileName}' 다운로드가 시작됩니다.`);
+            // 다운로드 시 개수 증가 로직 등은 여기에 추가 가능
+            let countSpan = document.getElementById('downloadCount');
+            if(countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
         }
     }
 
