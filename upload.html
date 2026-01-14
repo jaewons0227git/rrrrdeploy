@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocord - Admin Upload</title>
+    <meta name="theme-color" content="#5865F2">
+    <style>
+        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil3Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Daeojamjil', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #ffffff; color: #1a1a1a; padding-top: 60px; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; }
+
+        /* 로딩 오버레이 (접속 시 화면 가림용) */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #5865F2; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        header { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo-container svg { height: 24px; width: auto; display: block; cursor: pointer; }
+        
+        .header-right { display: flex; align-items: center; gap: 20px; font-weight: 700; color: #ff4757; }
+        
+        .content-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; text-align: center; }
+        .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 10px; color: #ff4757; }
+        
+        /* 텍스트 버튼 스타일 */
+        .btn-text-add {
+            display: inline-block; padding: 10px 20px; background: #1a1a1a; color: #fff;
+            border-radius: 8px; font-weight: 700; font-size: 1rem; margin-bottom: 30px;
+            transition: 0.2s;
+        }
+        .btn-text-add:hover { background: #333; transform: translateY(-2px); }
+
+        .model-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; text-align: left;
+        }
+        .model-card {
+            background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;
+        }
+        .model-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; background: #f0f0f0; }
+        .model-info h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; }
+        .model-info p { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
+        
+        /* 모달 스타일 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 3000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal-box {
+            background: #fff; width: 400px; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left;
+        }
+        .modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; }
+        .input-group input, .input-group textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; outline: none;
+        }
+        .input-group textarea { resize: none; height: 80px; }
+        .btn-submit {
+            width: 100%; padding: 12px; background: #5865F2; color: #fff;
+            border-radius: 8px; font-weight: 700; margin-top: 10px;
+        }
+
+        .contact { min-height: 40vh; background: linear-gradient(180deg, #5865F2 0%, #050505 100%); color: #fff; text-align: center; padding: 80px 20px; margin-top: 60px; border-radius: 40px 40px 0 0; }
+        .contact h2 { font-size: 2rem; margin-bottom: 15px; font-weight: 800; }
+        .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<header>
+    <div class="logo-container" onclick="location.href='index.html'">
+        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 454.000000 95.000000" preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0.000000,95.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                <path d="M110 725 l0 -75 254 0 254 0 43 -45 c24 -25 48 -45 54 -45 6 0 34 24 63 53 l52 53 -68 67 -68 67 -292 0 -292 0 0 -75z"/>
+                <path d="M940 513 l1 -178 82 -92 81 -93 218 0 218 0 0 264 c0 231 -2 265 -16 270 -9 3 -144 6 -300 6 l-284 0 0 -177z m430 -88 l0 -175 -74 0 -73 0 -57 67 -56 67 0 102 c0 55 3 104 7 107 3 4 62 7 130 7 l123 0 0 -175z"/>
+                <path d="M2350 516 l0 -175 83 -95 82 -94 218 -1 217 -1 -2 268 -3 267 -297 3 -298 2 0 -174z m438 -93 l2 -173 -77 0 -78 0 -57 71 -58 71 0 97 c0 54 3 101 7 105 4 3 63 5 132 4 l126 -3 3 -172z"/>
+                <path d="M1640 410 l0 -270 263 0 263 0 43 44 c41 42 42 43 19 50 -13 3 -110 6 -215 6 l-193 0 0 175 0 175 178 0 178 0 25 28 c62 68 85 62 -255 62 l-306 0 0 -270z"/>
+                <path d="M3080 615 l0 -65 213 0 213 0 34 -35 c19 -19 39 -35 45 -35 6 0 29 18 50 40 l39 40 -59 60 -59 60 -238 0 -238 0 0 -65z"/>
+                <path d="M3780 410 l0 -270 224 0 224 0 70 113 c109 174 108 145 15 294 l-80 128 -226 3 -227 2 0 -270z m382 93 c62 -99 63 -84 -9 -194 l-44 -69 -79 0 -80 0 0 175 0 175 78 0 79 0 55 -87z"/>
+                <path d="M510 295 l135 -135 110 0 110 0 -135 135 -135 135 -110 0 -110 0 135 -135z"/>
+                <path d="M3355 318 c28 -29 75 -79 105 -111 l54 -57 96 0 95 0 -110 110 -110 110 -89 0 -90 0 49 -52z"/>
+                <path d="M110 255 l0 -95 95 0 95 0 0 95 0 95 -95 0 -95 0 0 -95z"/>
+                <path d="M3080 230 l0 -80 80 0 81 0 -3 78 -3 77 -77 3 -78 3 0 -81z"/>
+            </g>
+        </svg>
+    </div>
+    <div class="header-right">
+        <span style="font-weight:700;">ADMIN MODE</span>
+    </div>
+</header>
+
+<div class="content-container">
+    <h1 class="page-title">Admin Model Management</h1>
+    <button class="btn-text-add" onclick="verifyAdminAndOpenModal()">모델 추가하기</button>
+    <div class="model-grid" id="modelGrid">
+        </div>
+</div>
+
+<div class="modal-overlay" id="addModal">
+    <div class="modal-box">
+        <h2 class="modal-title">새 모델 추가</h2>
+        <div class="input-group">
+            <label>모델 이름</label>
+            <input type="text" id="mName" placeholder="예: 소방복장 세트">
+        </div>
+        <div class="input-group">
+            <label>모델 사진 링크</label>
+            <input type="text" id="mImage" placeholder="https://...">
+        </div>
+        <div class="input-group">
+            <label>모델 설명</label>
+            <textarea id="mDesc" placeholder="설명을 입력하세요"></textarea>
+        </div>
+        <div class="input-group">
+            <label>다운로드 링크 (외부 URL)</label>
+            <input type="text" id="mLink" placeholder="예: https://drive.google.com/...">
+        </div>
+        <button class="btn-submit" onclick="submitModel()">확인 (추가하기)</button>
+        <button onclick="closeModal()" style="width:100%; margin-top:10px; color:#999; font-size:0.9rem;">취소</button>
+    </div>
+</div>
+
+<section class="contact">
+    <div class="section-inner">
+        <h2>지금 바로<br>Rocord에 합류하세요.</h2>
+        <a href="https://discord.gg/NC4DQ3Cet9" target="_blank" class="btn-large">디스코드 입장하기</a>
+    </div>
+</section>
+
+<footer>
+    © 2025-2026 Rocord Deploy. All Rights Reserved.
+</footer>
+
+<script>
+    const BACKEND_URL = 'https://rocorddev.pythonanywhere.com';
+    let adminToken = localStorage.getItem('admin_token');
+
+    window.onload = function() {
+        if (!adminToken) {
+            // 관리자 토큰 없으면 바로 내보냄
+            window.location.href = 'index.html';
+        } else {
+            // 토큰 있으면 로딩 끄고 목록 불러오기
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                fetchModels();
+            }, 600);
+        }
+    };
+
+    function fetchModels() {
+        fetch(`${BACKEND_URL}/api/models`)
+        .then(res => res.json())
+        .then(data => {
+            const grid = document.getElementById('modelGrid');
+            grid.innerHTML = '';
+            data.forEach(model => {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+                card.innerHTML = `
+                    <img src="${model.image}" alt="${model.name}" class="model-img">
+                    <div class="model-info">
+                        <h3>${model.name}</h3>
+                        <p>${model.desc}</p>
+                    </div>
+                    <div style="font-size:0.8rem; color:#888;">Link: ${model.download_url}</div>
+                `;
+                grid.appendChild(card);
+            });
+        });
+    }
+
+    function verifyAdminAndOpenModal() {
+        // 토큰 재확인
+        if(!localStorage.getItem('admin_token')) {
+            alert("로그인이 만료되었습니다.");
+            window.location.href = 'index.html';
+            return;
+        }
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('addModal').style.display = 'none';
+    }
+
+    function submitModel() {
+        const name = document.getElementById('mName').value;
+        const image = document.getElementById('mImage').value;
+        const desc = document.getElementById('mDesc').value;
+        const link = document.getElementById('mLink').value;
+
+        if(!name || !image || !desc || !link) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+        }
+
+        const newModel = { name, image, desc, download_url: link };
+
+        fetch(`${BACKEND_URL}/api/models`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify(newModel)
+        })
+        .then(res => {
+            if(res.ok) {
+                alert("성공적으로 추가되었습니다.");
+                closeModal();
+                fetchModels(); 
+                document.getElementById('mName').value = '';
+                document.getElementById('mImage').value = '';
+                document.getElementById('mDesc').value = '';
+                document.getElementById('mLink').value = '';
+            } else {
+                alert("추가 실패. 권한을 확인하세요.");
+            }
+        })
+        .catch(err => alert("오류 발생: " + err));
+    }
+</script>
+
+</body>
+</html>
