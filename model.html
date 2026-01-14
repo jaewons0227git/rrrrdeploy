@@ -24,10 +24,40 @@
         .nav-links a { font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
         .nav-links a:hover { color: #5865F2; }
 
+        /* 햄버거 버튼 스타일 (추가됨) */
+        .hamburger-btn { display: none; width: 24px; height: 24px; position: relative; z-index: 1100; }
+        .hamburger-btn span { display: block; width: 100%; height: 2px; background: #1a1a1a; position: absolute; left: 0; transition: 0.3s; }
+        .hamburger-btn span:nth-child(1) { top: 4px; }
+        .hamburger-btn span:nth-child(2) { top: 11px; }
+        .hamburger-btn span:nth-child(3) { top: 18px; }
+        .hamburger-btn.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+        .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+        /* 모바일 메뉴 (추가됨) */
+        .mobile-menu { position: fixed; top: 60px; left: 0; width: 100%; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 15px; transform: translateY(-150%); transition: transform 0.3s ease-in-out; z-index: 999; }
+        .mobile-menu.active { transform: translateY(0); }
+        .mobile-menu a { font-size: 1.1rem; font-weight: 700; width: 100%; text-align: center; padding: 10px 0; }
+
         .login-trigger-btn { background: #1a1a1a; color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px; max-width: 150px; }
         .login-trigger-btn:hover { background: #333; transform: translateY(-2px); }
         .profile-name { display: inline-block; max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
         .user-avatar { width: 24px; height: 24px; border-radius: 50%; display: none; }
+
+        /* 유저 프로필 드롭다운 (추가됨) */
+        .user-dropdown { position: absolute; top: 60px; right: 40px; width: 260px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 20px; display: none; flex-direction: column; gap: 15px; border: 1px solid #eee; z-index: 1002; }
+        .user-dropdown.active { display: flex; }
+        .dropdown-profile-header { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .dropdown-avatar-large { width: 50px; height: 50px; border-radius: 50%; background: #eee; object-fit: cover; }
+        .dropdown-text-info { display: flex; flex-direction: column; overflow: hidden; }
+        .dropdown-name { font-weight: 800; font-size: 1rem; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-id { font-size: 0.8rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-stats { font-size: 0.9rem; color: #333; font-weight: 600; }
+        .dropdown-stats span { color: #5865F2; }
+        .cart-btn { width: 100%; padding: 10px; background: #f0f0f0; color: #333; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-align: center; transition: 0.2s; }
+        .cart-btn:hover { background: #e0e0e0; }
+        .logout-btn { width: 100%; padding: 8px; background: #ff4757; color: #fff; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; }
+        .logout-btn:hover { background: #e84118; }
 
         /* 모달 스타일 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
@@ -47,6 +77,13 @@
         .social-divider::after { right: 0; }
         .btn-discord-modal { width: 100%; padding: 12px; background: #5865F2; color: #fff; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-discord-modal:hover { background: #4752c4; }
+        
+        .auto-login-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; cursor: pointer; user-select: none; font-size: 0.9rem; color: #666; }
+        .checkbox-icon { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: #fff; }
+        .checkbox-icon svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; display: none; }
+        .auto-login-wrapper input[type="checkbox"] { display: none; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon { background: #5865F2; border-color: #5865F2; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon svg { display: block; }
 
         /* 컨텐츠 영역 */
         .content-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; min-height: 80vh; }
@@ -60,7 +97,7 @@
             font-size: 2rem; 
             font-weight: 800; 
             color: #1a1a1a; 
-            margin-left: 15px; /* 오른쪽으로 살짝 이동 */
+            margin-left: 15px; 
         }
         
         /* 검색창 스타일 */
@@ -72,20 +109,25 @@
         }
         .search-box input:focus { border-color: #5865F2; background: #fff; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.1); }
 
-        /* 모델 그리드 (4개 배치 수정) */
+        /* 모델 그리드 */
         .model-grid { 
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개 고정 */
+            grid-template-columns: repeat(4, 1fr); /* 4개 고정 */
             gap: 25px; 
         }
         
-        /* 카드 스타일 (곡률 유지) */
+        /* 카드 스타일 (높이 100% + Flex Column) */
         .model-card {
             background: #fff; border: 1px solid #eee; 
             border-radius: 24px; 
             padding: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-            transition: 0.3s; display: flex; flex-direction: column;
+            transition: 0.3s; 
+            
+            /* 핵심 수정: 카드 높이를 그리드 셀에 꽉 채우고 내용을 Flex로 배치 */
+            height: 100%; 
+            display: flex; 
+            flex-direction: column;
         }
         .model-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
         
@@ -101,7 +143,21 @@
         
         .model-info h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; }
         .model-info p { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
-        .btn-download { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s; }
+        
+        /* 버튼 스타일 (아래로 밀기) */
+        .btn-download { 
+            width: 100%; 
+            padding: 12px; 
+            background: #1a1a1a; 
+            color: #fff; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            text-align: center; 
+            transition: 0.2s;
+            
+            /* 핵심 수정: 버튼을 항상 아래로 밀어버림 */
+            margin-top: auto; 
+        }
         .btn-download:hover { background: #333; }
 
         /* 로딩 스피너 */
@@ -121,7 +177,7 @@
 
         footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; margin-top: 60px; }
 
-        /* 반응형: 화면이 작아지면 개수 조정 */
+        /* 반응형: 화면이 작아지면 개수 조정 + 모바일 요소 처리 */
         @media (max-width: 1200px) {
             .model-grid { grid-template-columns: repeat(3, 1fr); }
         }
@@ -132,10 +188,15 @@
             header { height: 55px; padding: 0 20px; }
             .nav-links { display: none; }
             .logo-container svg { height: 20px; }
+            .hamburger-btn { display: block; } /* 햄버거 보이기 */
+            
             .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
             .search-box { max-width: 100%; }
-            .page-title { margin-left: 0; } /* 모바일은 왼쪽 정렬이 자연스러움 */
+            .page-title { margin-left: 0; }
             .model-grid { grid-template-columns: repeat(1, 1fr); }
+            
+            .user-dropdown { right: 20px; width: 240px; }
+            .mobile-menu { top: 55px; border-radius: 0 0 20px 20px; }
         }
     </style>
 </head>
@@ -170,8 +231,38 @@
             <img id="userAvatar" class="user-avatar" src="" alt="">
             <span id="loginBtnText" class="profile-name">로그인</span>
         </button>
+
+        <button class="hamburger-btn" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="model.html">모델</a>
+    <a href="system.html">시스템</a>
+    <a href="car.html">차량</a>
+    <a href="shirt.html">복장</a>
+</div>
+
+<div class="user-dropdown" id="userDropdown">
+    <div class="dropdown-profile-header">
+        <img id="dropdownAvatar" class="dropdown-avatar-large" src="" alt="Profile">
+        <div class="dropdown-text-info">
+            <div id="dropdownName" class="dropdown-name">사용자</div>
+            <div id="dropdownId" class="dropdown-id">@username</div>
+        </div>
+    </div>
+    
+    <div class="dropdown-stats">
+        내가 다운로드한 모델: <span id="downloadCount">0</span>개
+    </div>
+
+    <button class="cart-btn" onclick="alert('장바구니 기능은 추후 업데이트 예정입니다.')">🛒 장바구니</button>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+</div>
 
 <div class="modal-overlay" id="loginModalOverlay">
     <div class="login-modal">
@@ -184,6 +275,14 @@
         <div class="input-group">
             <input type="password" id="loginPw" placeholder="비밀번호">
         </div>
+
+        <label class="auto-login-wrapper">
+            <input type="checkbox">
+            <span class="checkbox-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+            자동로그인
+        </label>
 
         <button class="btn-login-submit" onclick="handleLoginSubmit()">로그인</button>
 
@@ -233,10 +332,34 @@
         }
         fetchModels();
         
+        // 모달 외부 클릭시 닫기
         document.getElementById('loginModalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeLoginModal();
         });
+
+        // 햄버거 메뉴 및 프로필 닫기 (외부 클릭)
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('userDropdown');
+            const headerBtn = document.getElementById('headerLoginBtn');
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            if (!dropdown.contains(e.target) && !headerBtn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
     };
+
+    function toggleMobileMenu() {
+        const btn = document.querySelector('.hamburger-btn');
+        const menu = document.getElementById('mobileMenu');
+        btn.classList.toggle('active');
+        menu.classList.toggle('active');
+    }
 
     function loginToBackend(token) {
         fetch(`${BACKEND_URL}/api/login`, {
@@ -274,13 +397,22 @@
         btn.style.background = "transparent"; 
         btn.style.color = "#1a1a1a";
         btn.style.border = "1px solid #ddd";
+        
+        // 드롭다운 정보 업데이트
+        document.getElementById('dropdownAvatar').src = avatarUrl;
+        document.getElementById('dropdownName').innerText = data.global_name || data.username;
+        document.getElementById('dropdownId').innerText = '@' + data.username;
+        document.getElementById('downloadCount').innerText = data.download_count || 0;
     }
 
     function openLoginModal() {
-        if(isLoggedIn) return;
-        const modal = document.getElementById('loginModalOverlay');
-        modal.style.display = 'flex';
-        setTimeout(() => { modal.classList.add('show'); }, 10);
+        if(isLoggedIn) {
+            document.getElementById('userDropdown').classList.toggle('active');
+        } else {
+            const modal = document.getElementById('loginModalOverlay');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('show'); }, 10);
+        }
     }
 
     function closeLoginModal() {
@@ -313,6 +445,13 @@
     function loginWithDiscord() {
         const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = oauthUrl;
+    }
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        isLoggedIn = false;
+        currentUserToken = null;
+        location.reload();
     }
 
     function fetchModels() {
@@ -386,6 +525,9 @@
             if(data.url) {
                 // 알림 없이 바로 이동
                 window.location.href = data.url;
+                // 다운로드 카운트 증가 UI 즉시 반영
+                let countSpan = document.getElementById('downloadCount');
+                if(countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
             } else {
                 alert("링크를 찾을 수 없습니다.");
             }
