@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocord - 모델</title>
+    <meta name="theme-color" content="#5865F2">
+    <style>
+        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil3Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil6ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Daeojamjil', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #ffffff; color: #1a1a1a; padding-top: 60px; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; }
+
+        header { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo-container svg { height: 24px; width: auto; display: block; cursor: pointer; }
+        
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #5865F2; }
+
+        .login-trigger-btn { background: #1a1a1a; color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px; max-width: 150px; }
+        .login-trigger-btn:hover { background: #333; transform: translateY(-2px); }
+        .profile-name { display: inline-block; max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+        .user-avatar { width: 24px; height: 24px; border-radius: 50%; display: none; }
+
+        /* 모달 스타일 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.show { opacity: 1; }
+        .login-modal { background: #fff; width: 340px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .modal-overlay.show .login-modal { transform: scale(1); }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; }
+        .modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        .input-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem; outline: none; transition: 0.3s; background: #f9f9f9; }
+        .input-group input:focus { border-color: #5865F2; background: #fff; }
+        .btn-login-submit { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border-radius: 50px; font-weight: 700; font-size: 1rem; margin-bottom: 20px; transition: 0.2s; }
+        .btn-login-submit:hover { background: #333; }
+        .social-divider { text-align: center; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; position: relative; }
+        .social-divider::before, .social-divider::after { content: ""; position: absolute; top: 50%; width: 30%; height: 1px; background: #eee; }
+        .social-divider::before { left: 0; }
+        .social-divider::after { right: 0; }
+        .btn-discord-modal { width: 100%; padding: 12px; background: #5865F2; color: #fff; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-discord-modal:hover { background: #4752c4; }
+
+        .content-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 60vh; }
+        .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 30px; text-align: center; }
+        
+        .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .model-card { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; display: flex; flex-direction: column; }
+        .model-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .model-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; background: #f0f0f0; }
+        .model-info h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; }
+        .model-info p { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
+        .btn-download { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border-radius: 8px; font-weight: 700; text-align: center; transition: 0.2s; }
+        .btn-download:hover { background: #333; }
+
+        /* 로딩 스피너 */
+        .spinner-container { grid-column: 1 / -1; display: flex; justify-content: center; padding: 50px 0; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #5865F2; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .contact { min-height: 40vh; background: linear-gradient(180deg, #5865F2 0%, #050505 100%); color: #fff; text-align: center; padding: 80px 20px; margin-top: 60px; border-radius: 40px 40px 0 0; }
+        .contact h2 { font-size: 2rem; margin-bottom: 15px; font-weight: 800; }
+        .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; }
+
+        @media (max-width: 768px) {
+            header { height: 55px; padding: 0 20px; }
+            .nav-links { display: none; }
+            .logo-container svg { height: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container" onclick="location.href='index.html'">
+        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 454.000000 95.000000" preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0.000000,95.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                <path d="M110 725 l0 -75 254 0 254 0 43 -45 c24 -25 48 -45 54 -45 6 0 34 24 63 53 l52 53 -68 67 -68 67 -292 0 -292 0 0 -75z"/>
+                <path d="M940 513 l1 -178 82 -92 81 -93 218 0 218 0 0 264 c0 231 -2 265 -16 270 -9 3 -144 6 -300 6 l-284 0 0 -177z m430 -88 l0 -175 -74 0 -73 0 -57 67 -56 67 0 102 c0 55 3 104 7 107 3 4 62 7 130 7 l123 0 0 -175z"/>
+                <path d="M2350 516 l0 -175 83 -95 82 -94 218 -1 217 -1 -2 268 -3 267 -297 3 -298 2 0 -174z m438 -93 l2 -173 -77 0 -78 0 -57 71 -58 71 0 97 c0 54 3 101 7 105 4 3 63 5 132 4 l126 -3 3 -172z"/>
+                <path d="M1640 410 l0 -270 263 0 263 0 43 44 c41 42 42 43 19 50 -13 3 -110 6 -215 6 l-193 0 0 175 0 175 178 0 178 0 25 28 c62 68 85 62 -255 62 l-306 0 0 -270z"/>
+                <path d="M3080 615 l0 -65 213 0 213 0 34 -35 c19 -19 39 -35 45 -35 6 0 29 18 50 40 l39 40 -59 60 -59 60 -238 0 -238 0 0 -65z"/>
+                <path d="M3780 410 l0 -270 224 0 224 0 70 113 c109 174 108 145 15 294 l-80 128 -226 3 -227 2 0 -270z m382 93 c62 -99 63 -84 -9 -194 l-44 -69 -79 0 -80 0 0 175 0 175 78 0 79 0 55 -87z"/>
+                <path d="M510 295 l135 -135 110 0 110 0 -135 135 -135 135 -110 0 -110 0 135 -135z"/>
+                <path d="M3355 318 c28 -29 75 -79 105 -111 l54 -57 96 0 95 0 -110 110 -110 110 -89 0 -90 0 49 -52z"/>
+                <path d="M110 255 l0 -95 95 0 95 0 0 95 0 95 -95 0 -95 0 0 -95z"/>
+                <path d="M3080 230 l0 -80 80 0 81 0 -3 78 -3 77 -77 3 -78 3 0 -81z"/>
+            </g>
+        </svg>
+    </div>
+    <div class="header-right">
+        <nav class="nav-links">
+            <a href="model.html" style="color:#5865F2">모델</a>
+            <a href="system.html">시스템</a>
+            <a href="car.html">차량</a>
+            <a href="shirt.html">복장</a>
+        </nav>
+
+        <button id="headerLoginBtn" class="login-trigger-btn" onclick="openLoginModal()">
+            <img id="userAvatar" class="user-avatar" src="" alt="">
+            <span id="loginBtnText" class="profile-name">로그인</span>
+        </button>
+    </div>
+</header>
+
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="login-modal">
+        <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+        <h2 class="modal-title">로그인</h2>
+
+        <div class="input-group">
+            <input type="text" id="loginId" placeholder="아이디">
+        </div>
+        <div class="input-group">
+            <input type="password" id="loginPw" placeholder="비밀번호">
+        </div>
+
+        <button class="btn-login-submit" onclick="handleLoginSubmit()">로그인</button>
+
+        <div class="social-divider">소셜 로그인</div>
+
+        <button class="btn-discord-modal" onclick="loginWithDiscord()">
+            <svg width="24" height="24" viewBox="0 0 127 96" fill="white">
+                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.89,105.89,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+            Discord로 로그인
+        </button>
+    </div>
+</div>
+
+<div class="content-container">
+    <h1 class="page-title">Models</h1>
+    <div class="model-grid" id="modelGrid">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<section class="contact">
+    <div class="section-inner">
+        <h2>지금 바로<br>Rocord에 합류하세요.</h2>
+        <a href="https://discord.gg/NC4DQ3Cet9" target="_blank" class="btn-large">디스코드 입장하기</a>
+    </div>
+</section>
+
+<footer>
+    © 2025-2026 Rocord Deploy. All Rights Reserved.
+</footer>
+
+<script>
+    const CLIENT_ID = '1460856182716502036';
+    const REDIRECT_URI = 'https://rocorddev.kro.kr'; 
+    const BACKEND_URL = 'https://rocorddev.pythonanywhere.com';
+
+    let isLoggedIn = false;
+    let currentUserToken = null;
+
+    window.onload = function() {
+        const storedToken = localStorage.getItem('discord_token');
+        if (storedToken) {
+            loginToBackend(storedToken);
+        }
+        fetchModels();
+        
+        // 모달 외부 클릭 닫기 이벤트
+        document.getElementById('loginModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeLoginModal();
+        });
+    };
+
+    function loginToBackend(token) {
+        fetch(`${BACKEND_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: token })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.error) throw new Error(data.error);
+            currentUserToken = token;
+            isLoggedIn = true;
+            updateUI(data);
+            closeLoginModal();
+        })
+        .catch(err => {
+            console.error(err);
+            localStorage.removeItem('discord_token');
+        });
+    }
+
+    function updateUI(data) {
+        const loginText = document.getElementById('loginBtnText');
+        const avatar = document.getElementById('userAvatar');
+        const btn = document.getElementById('headerLoginBtn');
+
+        loginText.innerText = data.global_name || data.username;
+        avatar.style.display = 'block';
+        let avatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png";
+        if (data.avatar) {
+            avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+        }
+        avatar.src = avatarUrl;
+        
+        btn.style.background = "transparent"; 
+        btn.style.color = "#1a1a1a";
+        btn.style.border = "1px solid #ddd";
+    }
+
+    // 모달 제어 함수
+    function openLoginModal() {
+        if(isLoggedIn) return; // 이미 로그인했으면 아무 동작 안함(혹은 로그아웃 메뉴)
+        const modal = document.getElementById('loginModalOverlay');
+        modal.style.display = 'flex';
+        setTimeout(() => { modal.classList.add('show'); }, 10);
+    }
+
+    function closeLoginModal() {
+        const modal = document.getElementById('loginModalOverlay');
+        modal.classList.remove('show');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    function handleLoginSubmit() {
+        const id = document.getElementById('loginId').value;
+        const pw = document.getElementById('loginPw').value;
+        if(!id || !pw) return alert("정보를 입력하세요.");
+
+        fetch(`${BACKEND_URL}/api/admin/login`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id, pw})
+        })
+        .then(res=>res.json())
+        .then(data => {
+            if(data.success) {
+                localStorage.setItem('admin_token', data.token);
+                window.location.href = 'upload.html';
+            } else {
+                alert("관리자 로그인 실패");
+            }
+        });
+    }
+
+    function loginWithDiscord() {
+        const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        window.location.href = oauthUrl;
+    }
+
+    function fetchModels() {
+        fetch(`${BACKEND_URL}/api/models`)
+        .then(res => res.json())
+        .then(data => {
+            const grid = document.getElementById('modelGrid');
+            grid.innerHTML = ''; 
+
+            if (data.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; width:100%; grid-column: 1 / -1;">등록된 모델이 없습니다.</div>';
+                return;
+            }
+
+            data.forEach(model => {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+                card.innerHTML = `
+                    <img src="${model.image}" alt="${model.name}" class="model-img">
+                    <div class="model-info">
+                        <h3>${model.name}</h3>
+                        <p>${model.desc}</p>
+                    </div>
+                    <button class="btn-download" onclick="downloadModel('${model.download_url}')">다운로드</button>
+                `;
+                grid.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('modelGrid').innerHTML = '<div style="text-align:center;width:100%">데이터를 불러오는데 실패했습니다.</div>';
+        });
+    }
+
+    function downloadModel(targetId) {
+        if (!isLoggedIn) {
+            alert("🔒 로그인이 필요한 서비스입니다.");
+            openLoginModal();
+            return;
+        }
+        alert(`다운로드 링크를 요청합니다...`);
+        fetch(`${BACKEND_URL}/api/request_download`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentUserToken}` 
+            },
+            body: JSON.stringify({ target_id: targetId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("링크를 찾을 수 없습니다.");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
