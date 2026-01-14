@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Rocord Deploy</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rocord Deploy">
+    <meta property="og:description" content="한국 시스템 무배의 시작, Rocord 공식사이트">
+    <meta property="og:image" content="https://designcompass.org/2022/09/06/roblox-logo-refresh/"> <meta name="theme-color" content="#5865F2">
+    <meta name="twitter:card" content="summary_large_image">
+
     <style>
         /* ------------------- 폰트 정의 (Font-face) ------------------- */
         
@@ -149,14 +156,14 @@
             font-weight: 500; 
         }
 
-        /* 슬라이드 1: 어두운 회색, 왼쪽 정렬 */
-        .slide:nth-child(1) {
+        /* 슬라이드 1: 어두운 회색, 왼쪽 정렬 (복제된 슬라이드 스타일 포함) */
+        .slide:nth-child(1), .slide.clone {
             background: #2b2b2b;
             align-items: flex-start;
             text-align: left;
         }
 
-        .slide:nth-child(1) h2 {
+        .slide:nth-child(1) h2, .slide.clone h2 {
             color: #ffffff;
             font-size: 2.5rem; /* 폰트 특성에 맞춰 크기 살짝 조정 */
         }
@@ -409,9 +416,9 @@
             
             .banner-container { height: 280px; }
             
-            .slide:nth-child(1) { padding-left: 20px; padding-right: 20px; }
+            .slide:nth-child(1), .slide.clone { padding-left: 20px; padding-right: 20px; }
             /* 폰트 변경으로 인한 크기 미세 조정 */
-            .slide:nth-child(1) h2 { font-size: 2.0rem; }
+            .slide:nth-child(1) h2, .slide.clone h2 { font-size: 2.0rem; }
             .slide:nth-child(2) h2 { font-size: 2.0rem; }
             
             .recommend-section { padding: 30px 20px 10px 20px; }
@@ -548,28 +555,52 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // 슬라이드 배너 스크립트
-    let currentSlide = 0;
+    // 슬라이드 배너 스크립트 (한 방향 무한 롤링 적용)
     const slideWrapper = document.getElementById('slideWrapper');
     const dots = document.querySelectorAll('.dot');
-    const totalSlides = 2;
+    const totalSlides = 2; // 실제 슬라이드 개수
+    let currentSlide = 0;
 
-    function updateSlider() {
+    // 무한 롤링을 위해 첫 번째 슬라이드 복제
+    const firstClone = slideWrapper.firstElementChild.cloneNode(true);
+    firstClone.classList.add('clone'); // 스타일 적용을 위한 클래스 추가
+    slideWrapper.appendChild(firstClone);
+
+    function updateSlider(withTransition = true) {
+        if (withTransition) {
+            slideWrapper.style.transition = 'transform 0.5s ease-in-out';
+        } else {
+            slideWrapper.style.transition = 'none';
+        }
+        
         slideWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        // 닷(dot) 업데이트: 복제된 슬라이드일 경우(인덱스 2) 0번 닷 활성화
         dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentSlide);
+            dot.classList.toggle('active', index === (currentSlide % totalSlides));
         });
     }
 
     function moveToSlide(index) {
         currentSlide = index;
-        updateSlider();
+        updateSlider(true);
     }
 
     function nextSlide() {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateSlider();
+        currentSlide++;
+        updateSlider(true);
+
+        // 마지막 복제 슬라이드에 도달했을 때
+        if (currentSlide === totalSlides) {
+            setTimeout(() => {
+                // 트랜지션 효과를 끄고 순식간에 처음으로 이동
+                currentSlide = 0;
+                updateSlider(false);
+            }, 500); // CSS transition 시간(0.5s)과 동일하게 설정
+        }
     }
+    
+    // 자동 슬라이드
     setInterval(nextSlide, 4000);
 
     // 드래그 스크롤
