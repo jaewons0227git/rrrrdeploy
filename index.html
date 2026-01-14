@@ -8,126 +8,212 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Rocord Deploy">
     <meta property="og:description" content="한국 시스템 무배의 시작, Rocord 공식사이트">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop">
     <meta name="theme-color" content="#5865F2">
-    <meta name="twitter:card" content="summary_large_image">
 
     <style>
-        /* ------------------- 폰트 정의 (Font-face) ------------------- */
-        @font-face {
-            font-family: 'KblcourtEbttf';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-5@1.0/KBLCourt_EBTTF.woff2') format('woff2');
-            font-weight: normal;
-            font-display: swap;
-        }
-
-        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil1Thin.woff2') format('woff2'); font-weight: 100; font-display: swap; }
-        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil2Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+        /* ------------------- 폰트 정의 ------------------- */
         @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil3Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-        @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil4Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
         @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
         @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil6ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
 
-        /* ------------------- 초기화 및 기본 스타일 ------------------- */
+        /* ------------------- 기본 스타일 ------------------- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Daeojamjil', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #ffffff; color: #1a1a1a; line-height: 1.6; word-break: keep-all; padding-top: 60px; }
+        ul { list-style: none; }
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; }
 
-        /* ------------------- 헤더 스타일 ------------------- */
-        header { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.05); transition: height 0.3s, padding 0.3s; }
-        .logo-container { cursor: pointer; }
-        .logo-container svg { height: 24px; width: auto; display: block; }
+        /* ------------------- 헤더 ------------------- */
+        header { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo-container svg { height: 24px; width: auto; display: block; cursor: pointer; }
+
+        /* 헤더 우측 그룹 (네비게이션 + 로그인 + 햄버거) */
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        /* 데스크탑 네비게이션 */
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #5865F2; }
+
+        /* 햄버거 버튼 (모바일용, 기본 숨김) */
+        .hamburger-btn { display: none; width: 24px; height: 24px; position: relative; z-index: 1100; }
+        .hamburger-btn span { display: block; width: 100%; height: 2px; background: #1a1a1a; position: absolute; left: 0; transition: 0.3s; }
+        .hamburger-btn span:nth-child(1) { top: 4px; }
+        .hamburger-btn span:nth-child(2) { top: 11px; }
+        .hamburger-btn span:nth-child(3) { top: 18px; }
         
-        nav { display: flex; align-items: center; gap: 15px; }
-        nav a.nav-item { text-decoration: none; color: #1a1a1a; font-size: 0.95rem; font-weight: 500; transition: color 0.3s; padding: 5px; }
-        nav a.nav-item:hover { color: #5865F2; }
+        /* 햄버거 활성화 애니메이션 */
+        .hamburger-btn.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+        .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
 
-        /* 로그인 버튼 스타일 */
-        .login-btn {
-            cursor: pointer;
-            text-decoration: none;
-            color: #fff;
-            padding: 8px 18px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border-radius: 50px;
-            background: #5865F2;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(88, 101, 242, 0.3);
-            white-space: nowrap;
-            margin-left: 5px;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* 모바일 메뉴 드롭다운 */
+        .mobile-menu {
+            position: fixed; top: 60px; left: 0; width: 100%; background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px 0;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            transform: translateY(-150%); transition: transform 0.3s ease-in-out; z-index: 999;
         }
-        .login-btn:hover { background: #4752c4; transform: translateY(-2px); }
+        .mobile-menu.active { transform: translateY(0); }
+        .mobile-menu a { font-size: 1.1rem; font-weight: 700; width: 100%; text-align: center; padding: 10px 0; }
+
+        /* ------------------- 로그인 버튼 및 프로필 ------------------- */
+        .login-trigger-btn {
+            background: #1a1a1a; color: #fff; padding: 8px 20px; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            max-width: 150px;
+        }
+        .login-trigger-btn:hover { background: #333; transform: translateY(-2px); }
         
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #fff;
-            display: none; 
+        /* 로그인 후 프로필 이름 말줄임 처리 */
+        .profile-name {
+            display: inline-block;
+            max-width: 80px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
+            vertical-align: middle;
         }
 
-        /* ------------------- 기존 CSS 유지 ------------------- */
+        .user-avatar { width: 24px; height: 24px; border-radius: 50%; display: none; }
+
+        /* 유저 프로필 드롭다운 카드 */
+        .user-dropdown {
+            position: absolute; top: 60px; right: 40px; width: 200px;
+            background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            padding: 15px; display: none; flex-direction: column; gap: 10px; border: 1px solid #eee;
+            z-index: 1002;
+        }
+        .user-dropdown.active { display: flex; }
+        .user-info-text { font-size: 0.9rem; font-weight: 700; color: #333; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 5px; }
+        .logout-btn {
+            width: 100%; padding: 8px; background: #ff4757; color: #fff;
+            border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center;
+        }
+        .logout-btn:hover { background: #e84118; }
+
+        /* ------------------- 배너 (모바일 가로 비율 유지 수정) ------------------- */
         .banner-container { position: relative; width: 100%; height: 320px; overflow: hidden; background: #f0f0f0; }
         .slide-wrapper { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
         .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 20px 10%; }
-        .slide h2 { font-family: 'Daeojamjil', sans-serif; margin-bottom: 10px; font-weight: 500; }
+        .slide h2 { margin-bottom: 10px; font-weight: 500; font-size: 2.5rem; color: #fff; }
         .slide:nth-child(1), .slide.clone { background: #2b2b2b; align-items: flex-start; text-align: left; }
-        .slide:nth-child(1) h2, .slide.clone h2 { color: #ffffff; font-size: 2.5rem; }
         .slide:nth-child(2) { background: linear-gradient(135deg, #0052D4 0%, #4BB6F3 100%); align-items: center; text-align: center; }
-        .slide:nth-child(2) h2 { color: #ffffff; font-size: 2.3rem; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .slider-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
 
-        .recommend-section { padding: 40px 40px 10px 40px; max-width: 1100px; margin: 0 auto; }
-        .recommend-section h3 { font-size: 1.5rem; margin-bottom: 20px; border-left: 4px solid #5865F2; padding-left: 12px; font-weight: 800; }
-        .recommend-card { background: #f8f9fa; border: 1px solid #eee; border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 30px; transition: box-shadow 0.3s; }
-        .recommend-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        /* ------------------- 로그인 모달 ------------------- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; }
+        
+        .login-modal {
+            background: #fff; width: 340px; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .modal-overlay.show .login-modal { transform: scale(1); }
+
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #999; cursor: pointer; }
+        .modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; text-align: center; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group input {
+            width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 10px;
+            font-size: 0.95rem; outline: none; transition: 0.3s; background: #f9f9f9;
+        }
+        .input-group input:focus { border-color: #5865F2; background: #fff; }
+
+        /* 자동 로그인 체크박스 (아이콘 커스텀) */
+        .auto-login-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; cursor: pointer; user-select: none; font-size: 0.9rem; color: #666; }
+        .checkbox-icon { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: #fff; }
+        .checkbox-icon svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; display: none; }
+        /* 체크 상태 */
+        .auto-login-wrapper input[type="checkbox"] { display: none; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon { background: #5865F2; border-color: #5865F2; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon svg { display: block; }
+
+        /* 메인 로그인 버튼 */
+        .btn-login-submit {
+            width: 100%; padding: 12px; background: #1a1a1a; color: #fff;
+            border-radius: 50px; font-weight: 700; font-size: 1rem; margin-bottom: 20px;
+            transition: 0.2s;
+        }
+        .btn-login-submit:hover { background: #333; }
+
+        .social-divider {
+            text-align: center; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; position: relative;
+        }
+        .social-divider::before, .social-divider::after {
+            content: ""; position: absolute; top: 50%; width: 30%; height: 1px; background: #eee;
+        }
+        .social-divider::before { left: 0; }
+        .social-divider::after { right: 0; }
+
+        /* 디스코드 로그인 버튼 (모달 내부) */
+        .btn-discord-modal {
+            width: 100%; padding: 12px; background: #5865F2; color: #fff;
+            border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .btn-discord-modal:hover { background: #4752c4; }
+
+        /* ------------------- 콘텐츠 섹션들 (기존 유지) ------------------- */
+        .recommend-section, .system-section { padding: 40px; max-width: 1100px; margin: 0 auto; }
+        .recommend-section h3, .system-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
+        .recommend-section h3 { border-left: 4px solid #5865F2; }
+        .system-section h3 { border-left: 4px solid #1a1a1a; }
+        
+        .recommend-card { background: #f8f9fa; border: 1px solid #eee; border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 30px; }
         .rec-img-placeholder { width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; flex-shrink: 0; }
         .rec-info h4 { font-size: 1.3rem; margin-bottom: 8px; font-weight: 700; }
-        .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; font-weight: 400; }
-        .rec-btn { font-size: 0.85rem; color: #5865F2; font-weight: 700; text-decoration: none; cursor: pointer; }
+        .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+        .rec-btn { color: #5865F2; font-weight: 700; }
 
-        .system-section { padding: 40px; max-width: 1100px; margin: 0 auto; }
-        .system-section h3 { font-size: 1.5rem; margin-bottom: 20px; border-left: 4px solid #1a1a1a; padding-left: 12px; font-weight: 800; }
-        .system-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; }
-        .system-scroll-container.active { cursor: grabbing; user-select: none; }
+        .system-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .system-scroll-container::-webkit-scrollbar { display: none; }
-        .system-card { flex: 0 0 240px; height: 300px; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: box-shadow 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); pointer-events: auto; }
-        .system-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .system-card { flex: 0 0 240px; height: 300px; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .sys-icon { width: 40px; height: 40px; background: #f0f0f0; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .sys-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
-        .sys-desc { font-size: 0.85rem; color: #666; margin-bottom: auto; line-height: 1.5; font-weight: 400; }
-        
-        .sys-btn { margin-top: 15px; padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; text-decoration: none; font-size: 0.8rem; transition: 0.2s; font-weight: 500; border: none; cursor: pointer; display: block; width: 100%; }
+        .sys-title { font-weight: 700; margin-bottom: 8px; }
+        .sys-desc { font-size: 0.85rem; color: #666; line-height: 1.5; }
+        .sys-btn { padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 0.8rem; display: block; width: 100%; transition: 0.2s; }
         .sys-btn:hover { background: #333; }
 
-        .contact { min-height: 40vh; background: linear-gradient(180deg, #5865F2 0%, #050505 100%); color: #fff; text-align: center; padding: 80px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 40px; border-radius: 40px 40px 0 0; }
-        .contact h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); margin-bottom: 15px; font-weight: 800; }
-        .btn-large { display: inline-block; padding: 15px 40px; background: #fff; color: #5865F2; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 1rem; transition: 0.3s; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); }
-        .btn-large:hover { background: #f0f0f0; transform: scale(1.05); }
-        footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; font-weight: 300; }
+        .contact { min-height: 40vh; background: linear-gradient(180deg, #5865F2 0%, #050505 100%); color: #fff; text-align: center; padding: 80px 20px; margin-top: 40px; border-radius: 40px 40px 0 0; }
+        .contact h2 { font-size: 2rem; margin-bottom: 15px; font-weight: 800; }
+        .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
+        footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; }
+
+        /* ------------------- 반응형 (Mobile) ------------------- */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
             header { height: 55px; padding: 0 20px; }
             .logo-container svg { height: 20px; }
-            nav { gap: 8px; }
-            nav a.nav-item { font-size: 0.75rem; padding: 2px; display: none; }
-            @media (min-width: 400px) { nav a.nav-item { display: inline-block; } }
-            .login-btn { padding: 6px 14px; font-size: 0.75rem; margin-left: 0; }
-            .banner-container { height: 280px; }
-            .slide:nth-child(1), .slide.clone { padding-left: 20px; padding-right: 20px; }
-            .slide:nth-child(1) h2, .slide.clone h2 { font-size: 2.0rem; }
-            .slide:nth-child(2) h2 { font-size: 2.0rem; }
-            .recommend-section { padding: 30px 20px 10px 20px; }
-            .recommend-card { flex-direction: column; text-align: center; gap: 15px; padding: 25px; }
-            .system-section { padding: 30px 20px; }
+            
+            /* 모바일에서 네비게이션 숨김 */
+            .nav-links { display: none; }
+            /* 햄버거 버튼 표시 */
+            .hamburger-btn { display: block; }
+            
+            /* 로그인 버튼 텍스트 숨기고 작게 처리하거나 유지. 요청에 따라 로그인 버튼은 유지하되, 헤더에 둠 */
+            .login-trigger-btn { padding: 6px 14px; font-size: 0.8rem; }
+            
+            /* 배너 비율: 정사각형 방지하고 가로로 길게 (180px 정도 고정 혹은 aspect-ratio) */
+            .banner-container { height: 180px; } 
+            .slide h2 { font-size: 1.8rem; }
+            
+            .recommend-card { flex-direction: column; text-align: center; }
             .contact { border-radius: 30px 30px 0 0; }
+
+            /* 유저 드롭다운 위치 조정 */
+            .user-dropdown { right: 20px; width: 180px; }
         }
     </style>
 </head>
@@ -135,11 +221,8 @@
 
 <header>
     <div class="logo-container" onclick="scrollToTop()">
-        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-             viewBox="0 0 454.000000 95.000000"
-             preserveAspectRatio="xMidYMid meet">
-            <g transform="translate(0.000000,95.000000) scale(0.100000,-0.100000)"
-               fill="#000000" stroke="none">
+        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 454.000000 95.000000" preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0.000000,95.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
                 <path d="M110 725 l0 -75 254 0 254 0 43 -45 c24 -25 48 -45 54 -45 6 0 34 24 63 53 l52 53 -68 67 -68 67 -292 0 -292 0 0 -75z"/>
                 <path d="M940 513 l1 -178 82 -92 81 -93 218 0 218 0 0 264 c0 231 -2 265 -16 270 -9 3 -144 6 -300 6 l-284 0 0 -177z m430 -88 l0 -175 -74 0 -73 0 -57 67 -56 67 0 102 c0 55 3 104 7 107 3 4 62 7 130 7 l123 0 0 -175z"/>
                 <path d="M2350 516 l0 -175 83 -95 82 -94 218 -1 217 -1 -2 268 -3 267 -297 3 -298 2 0 -174z m438 -93 l2 -173 -77 0 -78 0 -57 71 -58 71 0 97 c0 54 3 101 7 105 4 3 63 5 132 4 l126 -3 3 -172z"/>
@@ -153,18 +236,73 @@
             </g>
         </svg>
     </div>
-    <nav>
-        <a href="model.html" class="nav-item">모델</a>
-        <a href="system.html" class="nav-item">시스템</a>
-        <a href="car.html" class="nav-item">차량</a>
-        <a href="shirt.html" class="nav-item">복장</a>
-        
-        <button id="discordLoginBtn" class="login-btn" onclick="loginWithDiscord()">
-            <img id="userAvatar" class="user-avatar" src="" alt="User">
-            <span id="loginText">디스코드 로그인</span>
+
+    <div class="header-right">
+        <nav class="nav-links">
+            <a href="model.html">모델</a>
+            <a href="system.html">시스템</a>
+            <a href="car.html">차량</a>
+            <a href="shirt.html">복장</a>
+        </nav>
+
+        <button id="headerLoginBtn" class="login-trigger-btn" onclick="openLoginModal()">
+            <img id="userAvatar" class="user-avatar" src="" alt="">
+            <span id="loginBtnText" class="profile-name">로그인</span>
         </button>
-    </nav>
+
+        <button class="hamburger-btn" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="model.html">모델</a>
+    <a href="system.html">시스템</a>
+    <a href="car.html">차량</a>
+    <a href="shirt.html">복장</a>
+</div>
+
+<div class="user-dropdown" id="userDropdown">
+    <div class="user-info-text">내 프로필</div>
+    <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">반갑습니다!</div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+</div>
+
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="login-modal">
+        <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+        <h2 class="modal-title">로그인</h2>
+
+        <div class="input-group">
+            <input type="text" placeholder="아이디">
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="비밀번호">
+        </div>
+
+        <label class="auto-login-wrapper">
+            <input type="checkbox">
+            <span class="checkbox-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+            자동로그인
+        </label>
+
+        <button class="btn-login-submit" onclick="alert('서버 연결이 필요합니다. 아래 디스코드 로그인을 이용해주세요.')">로그인</button>
+
+        <div class="social-divider">소셜 로그인</div>
+
+        <button class="btn-discord-modal" onclick="loginWithDiscord()">
+            <svg width="24" height="24" viewBox="0 0 127 96" fill="white">
+                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.89,105.89,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+            Discord로 로그인
+        </button>
+    </div>
+</div>
 
 <div class="banner-container">
     <div class="slide-wrapper" id="slideWrapper">
@@ -213,7 +351,7 @@
             </div>
             <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_fire.zip')">다운로드</button>
         </div>
-
+        
         <div class="system-card">
             <div>
                 <div class="sys-icon">🛒</div>
@@ -246,9 +384,6 @@
 <section id="contact" class="contact">
     <div class="section-inner">
         <h2>지금 바로<br>Rocord에 합류하세요.</h2>
-        <p style="margin-bottom: 30px; color: #ddd; font-weight: 300; font-size: 0.9rem;">
-            새로운 시스템 소식과 업데이트를 가장 먼저 만나보세요.
-        </p>
         <a href="https://discord.gg/NC4DQ3Cet9" target="_blank" class="btn-large">디스코드 입장하기</a>
     </div>
 </section>
@@ -258,14 +393,13 @@
 </footer>
 
 <script>
-    // ---------- 디스코드 로그인 설정 (자동 적용됨) ---------- //
+    // ---------- 디스코드 로그인 설정 ---------- //
     const CLIENT_ID = '1460856182716502036';
-    const REDIRECT_URI = 'https://rocorddev.kro.kr'; // 반드시 이 도메인에서 실행해야 작동함
+    const REDIRECT_URI = 'https://rocorddev.kro.kr'; 
 
     let isLoggedIn = false;
 
     window.onload = function() {
-        // 토큰 방식이므로 hash에서 access_token을 찾습니다.
         const fragment = new URLSearchParams(window.location.hash.slice(1));
         const accessToken = fragment.get('access_token');
         const storedToken = localStorage.getItem('discord_token');
@@ -273,7 +407,6 @@
         if (accessToken) {
             localStorage.setItem('discord_token', accessToken);
             isLoggedIn = true;
-            // URL 보기 좋게 정리
             window.history.replaceState({}, document.title, window.location.pathname);
             fetchDiscordUserInfo(accessToken);
         } else if (storedToken) {
@@ -281,51 +414,105 @@
             fetchDiscordUserInfo(storedToken);
         }
 
-        updateLoginUI();
         initSlider();
+        
+        // 외부 클릭시 모바일 메뉴 및 드롭다운 닫기
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('userDropdown');
+            const headerBtn = document.getElementById('headerLoginBtn');
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            // 유저 드롭다운 닫기
+            if (!dropdown.contains(e.target) && !headerBtn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+            
+            // 모바일 메뉴 닫기 (햄버거 버튼과 메뉴 영역 제외)
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+            
+            // 모달 닫기 (Overlay 배경 클릭 시)
+            const modalOverlay = document.getElementById('loginModalOverlay');
+            if (e.target === modalOverlay) {
+                closeLoginModal();
+            }
+        });
     };
 
+    // 모바일 햄버거 메뉴 토글
+    function toggleMobileMenu() {
+        const btn = document.querySelector('.hamburger-btn');
+        const menu = document.getElementById('mobileMenu');
+        btn.classList.toggle('active');
+        menu.classList.toggle('active');
+    }
+
+    // 모달 관련 함수
+    function openLoginModal() {
+        if (isLoggedIn) {
+            // 로그인 상태면 프로필 드롭다운 토글
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        } else {
+            // 비로그인 상태면 모달 열기
+            const modal = document.getElementById('loginModalOverlay');
+            modal.style.display = 'flex'; // flex로 변경해 중앙 정렬
+            setTimeout(() => { modal.classList.add('show'); }, 10);
+        }
+    }
+
+    function closeLoginModal() {
+        const modal = document.getElementById('loginModalOverlay');
+        modal.classList.remove('show');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    // 디스코드 유저 정보
     function fetchDiscordUserInfo(token) {
         fetch('https://discord.com/api/users/@me', {
-            headers: {
-                authorization: `Bearer ${token}`,
-            },
+            headers: { authorization: `Bearer ${token}` },
         })
-        .then(result => {
-            if (!result.ok) throw new Error("Token expired");
-            return result.json();
+        .then(res => {
+            if (!res.ok) throw new Error("Token expired");
+            return res.json();
         })
         .then(response => {
             if (response.username) {
-                const loginText = document.getElementById('loginText');
+                const loginText = document.getElementById('loginBtnText');
                 const avatar = document.getElementById('userAvatar');
+                const btn = document.getElementById('headerLoginBtn');
+
+                // 이름 표시 (CSS로 말줄임 처리됨)
+                loginText.innerText = response.global_name || response.username;
                 
-                loginText.innerText = `${response.global_name || response.username}님`;
+                // 아바타 처리
                 avatar.style.display = 'block';
                 if (response.avatar) {
                     avatar.src = `https://cdn.discordapp.com/avatars/${response.id}/${response.avatar}.png`;
                 } else {
                     avatar.src = "https://cdn.discordapp.com/embed/avatars/0.png";
                 }
+
+                // 버튼 스타일 변경 (로그인 됨)
+                btn.style.background = "transparent"; 
+                btn.style.color = "#1a1a1a";
+                btn.style.border = "1px solid #ddd";
+
                 isLoggedIn = true;
-                updateLoginUI(); // UI 강제 업데이트
+                closeLoginModal(); // 혹시 열려있으면 닫기
             }
         })
         .catch(error => {
             console.error(error);
-            logout(); // 토큰 만료 시 로그아웃
+            logout();
         });
     }
 
     function loginWithDiscord() {
-        if (isLoggedIn) {
-            if(confirm("로그아웃 하시겠습니까?")) {
-                logout();
-            }
-            return;
-        }
-        
-        // 중요: response_type을 code에서 token으로 변경함 (서버리스 환경 지원)
+        // 실제 디스코드 로그인 페이지로 이동
         const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = oauthUrl;
     }
@@ -336,35 +523,18 @@
         location.reload();
     }
 
-    function updateLoginUI() {
-        const btn = document.getElementById('discordLoginBtn');
-        const text = document.getElementById('loginText');
-        if (isLoggedIn) {
-            btn.style.background = "#2f3136"; 
-        } else {
-            text.innerText = "디스코드 로그인";
-            document.getElementById('userAvatar').style.display = 'none';
-            btn.style.background = "#5865F2";
-        }
-    }
-
     function checkLoginAndDownload(event, fileName) {
         event.preventDefault();
-
         if (!isLoggedIn) {
-            alert("🔒 이 파일은 로그인한 사용자만 다운로드할 수 있습니다.\n상단의 디스코드 로그인 버튼을 눌러주세요.");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert("🔒 로그인이 필요한 서비스입니다.");
+            openLoginModal();
         } else {
-            alert(`🎉 인증되었습니다! \n'${fileName}' 다운로드를 시작합니다.`);
-            // 실제 파일 경로 설정 예시:
-            // window.location.href = `./downloads/${fileName}`;
+            alert(`🎉 '${fileName}' 다운로드가 시작됩니다.`);
         }
     }
 
-    // ---------- 기존 슬라이더 및 스크롤 ---------- //
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    // 슬라이더 및 스크롤 (기존 코드 유지)
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: "smooth" }); }
 
     function initSlider() {
         const slideWrapper = document.getElementById('slideWrapper');
@@ -373,7 +543,7 @@
         const dots = document.querySelectorAll('.dot');
         const totalSlides = 2; 
         let currentSlide = 0;
-
+        
         if(slideWrapper.children.length === 2) {
             const firstClone = slideWrapper.firstElementChild.cloneNode(true);
             firstClone.classList.add('clone');
@@ -387,7 +557,6 @@
                 dot.classList.toggle('active', index === (currentSlide % totalSlides));
             });
         }
-
         function nextSlide() {
             currentSlide++;
             updateSlider(true);
@@ -404,15 +573,14 @@
         let isDown = false;
         let startX;
         let scrollLeft;
-
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
-            slider.classList.add('active');
+            slider.style.cursor = 'grabbing';
             startX = e.pageX - slider.offsetLeft;
             scrollLeft = slider.scrollLeft;
         });
-        slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
-        slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+        slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
+        slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
