@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rocord - 모델</title>
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Rocord Deploy의 모델">
-    <meta property="og:description" content="Rocord-모든모델">
     <meta name="theme-color" content="#5865F2">
     <style>
         @font-face { font-family: 'Daeojamjil'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil3Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
@@ -27,7 +24,6 @@
         .nav-links a { font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
         .nav-links a:hover { color: #5865F2; }
 
-        /* 햄버거 버튼 스타일 (추가됨) */
         .hamburger-btn { display: none; width: 24px; height: 24px; position: relative; z-index: 1100; }
         .hamburger-btn span { display: block; width: 100%; height: 2px; background: #1a1a1a; position: absolute; left: 0; transition: 0.3s; }
         .hamburger-btn span:nth-child(1) { top: 4px; }
@@ -37,7 +33,6 @@
         .hamburger-btn.active span:nth-child(2) { opacity: 0; }
         .hamburger-btn.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
 
-        /* 모바일 메뉴 (추가됨) */
         .mobile-menu { position: fixed; top: 60px; left: 0; width: 100%; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 15px; transform: translateY(-150%); transition: transform 0.3s ease-in-out; z-index: 999; }
         .mobile-menu.active { transform: translateY(0); }
         .mobile-menu a { font-size: 1.1rem; font-weight: 700; width: 100%; text-align: center; padding: 10px 0; }
@@ -47,7 +42,6 @@
         .profile-name { display: inline-block; max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
         .user-avatar { width: 24px; height: 24px; border-radius: 50%; display: none; }
 
-        /* 유저 프로필 드롭다운 (추가됨) */
         .user-dropdown { position: absolute; top: 60px; right: 40px; width: 260px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 20px; display: none; flex-direction: column; gap: 15px; border: 1px solid #eee; z-index: 1002; }
         .user-dropdown.active { display: flex; }
         .dropdown-profile-header { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
@@ -80,7 +74,6 @@
         .social-divider::after { right: 0; }
         .btn-discord-modal { width: 100%; padding: 12px; background: #5865F2; color: #fff; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-discord-modal:hover { background: #4752c4; }
-        
         .auto-login-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; cursor: pointer; user-select: none; font-size: 0.9rem; color: #666; }
         .checkbox-icon { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: #fff; }
         .checkbox-icon svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; display: none; }
@@ -96,15 +89,25 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 40px; flex-wrap: wrap; gap: 20px;
         }
-        .page-title { 
-            font-size: 2rem; 
-            font-weight: 800; 
-            color: #1a1a1a; 
-            margin-left: 15px; 
-        }
+        .page-title { font-size: 2rem; font-weight: 800; color: #1a1a1a; margin-left: 15px; }
         
+        /* 검색 및 정렬 컨트롤 그룹 */
+        .controls-wrapper { display: flex; gap: 10px; align-items: center; width: 100%; max-width: 450px; justify-content: flex-end; }
+
+        /* 정렬 드롭다운 */
+        .sort-select {
+            padding: 12px 15px; border-radius: 50px;
+            border: 2px solid #eee; background: #f9f9f9;
+            font-size: 0.9rem; outline: none; font-weight: 700; color: #555; cursor: pointer; transition: 0.3s;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 15px;
+            padding-right: 40px; min-width: 120px;
+        }
+        .sort-select:focus { border-color: #5865F2; background-color: #fff; }
+
         /* 검색창 스타일 */
-        .search-box { position: relative; width: 100%; max-width: 300px; }
+        .search-box { position: relative; width: 100%; flex-grow: 1; }
         .search-box input {
             width: 100%; padding: 12px 20px; border-radius: 50px;
             border: 2px solid #eee; background: #f9f9f9;
@@ -113,91 +116,44 @@
         .search-box input:focus { border-color: #5865F2; background: #fff; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.1); }
 
         /* 모델 그리드 */
-        .model-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* 4개 고정 */
-            gap: 25px; 
-        }
+        .model-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
         
-        /* 카드 스타일 (높이 100% + Flex Column) */
+        /* 카드 스타일 */
         .model-card {
             background: #fff; border: 1px solid #eee; 
-            border-radius: 24px; 
-            padding: 20px; 
+            border-radius: 24px; padding: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-            transition: 0.3s; 
-            
-            /* 핵심 수정: 카드 높이를 그리드 셀에 꽉 채우고 내용을 Flex로 배치 */
-            height: 100%; 
-            display: flex; 
-            flex-direction: column;
+            transition: 0.3s; height: 100%; display: flex; flex-direction: column;
         }
         .model-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        
-        /* 이미지 (16:9 비율) */
-        .model-img { 
-            width: 100%; 
-            aspect-ratio: 16/9; 
-            object-fit: cover; 
-            border-radius: 16px;
-            margin-bottom: 15px; 
-            background: #f0f0f0; 
-        }
-        
+        .model-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 16px; margin-bottom: 15px; background: #f0f0f0; }
         .model-info h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; }
         .model-info p { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
         
-        /* 버튼 스타일 (아래로 밀기) */
         .btn-download { 
-            width: 100%; 
-            padding: 12px; 
-            background: #1a1a1a; 
-            color: #fff; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            text-align: center; 
-            transition: 0.2s;
-            
-            /* 핵심 수정: 버튼을 항상 아래로 밀어버림 */
-            margin-top: auto; 
+            width: 100%; padding: 12px; background: #1a1a1a; color: #fff; 
+            border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s; margin-top: auto; 
         }
         .btn-download:hover { background: #333; }
 
-        /* 로딩 스피너 */
         .spinner-container { grid-column: 1 / -1; display: flex; justify-content: center; padding: 50px 0; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #5865F2; border-radius: 50%; animation: spin 1s linear infinite; }
-        
-        /* 버튼 로딩 스피너 */
-        .btn-loading-spinner {
-            display: inline-block;
-            width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s linear infinite;
-        }
+        .btn-loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; margin-top: 60px; }
 
-        /* 반응형: 화면이 작아지면 개수 조정 + 모바일 요소 처리 */
-        @media (max-width: 1200px) {
-            .model-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 900px) {
-            .model-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 1200px) { .model-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .model-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             header { height: 55px; padding: 0 20px; }
             .nav-links { display: none; }
             .logo-container svg { height: 20px; }
-            .hamburger-btn { display: block; } /* 햄버거 보이기 */
-            
+            .hamburger-btn { display: block; }
             .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .search-box { max-width: 100%; }
+            .controls-wrapper { max-width: 100%; } /* 모바일에서 꽉 차게 */
             .page-title { margin-left: 0; }
             .model-grid { grid-template-columns: repeat(1, 1fr); }
-            
             .user-dropdown { right: 20px; width: 240px; }
             .mobile-menu { top: 55px; border-radius: 0 0 20px 20px; }
         }
@@ -258,11 +214,9 @@
             <div id="dropdownId" class="dropdown-id">@username</div>
         </div>
     </div>
-    
     <div class="dropdown-stats">
         내가 다운로드한 모델: <span id="downloadCount">0</span>개
     </div>
-
     <button class="cart-btn" onclick="alert('장바구니 기능은 추후 업데이트 예정입니다.')">🛒 장바구니</button>
     <button class="logout-btn" onclick="logout()">로그아웃</button>
 </div>
@@ -271,14 +225,12 @@
     <div class="login-modal">
         <span class="modal-close" onclick="closeLoginModal()">&times;</span>
         <h2 class="modal-title">로그인</h2>
-
         <div class="input-group">
             <input type="text" id="loginId" placeholder="아이디">
         </div>
         <div class="input-group">
             <input type="password" id="loginPw" placeholder="비밀번호">
         </div>
-
         <label class="auto-login-wrapper">
             <input type="checkbox">
             <span class="checkbox-icon">
@@ -286,11 +238,8 @@
             </span>
             자동로그인
         </label>
-
         <button class="btn-login-submit" onclick="handleLoginSubmit()">로그인</button>
-
         <div class="social-divider">소셜 로그인</div>
-
         <button class="btn-discord-modal" onclick="loginWithDiscord()">
             <svg width="24" height="24" viewBox="0 0 127 96" fill="white">
                 <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.89,105.89,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
@@ -303,8 +252,14 @@
 <div class="content-container">
     <div class="page-header">
         <h1 class="page-title">모든모델 All Model</h1>
-        <div class="search-box">
-            <input type="text" id="search" placeholder="모델 검색..." oninput="filterModels()">
+        <div class="controls-wrapper">
+            <select id="sortOrder" class="sort-select" onchange="applyFilters()">
+                <option value="newest">최신순</option>
+                <option value="oldest">오래된순</option>
+            </select>
+            <div class="search-box">
+                <input type="text" id="search" placeholder="모델 검색..." oninput="applyFilters()">
+            </div>
         </div>
     </div>
 
@@ -335,12 +290,11 @@
         }
         fetchModels();
         
-        // 모달 외부 클릭시 닫기
         document.getElementById('loginModalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeLoginModal();
         });
 
-        // 햄버거 메뉴 및 프로필 닫기 (외부 클릭)
+        // 외부 클릭시 햄버거 메뉴 및 프로필 닫기
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('userDropdown');
             const headerBtn = document.getElementById('headerLoginBtn');
@@ -401,7 +355,6 @@
         btn.style.color = "#1a1a1a";
         btn.style.border = "1px solid #ddd";
         
-        // 드롭다운 정보 업데이트
         document.getElementById('dropdownAvatar').src = avatarUrl;
         document.getElementById('dropdownName').innerText = data.global_name || data.username;
         document.getElementById('dropdownId').innerText = '@' + data.username;
@@ -462,12 +415,31 @@
         .then(res => res.json())
         .then(data => {
             allModelsData = data; 
-            renderModels(allModelsData);
+            applyFilters(); // 초기 로드 시 필터 적용 (기본: 최신순)
         })
         .catch(err => {
             console.error(err);
             document.getElementById('modelGrid').innerHTML = '<div style="text-align:center;width:100%">데이터를 불러오는데 실패했습니다.</div>';
         });
+    }
+
+    function applyFilters() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const sortOrder = document.getElementById('sortOrder').value;
+
+        // 1. 검색 필터링
+        let filtered = allModelsData.filter(model => 
+            model.name.toLowerCase().includes(query) || 
+            model.desc.toLowerCase().includes(query)
+        );
+
+        // 2. 정렬 (models.json은 append로 쌓이므로 기본은 오래된순)
+        // 최신순이면 뒤집기, 오래된순이면 그대로 유지
+        if(sortOrder === 'newest') {
+            filtered.reverse(); 
+        }
+
+        renderModels(filtered);
     }
 
     function renderModels(models) {
@@ -494,15 +466,6 @@
         });
     }
 
-    function filterModels() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const filtered = allModelsData.filter(model => 
-            model.name.toLowerCase().includes(query) || 
-            model.desc.toLowerCase().includes(query)
-        );
-        renderModels(filtered);
-    }
-
     function downloadModel(btnElement, targetId) {
         if (!isLoggedIn) {
             alert("🔒 로그인이 필요한 서비스입니다.");
@@ -510,7 +473,6 @@
             return;
         }
         
-        // 버튼 로딩 처리
         const originalText = btnElement.innerHTML;
         btnElement.innerHTML = '<span class="btn-loading-spinner"></span>';
         btnElement.disabled = true;
@@ -526,9 +488,7 @@
         .then(res => res.json())
         .then(data => {
             if(data.url) {
-                // 알림 없이 바로 이동
                 window.location.href = data.url;
-                // 다운로드 카운트 증가 UI 즉시 반영
                 let countSpan = document.getElementById('downloadCount');
                 if(countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
             } else {
@@ -539,7 +499,6 @@
             alert("오류가 발생했습니다.");
         })
         .finally(() => {
-            // 버튼 상태 복구
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
                 btnElement.disabled = false;
