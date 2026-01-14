@@ -95,10 +95,11 @@
         /* ------------------- 배너 (모바일 가로 비율 유지 수정) ------------------- */
         .banner-container { position: relative; width: 100%; height: 320px; overflow: hidden; background: #f0f0f0; }
         .slide-wrapper { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
-        .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 20px 10%; }
-        .slide h2 { margin-bottom: 10px; font-weight: 500; font-size: 2.5rem; color: #fff; }
-        .slide:nth-child(1), .slide.clone { background: #2b2b2b; align-items: flex-start; text-align: left; }
-        .slide:nth-child(2) { background: linear-gradient(135deg, #0052D4 0%, #4BB6F3 100%); align-items: center; text-align: center; }
+        /* 패딩을 제거하여 이미지가 꽉 차게 변경, 배경색 스타일 제거 */
+        .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0; }
+        /* 이미지 스타일 추가: 비율 유지하며 꽉 채우기 */
+        .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
         .slider-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
@@ -214,6 +215,12 @@
 
             /* 유저 드롭다운 위치 조정 */
             .user-dropdown { right: 20px; width: 180px; }
+
+            /* 모바일 메뉴 위치 및 스타일 수정 */
+            .mobile-menu {
+                top: 55px; /* 헤더 높이(55px)에 맞춰 틈 제거 */
+                border-radius: 0 0 20px 20px; /* 아래쪽 두 모서리 둥글게 */
+            }
         }
     </style>
 </head>
@@ -307,10 +314,10 @@
 <div class="banner-container">
     <div class="slide-wrapper" id="slideWrapper">
         <div class="slide">
-            <h2>한국 시스템 무배의 시작,<br>Rocord</h2>
+            <img src="https://cdn.buttercms.com/GnaqqRBTcCuoRELL938w" alt="Banner 1">
         </div>
         <div class="slide">
-            <h2>쿠가 부러워 하는<br>Rocord 공식사이트</h2>
+            <img src="https://chromeos.imgix.net/3fffc9d8fb3f9e423f7ad02f7791833898cfa0fb-4627x2603.jpg?auto=format,compress" alt="Banner 2">
         </div>
     </div>
     <div class="slider-dots">
