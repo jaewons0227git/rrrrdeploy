@@ -69,6 +69,12 @@
         .input-group { margin-bottom: 15px; }
         .input-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem; outline: none; transition: 0.3s; background: #f9f9f9; }
         .input-group input:focus { border-color: #5865F2; background: #fff; }
+        .auto-login-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; cursor: pointer; user-select: none; font-size: 0.9rem; color: #666; }
+        .checkbox-icon { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: #fff; }
+        .checkbox-icon svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; display: none; }
+        .auto-login-wrapper input[type="checkbox"] { display: none; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon { background: #5865F2; border-color: #5865F2; }
+        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon svg { display: block; }
         .btn-login-submit { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border-radius: 50px; font-weight: 700; font-size: 1rem; margin-bottom: 20px; transition: 0.2s; }
         .btn-login-submit:hover { background: #333; }
         .social-divider { text-align: center; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; position: relative; }
@@ -77,12 +83,6 @@
         .social-divider::after { right: 0; }
         .btn-discord-modal { width: 100%; padding: 12px; background: #5865F2; color: #fff; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-discord-modal:hover { background: #4752c4; }
-        .auto-login-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; cursor: pointer; user-select: none; font-size: 0.9rem; color: #666; }
-        .checkbox-icon { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: #fff; }
-        .checkbox-icon svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; display: none; }
-        .auto-login-wrapper input[type="checkbox"] { display: none; }
-        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon { background: #5865F2; border-color: #5865F2; }
-        .auto-login-wrapper input[type="checkbox"]:checked + .checkbox-icon svg { display: block; }
 
         .banner-container { position: relative; width: 100%; height: 320px; overflow: hidden; background: #f0f0f0; }
         .slide-wrapper { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
@@ -109,6 +109,18 @@
         .sys-desc { font-size: 0.85rem; color: #666; line-height: 1.5; }
         .sys-btn { padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 0.8rem; display: block; width: 100%; transition: 0.2s; }
         .sys-btn:hover { background: #333; }
+        
+        /* 버튼 로딩 스피너 스타일 */
+        .btn-loading-spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .contact { min-height: 40vh; background: linear-gradient(180deg, #5865F2 0%, #050505 100%); color: #fff; text-align: center; padding: 80px 20px; margin-top: 40px; border-radius: 40px 40px 0 0; }
         .contact h2 { font-size: 2rem; margin-bottom: 15px; font-weight: 800; }
         .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
@@ -251,7 +263,7 @@
         <div class="rec-info">
             <h4>소방복장 세트</h4>
             <p>RP 서버에 꼭필요한 소방 복장세트입니다. 복장을 적용하고 사명감을 느껴보세요.</p>
-            <a href="#" class="rec-btn" onclick="checkLoginAndDownload(event, 'firefighter_set.zip')">지금 다운로드 &rarr;</a>
+            <a href="#" class="rec-btn" onclick="checkLoginAndDownload(event, this, 'firefighter_set.zip')">지금 다운로드 &rarr;</a>
         </div>
     </div>
 </section>
@@ -265,7 +277,7 @@
                 <div class="sys-title">고유번호 시스템</div>
                 <p class="sys-desc">한국 최초 무료배포 된 고유번호 시스템 입니다.</p>
             </div>
-            <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_unique_id.zip')">다운로드</button>
+            <button class="sys-btn" onclick="checkLoginAndDownload(event, this, 'system_unique_id.zip')">다운로드</button>
         </div>
         
         <div class="system-card">
@@ -274,7 +286,7 @@
                 <div class="sys-title">자동화재 시스템</div>
                 <p class="sys-desc">RP에 꼭필요한 화재 시스템 입니다.</p>
             </div>
-            <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_fire.zip')">다운로드</button>
+            <button class="sys-btn" onclick="checkLoginAndDownload(event, this, 'system_fire.zip')">다운로드</button>
         </div>
         
         <div class="system-card">
@@ -283,7 +295,7 @@
                 <div class="sys-title">잠수감지 시스템</div>
                 <p class="sys-desc">자동으로 잠수를 감지하여 UI로 표시합니다.</p>
             </div>
-            <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_afk.zip')">다운로드</button>
+            <button class="sys-btn" onclick="checkLoginAndDownload(event, this, 'system_afk.zip')">다운로드</button>
         </div>
 
         <div class="system-card">
@@ -292,7 +304,7 @@
                 <div class="sys-title">INS시스템</div>
                 <p class="sys-desc">RP요소에 꼭 필요한 차량소환 시스템 입니다.</p>
             </div>
-            <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_ins.zip')">다운로드</button>
+            <button class="sys-btn" onclick="checkLoginAndDownload(event, this, 'system_ins.zip')">다운로드</button>
         </div>
 
         <div class="system-card">
@@ -301,7 +313,7 @@
                 <div class="sys-title">버스탑승 시스템</div>
                 <p class="sys-desc">스마트하게 버스에 탑승할 수 있습니다.</p>
             </div>
-            <button class="sys-btn" onclick="checkLoginAndDownload(event, 'system_bus.zip')">다운로드</button>
+            <button class="sys-btn" onclick="checkLoginAndDownload(event, this, 'system_bus.zip')">다운로드</button>
         </div>
     </div>
 </section>
@@ -468,14 +480,18 @@
         location.reload();
     }
 
-    function checkLoginAndDownload(event, targetId) {
+    function checkLoginAndDownload(event, btnElement, targetId) {
         event.preventDefault();
         if (!isLoggedIn || !currentUserToken) {
             alert("🔒 로그인이 필요한 서비스입니다.");
             openLoginModal();
             return;
         }
-        alert(`🎉 '${targetId}' 다운로드 링크를 요청합니다...`);
+        
+        // 버튼 로딩 상태
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '<span class="btn-loading-spinner"></span>';
+        btnElement.disabled = true;
         
         fetch(`${BACKEND_URL}/api/request_download`, {
             method: 'POST',
@@ -485,19 +501,25 @@
             },
             body: JSON.stringify({ target_id: targetId })
         })
-        .then(res => {
-            if (!res.ok) throw new Error('Download link not found');
-            return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
             if(data.url) {
                 window.location.href = data.url;
                 let countSpan = document.getElementById('downloadCount');
                 if(countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
+            } else {
+                alert("링크를 찾을 수 없습니다.");
             }
         })
         .catch(error => {
-            alert("다운로드 링크를 찾을 수 없습니다.");
+            alert("다운로드 중 오류가 발생했습니다.");
+        })
+        .finally(() => {
+            // 버튼 상태 복구 (페이지가 이동하지 않을 경우를 대비)
+            setTimeout(() => {
+                btnElement.innerHTML = originalText;
+                btnElement.disabled = false;
+            }, 2000);
         });
     }
 
