@@ -4,13 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rocord Deploy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* ------------------- 폰트 정의 (Font-face) ------------------- */
+        
+        /* 배너용 폰트: KBLCourt_EBTTF */
+        @font-face {
+            font-family: 'KblcourtEbttf';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-5@1.0/KBLCourt_EBTTF.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 웹페이지 전체 기본 폰트: The Jamsil (더 잠실) */
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil1Thin.woff2') format('woff2');
+            font-weight: 100;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil2Light.woff2') format('woff2');
+            font-weight: 300;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil3Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil4Medium.woff2') format('woff2');
+            font-weight: 500;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Daeojamjil';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil6ExtraBold.woff2') format('woff2');
+            font-weight: 800;
+            font-display: swap;
+        }
+
+        /* ------------------- 초기화 및 기본 스타일 ------------------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Noto Sans KR', sans-serif;
+            /* 전체 폰트 적용: Daeojamjil */
+            font-family: 'Daeojamjil', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -18,170 +68,357 @@
             color: #1a1a1a;
             line-height: 1.6;
             word-break: keep-all;
+            padding-top: 60px;
         }
 
-        /* 헤더 스타일 */
+        /* ------------------- 헤더 스타일 ------------------- */
         header {
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 15px 50px;
+            height: 60px;
+            padding: 0 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
             backdrop-filter: blur(15px);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: height 0.3s, padding 0.3s;
         }
 
-        /* 로고 클릭 스타일 */
-        .logo-container {
-            cursor: pointer;
-        }
+        .logo-container { cursor: pointer; }
 
         .logo-container svg {
-            height: 28px;
+            height: 24px;
             width: auto;
             display: block;
         }
 
-        nav {
-            display: flex;
-            gap: 10px;
-        }
+        nav { display: flex; gap: 10px; }
 
-        nav a {
+        nav a.discord-btn {
             text-decoration: none;
-            color: #1a1a1a;
-            padding: 8px 16px;
+            color: #fff;
+            padding: 8px 18px;
             font-size: 0.85rem;
-            font-weight: 500;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.03);
+            font-weight: 700;
+            border-radius: 50px;
+            background: #5865F2;
             transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(88, 101, 242, 0.3);
+            white-space: nowrap;
         }
 
-        nav a:hover {
-            background: rgba(0, 0, 0, 0.08);
+        nav a.discord-btn:hover {
+            background: #4752c4;
             transform: translateY(-2px);
         }
 
-        /* 섹션 공통 - 배경 꽉 차도록 수정 */
-        section {
-            padding: 100px 50px;
-            min-height: 80vh;
+        /* ------------------- 상단 슬라이드 배너 ------------------- */
+        .banner-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .slide-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            width: 100%;
-            margin: 0 auto;
+            padding: 20px 10%;
         }
 
-        /* 콘텐츠 내부 정렬용 컨테이너 */
-        .section-inner {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
+        /* 배너 텍스트 폰트 적용 (KblcourtEbttf) */
+        .slide h2 {
+            font-family: 'KblcourtEbttf', sans-serif;
+            margin-bottom: 10px;
+            /* 폰트 자체가 굵은 편이라 normal로 설정하거나 필요시 bold 조정 */
+            font-weight: normal; 
         }
 
-        /* 히어로 섹션 */
-        .hero {
-            height: 100vh;
-            background: radial-gradient(circle at top right, #fdfbfb 0%, #ebedee 100%);
+        /* 슬라이드 1: 어두운 회색, 왼쪽 정렬 */
+        .slide:nth-child(1) {
+            background: #2b2b2b;
+            align-items: flex-start;
+            text-align: left;
         }
 
-        .hero h1 {
-            font-size: clamp(2rem, 8vw, 4rem);
-            line-height: 1.2;
-            margin-bottom: 25px;
-            font-weight: 700;
-            animation: fadeInUp 1s ease-out;
+        .slide:nth-child(1) h2 {
+            color: #ffffff;
+            font-size: 2.5rem; /* 폰트 특성에 맞춰 크기 살짝 조정 */
         }
 
-        .hero p {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            color: #666;
-            max-width: 500px;
-            font-weight: 300;
-            animation: fadeInUp 1.2s ease-out;
+        /* 슬라이드 2: 파랑+하늘 그라데이션, 가운데 정렬 */
+        .slide:nth-child(2) {
+            background: linear-gradient(135deg, #0052D4 0%, #4BB6F3 100%);
+            align-items: center;
+            text-align: center;
         }
 
-        /* 그리드 */
-        .work-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 50px;
+        .slide:nth-child(2) h2 {
+            color: #ffffff;
+            font-size: 2.3rem; /* 폰트 특성에 맞춰 크기 살짝 조정 */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .card {
-            background: #f0f0f0;
-            height: 320px;
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            transition: transform 0.4s ease;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-        }
-
-        .card-info {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
+        .slider-dots {
             position: absolute;
             bottom: 15px;
-            left: 15px;
-            right: 15px;
-            border-radius: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
         }
 
-        /* 연락처 섹션 - 높이 및 상단 여백 조절 */
-        .contact {
-            min-height: 60vh;
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
+        /* ------------------- 추천 모델 섹션 ------------------- */
+        .recommend-section {
+            padding: 40px 40px 10px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .recommend-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #5865F2;
+            padding-left: 12px;
+            font-weight: 800; /* Daeojamjil ExtraBold */
+        }
+
+        .recommend-card {
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            transition: box-shadow 0.3s;
+        }
+        
+        .recommend-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .rec-img-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .rec-info h4 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-weight: 700; /* Bold */
+        }
+        
+        .rec-info p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 400; /* Regular */
+        }
+
+        .rec-btn {
+            font-size: 0.85rem;
+            color: #5865F2;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        /* ------------------- 배포 시스템 목록 ------------------- */
+        .system-section {
+            padding: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .system-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #1a1a1a;
+            padding-left: 12px;
+            font-weight: 800;
+        }
+
+        .system-scroll-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+        
+        .system-scroll-container.active {
+            cursor: grabbing;
+            user-select: none;
+        }
+        .system-scroll-container::-webkit-scrollbar { display: none; }
+
+        .system-card {
+            flex: 0 0 240px;
+            height: 300px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            pointer-events: auto;
+        }
+
+        .system-card a { pointer-events: auto; }
+
+        .system-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .sys-icon {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sys-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .sys-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: auto;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .sys-btn {
+            margin-top: 15px;
+            padding: 8px;
+            text-align: center;
             background: #1a1a1a;
             color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .sys-btn:hover { background: #333; }
+
+        /* ------------------- 연락처 섹션 ------------------- */
+        .contact {
+            min-height: 40vh;
+            background: linear-gradient(180deg, #5865F2 0%, #050505 100%);
+            color: #fff;
             text-align: center;
-            padding: 120px 20px;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
             border-radius: 40px 40px 0 0;
-            margin-top: 50px;
         }
 
         .contact h2 {
-            font-size: clamp(1.8rem, 6vw, 3rem);
-            margin-bottom: 25px;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            margin-bottom: 15px;
+            font-weight: 800; /* ExtraBold */
         }
 
-        .btn {
+        .btn-large {
             display: inline-block;
-            padding: 16px 40px;
-            background: #5865F2;
-            color: #fff;
+            padding: 15px 40px;
+            background: #fff;
+            color: #5865F2;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 700;
+            font-size: 1rem;
             transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .btn:hover {
-            background: #4752c4;
+        .btn-large:hover {
+            background: #f0f0f0;
             transform: scale(1.05);
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        footer {
+            padding: 40px;
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
+            background: #050505;
+            font-weight: 300;
         }
 
+        /* ------------------- 모바일 반응형 ------------------- */
         @media (max-width: 768px) {
-            header { padding: 15px 20px; }
-            nav a { padding: 6px 12px; font-size: 0.75rem; }
-            section { padding: 80px 20px; }
+            body { padding-top: 55px; }
+            header { height: 55px; padding: 0 20px; }
+            .logo-container svg { height: 20px; }
+            nav a.discord-btn { padding: 6px 14px; font-size: 0.75rem; }
+            
+            .banner-container { height: 280px; }
+            
+            .slide:nth-child(1) { padding-left: 20px; padding-right: 20px; }
+            /* 폰트 변경으로 인한 크기 미세 조정 */
+            .slide:nth-child(1) h2 { font-size: 2.0rem; }
+            .slide:nth-child(2) h2 { font-size: 2.0rem; }
+            
+            .recommend-section { padding: 30px 20px 10px 20px; }
+            .recommend-card { flex-direction: column; text-align: center; gap: 15px; padding: 25px; }
+            
+            .system-section { padding: 30px 20px; }
+            .contact { border-radius: 30px 30px 0 0; }
         }
     </style>
 </head>
@@ -208,88 +445,156 @@
         </svg>
     </div>
     <nav>
-        <a href="javascript:void(0)" onclick="moveScroll('about')">소개</a>
-        <a href="javascript:void(0)" onclick="moveScroll('work')">커뮤니티</a>
-        <a href="javascript:void(0)" onclick="moveScroll('contact')">디스코드</a>
+        <a href="https://discord.gg/NC4DQ3Cet9" target="_blank" class="discord-btn">디스코드 입장</a>
     </nav>
 </header>
 
-<section class="hero" id="home">
-    <div class="section-inner">
-        <h1>로블록스 그 이상의<br>경험을 만듭니다.</h1>
-        <p>유저와 함께 성장하는 로블록스 시스템 무료배포의 시작, Rocord 입니다.</p>
+<div class="banner-container">
+    <div class="slide-wrapper" id="slideWrapper">
+        <div class="slide">
+            <h2>한국 시스템 무배의 시작,<br>Rocord</h2>
+        </div>
+        <div class="slide">
+            <h2>쿠가 부러워 하는<br>Rocord 공식사이트</h2>
+        </div>
+    </div>
+    <div class="slider-dots">
+        <div class="dot active" onclick="moveToSlide(0)"></div>
+        <div class="dot" onclick="moveToSlide(1)"></div>
+    </div>
+</div>
+
+<section class="recommend-section">
+    <h3>🔥 이달의 추천 모델</h3>
+    <div class="recommend-card">
+        <div class="rec-img-placeholder">🔥</div>
+        <div class="rec-info">
+            <h4>소방복장 세트</h4>
+            <p>RP 서버에 꼭필요한 소방 복장세트입니다. 복장을 적용하고 사명감을 느껴보세요.</p>
+            <a href="#" class="rec-btn">지금 확인하기 &rarr;</a>
+        </div>
     </div>
 </section>
 
-<section id="about">
-    <div class="section-inner">
-        <h2 style="font-size: 2rem; margin-bottom: 20px;">커뮤니티 소개</h2>
-        <p style="max-width: 800px; font-size: 1.1rem; color: #555; font-weight: 300;">
-            단순한 서버 운영을 넘어, 로블록스 생태계 속에서 유저들과 소통하고 
-            유저들이 편리하게 사용할 수 있는 시스템을 개발합니다. 
-            격식 없는 자유로운 분위기 속에서 최고의 경험을 제공합니다.
-        </p>
-    </div>
-</section>
+<section class="system-section">
+    <h3>배포 시스템 목록</h3>
+    <div class="system-scroll-container">
+        <div class="system-card">
+            <div>
+                <div class="sys-icon">📦</div>
+                <div class="sys-title">고유번호 시스템</div>
+                <p class="sys-desc">한국 최초 무료배포 된 고유번호 시스템 입니다.</p>
+            </div>
+            <a href="#" class="sys-btn">자세히 보기</a>
+        </div>
+        
+        <div class="system-card">
+            <div>
+                <div class="sys-icon">🛡️</div>
+                <div class="sys-title">자동화재 시스템</div>
+                <p class="sys-desc">RP에 꼭필요한 화재 시스템 입니다.</p>
+            </div>
+            <a href="#" class="sys-btn">자세히 보기</a>
+        </div>
 
-<section id="work" style="background: #fdfdfd;">
-    <div class="section-inner">
-        <h2 style="font-size: 2rem;">진행 프로젝트</h2>
-        <div class="work-grid">
-            <div class="card">
-                <div class="card-info">
-                    <strong>시스템 개발</strong>
-                    <p style="font-size: 0.8rem; color: #888;">Roblox System Development</p>
-                </div>
+        <div class="system-card">
+            <div>
+                <div class="sys-icon">🛒</div>
+                <div class="sys-title">잠수감지 시스템</div>
+                <p class="sys-desc">자동으로 잠수를 감지하여 UI로 표시합니다.</p>
             </div>
-            <div class="card">
-                <div class="card-info">
-                    <strong>로블록스 스튜디오</strong>
-                    <p style="font-size: 0.8rem; color: #888;">Map Design / Asset Creative</p>
-                </div>
+            <a href="#" class="sys-btn">자세히 보기</a>
+        </div>
+
+        <div class="system-card">
+            <div>
+                <div class="sys-icon">💬</div>
+                <div class="sys-title">INS시스템</div>
+                <p class="sys-desc">RP요소에 꼭 필요한 차량소환 시스템 입니다.</p>
             </div>
+            <a href="#" class="sys-btn">자세히 보기</a>
+        </div>
+
+        <div class="system-card">
+            <div>
+                <div class="sys-icon">🚌</div>
+                <div class="sys-title">버스탑승 시스템</div>
+                <p class="sys-desc">스마트하게 버스에 탑승할 수 있습니다.</p>
+            </div>
+            <a href="#" class="sys-btn">자세히 보기</a>
         </div>
     </div>
 </section>
 
 <section id="contact" class="contact">
     <div class="section-inner">
-        <h2>지금 우리 디스코드에<br>참여해 보세요.</h2>
-        <p style="margin-bottom: 40px; color: #aaa; font-weight: 300;">
-            다양한 정보 공유와 소통이 기다리고 있습니다.
+        <h2>지금 바로<br>Rocord에 합류하세요.</h2>
+        <p style="margin-bottom: 30px; color: #ddd; font-weight: 300; font-size: 0.9rem;">
+            새로운 시스템 소식과 업데이트를 가장 먼저 만나보세요.
         </p>
         <a href="https://discord.gg/NC4DQ3Cet9"
            target="_blank"
            rel="noopener noreferrer"
-           class="btn">디스코드 입장하기</a>
+           class="btn-large">디스코드 입장하기</a>
     </div>
 </section>
 
-<footer style="padding: 50px; font-size: 0.8rem; color: #888; text-align: center; background: #1a1a1a;">
+<footer>
     © 2025-2026 Rocord Deploy. All Rights Reserved.
 </footer>
 
 <script>
-    function moveScroll(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            const headerOffset = 70;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
-            });
-        }
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+    // 슬라이드 배너 스크립트
+    let currentSlide = 0;
+    const slideWrapper = document.getElementById('slideWrapper');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = 2;
+
+    function updateSlider() {
+        slideWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
         });
     }
+
+    function moveToSlide(index) {
+        currentSlide = index;
+        updateSlider();
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlider();
+    }
+    setInterval(nextSlide, 4000);
+
+    // 드래그 스크롤
+    const slider = document.querySelector('.system-scroll-container');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+    slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
 </script>
 
 </body>
