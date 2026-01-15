@@ -92,7 +92,7 @@
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
 
-        /* 수정됨: 여백을 넓히기 위해 max-width를 줄이고 width를 90%로 조정 */
+        /* PC 버전: 좌우 여백을 위해 90% 사용 */
         .recommend-section, .system-section, .latest-section { padding: 40px; max-width: 1400px; width: 90%; margin: 0 auto; }
         
         .recommend-section h3, .system-section h3, .latest-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
@@ -106,16 +106,15 @@
         .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
         .rec-btn { color: #5865F2; font-weight: 700; }
         
-        /* 가로 스크롤 컨테이너 (Snap 적용) */
-        /* 수정됨: scroll-behavior: smooth 제거 -> 트랙패드/터치에서 물리 가속도(momentum)가 죽지 않게 함 */
+        /* 가로 스크롤 컨테이너 */
         .system-scroll-container, .latest-scroll-container { 
             display: flex; 
             gap: 15px; 
             overflow-x: auto; 
             padding-bottom: 15px; 
             scrollbar-width: none; 
-            scroll-snap-type: x mandatory; /* 스냅 기능 */
-            scroll-behavior: auto; /* 기본값으로 설정해야 터치 가속도가 적용됨 */
+            scroll-snap-type: x mandatory; 
+            scroll-behavior: auto; /* 터치 가속을 위해 auto */
         }
         .system-scroll-container::-webkit-scrollbar, .latest-scroll-container::-webkit-scrollbar { display: none; }
         
@@ -150,7 +149,7 @@
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
-            /* 수정됨: 호버시 위로 뜨는 transform 효과 제거 */
+            /* 호버 효과 제거됨 */
         }
         
         .latest-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
@@ -174,6 +173,7 @@
         .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; }
 
+        /* 모바일 반응형 디자인 */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
             header { height: 55px; padding: 0 20px; }
@@ -183,7 +183,13 @@
             .login-trigger-btn { padding: 6px 14px; font-size: 0.8rem; }
             .banner-container { height: 180px; } 
             .slide h2 { font-size: 1.8rem; }
-            .recommend-section, .system-section, .latest-section { padding: 30px 20px; }
+            
+            /* 수정됨: 모바일에서 좌우 여백을 줄여서 넓게 사용 */
+            .recommend-section, .system-section, .latest-section { 
+                padding: 30px 10px;  /* 패딩을 10px로 줄임 */
+                width: 100%;         /* 너비를 100%로 설정 */
+            }
+            
             .recommend-card { flex-direction: column; text-align: center; }
             .contact { border-radius: 30px 30px 0 0; }
             .user-dropdown { right: 20px; width: 240px; }
@@ -618,7 +624,7 @@
         });
     }
 
-    // --- 통합 무한 스크롤 및 자동 넘김 핸들러 (수정됨) ---
+    // --- 통합 무한 스크롤 및 자동 넘김 핸들러 ---
     function setupInfiniteScroll(containerId, itemWidth) {
         const container = document.getElementById(containerId);
         if (!container || container.children.length === 0) return;
@@ -634,9 +640,6 @@
 
         // 2. 자동 스크롤 (4초마다)
         setInterval(() => {
-            // 사용자가 마우스 호버 중이거나 터치 중일때는 자동 스크롤 일시 정지 고려 가능하나
-            // 요청하신 내용에 따라 계속 흘러가게 두되, '부드럽게'만 처리
-            
             // 자동 넘김 때만 smooth를 켜야 트랙패드 스크롤 시 충돌이 없음
             container.style.scrollBehavior = 'smooth';
             container.scrollBy({ left: itemWidth * 2 });
@@ -657,7 +660,6 @@
         });
 
         // 4. 드래그 스크롤 (마우스용)
-        // 트랙패드는 'wheel' 이벤트로 처리되므로 이 드래그 로직과 충돌하지 않음
         let isDown = false;
         let startX;
         let scrollLeft;
@@ -684,7 +686,7 @@
         
         container.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            e.preventDefault(); // 마우스 드래그 시 텍스트 선택 등 방지
+            e.preventDefault(); 
             const x = e.pageX - container.offsetLeft;
             const walk = (x - startX) * 1.5;
             container.scrollLeft = scrollLeft - walk;
