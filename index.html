@@ -92,8 +92,8 @@
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
 
-        /* 섹션 공통 스타일 */
-        .recommend-section, .system-section, .latest-section { padding: 40px; max-width: 1600px; width: 95%; margin: 0 auto; }
+        /* 수정됨: 여백을 넓히기 위해 max-width를 줄이고 width를 90%로 조정 */
+        .recommend-section, .system-section, .latest-section { padding: 40px; max-width: 1400px; width: 90%; margin: 0 auto; }
         
         .recommend-section h3, .system-section h3, .latest-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
         .recommend-section h3 { border-left: 4px solid #5865F2; }
@@ -106,24 +106,24 @@
         .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
         .rec-btn { color: #5865F2; font-weight: 700; }
         
-        /* 가로 스크롤 컨테이너 공통 (Snap 적용) */
+        /* 가로 스크롤 컨테이너 (Snap 적용) */
+        /* 수정됨: scroll-behavior: smooth 제거 -> 트랙패드/터치에서 물리 가속도(momentum)가 죽지 않게 함 */
         .system-scroll-container, .latest-scroll-container { 
             display: flex; 
             gap: 15px; 
             overflow-x: auto; 
             padding-bottom: 15px; 
             scrollbar-width: none; 
-            scroll-snap-type: x mandatory; /* 스냅 기능 활성화 */
+            scroll-snap-type: x mandatory; /* 스냅 기능 */
+            scroll-behavior: auto; /* 기본값으로 설정해야 터치 가속도가 적용됨 */
         }
         .system-scroll-container::-webkit-scrollbar, .latest-scroll-container::-webkit-scrollbar { display: none; }
         
-        /* 카드 공통 속성 (스냅 정렬) */
         .system-card, .latest-card { 
             flex: 0 0 240px; 
-            scroll-snap-align: start; /* 카드 단위로 딱 맞게 정렬 */
+            scroll-snap-align: start; 
         }
 
-        /* 시스템 카드 스타일 */
         .system-card { 
             height: 300px; 
             background: #fff; 
@@ -141,7 +141,6 @@
         .sys-btn { padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 0.8rem; display: block; width: 100%; transition: 0.2s; }
         .sys-btn:hover { background: #333; }
         
-        /* 최신 모델 카드 스타일 */
         .latest-card { 
             height: 280px; 
             background: #fff; 
@@ -151,16 +150,15 @@
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
-            transition: transform 0.2s; 
+            /* 수정됨: 호버시 위로 뜨는 transform 효과 제거 */
         }
-        .latest-card:hover { transform: translateY(-5px); }
+        
         .latest-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
         .latest-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .latest-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
         .latest-btn { width: 100%; padding: 10px; background: #f0f0f0; color: #333; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-align: center; transition: 0.2s; }
         .latest-btn:hover { background: #e0e0e0; }
 
-        /* 버튼 로딩 스피너 스타일 */
         .btn-loading-spinner {
             display: inline-block;
             width: 16px; height: 16px;
@@ -620,45 +618,46 @@
         });
     }
 
-    // --- 통합 무한 스크롤 및 자동 넘김 핸들러 ---
+    // --- 통합 무한 스크롤 및 자동 넘김 핸들러 (수정됨) ---
     function setupInfiniteScroll(containerId, itemWidth) {
         const container = document.getElementById(containerId);
         if (!container || container.children.length === 0) return;
 
-        // 1. 무한 루프를 위해 아이템 복제 (충분히 길게 2세트 복제)
+        // 1. 무한 루프를 위해 아이템 복제
         const items = Array.from(container.children);
         const originalItemCount = items.length;
         
-        // 만약 아이템이 너무 적으면 굳이 복제해서 무한스크롤 할 필요가 없을 수도 있지만,
-        // 일관성을 위해 복제합니다.
         items.forEach(item => container.appendChild(item.cloneNode(true)));
         items.forEach(item => container.appendChild(item.cloneNode(true)));
 
-        // 원본 1세트의 전체 너비 계산
         const oneSetWidth = originalItemCount * itemWidth;
 
-        // 2. 자동 스크롤 (4초마다 2개씩 = 2 * itemWidth)
+        // 2. 자동 스크롤 (4초마다)
         setInterval(() => {
-            // 사용자가 터치 중이거나 마우스 호버 중일 땐 멈추고 싶다면 아래 조건 추가
-            if (container.matches(':hover')) return;
+            // 사용자가 마우스 호버 중이거나 터치 중일때는 자동 스크롤 일시 정지 고려 가능하나
+            // 요청하신 내용에 따라 계속 흘러가게 두되, '부드럽게'만 처리
+            
+            // 자동 넘김 때만 smooth를 켜야 트랙패드 스크롤 시 충돌이 없음
+            container.style.scrollBehavior = 'smooth';
+            container.scrollBy({ left: itemWidth * 2 });
 
-            // 스냅이 걸려있어도 smooth scroll은 작동함
-            container.scrollBy({ left: itemWidth * 2, behavior: 'smooth' });
+            // 애니메이션 끝날 즈음(약 0.6초 뒤) 다시 auto로 돌려서 사용자 스와이프 대비
+            setTimeout(() => {
+                container.style.scrollBehavior = 'auto';
+            }, 600);
         }, 4000);
 
         // 3. 무한 루프 리셋 로직 (Scroll Event)
         container.addEventListener('scroll', () => {
-            // 스크롤이 복제된 영역(중간 이상)에 도달하면 앞으로 순간이동
             if (container.scrollLeft >= oneSetWidth) {
-                // 스냅 때문에 순간이동 시 튀는 현상을 방지하기 위해 일시적으로 스냅 해제 고려 가능하나,
-                // 정확한 배수 위치로 이동하면 크게 문제되지 않음.
-                container.style.scrollBehavior = 'auto'; // 애니메이션 없이 즉시 이동
+                // 리셋할 때는 애니메이션 없이 즉시 이동
+                container.style.scrollBehavior = 'auto';
                 container.scrollLeft -= oneSetWidth;
-                container.style.scrollBehavior = ''; // 다시 smooth 등 기본값으로 복귀
             }
         });
 
-        // 4. 드래그 스크롤 (마우스)
+        // 4. 드래그 스크롤 (마우스용)
+        // 트랙패드는 'wheel' 이벤트로 처리되므로 이 드래그 로직과 충돌하지 않음
         let isDown = false;
         let startX;
         let scrollLeft;
@@ -668,7 +667,7 @@
             container.style.cursor = 'grabbing';
             startX = e.pageX - container.offsetLeft;
             scrollLeft = container.scrollLeft;
-            // 드래그 중에는 스냅을 잠시 꺼야 부드럽게 따라옴
+            // 드래그 중에는 스냅을 꺼야 부드럽게 따라옴
             container.style.scrollSnapType = 'none';
         });
         
@@ -676,7 +675,7 @@
             if(!isDown) return;
             isDown = false;
             container.style.cursor = 'grab';
-            // 드래그 끝나면 스냅 다시 켜기 -> 가장 가까운 곳으로 착 붙음
+            // 드래그 끝나면 스냅 다시 켜기
             container.style.scrollSnapType = 'x mandatory';
         };
 
@@ -685,9 +684,9 @@
         
         container.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            e.preventDefault();
+            e.preventDefault(); // 마우스 드래그 시 텍스트 선택 등 방지
             const x = e.pageX - container.offsetLeft;
-            const walk = (x - startX) * 1.5; // 드래그 속도 조절
+            const walk = (x - startX) * 1.5;
             container.scrollLeft = scrollLeft - walk;
         });
     }
