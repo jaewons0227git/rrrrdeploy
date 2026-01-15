@@ -92,7 +92,7 @@
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
 
-        /* 여백 줄이고 넓게 쓰기 위해 max-width 수정 */
+        /* 섹션 공통 스타일 */
         .recommend-section, .system-section, .latest-section { padding: 40px; max-width: 1600px; width: 95%; margin: 0 auto; }
         
         .recommend-section h3, .system-section h3, .latest-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
@@ -106,18 +106,53 @@
         .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
         .rec-btn { color: #5865F2; font-weight: 700; }
         
-        .system-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
-        .system-scroll-container::-webkit-scrollbar { display: none; }
-        .system-card { flex: 0 0 240px; height: 300px; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        /* 가로 스크롤 컨테이너 공통 (Snap 적용) */
+        .system-scroll-container, .latest-scroll-container { 
+            display: flex; 
+            gap: 15px; 
+            overflow-x: auto; 
+            padding-bottom: 15px; 
+            scrollbar-width: none; 
+            scroll-snap-type: x mandatory; /* 스냅 기능 활성화 */
+        }
+        .system-scroll-container::-webkit-scrollbar, .latest-scroll-container::-webkit-scrollbar { display: none; }
+        
+        /* 카드 공통 속성 (스냅 정렬) */
+        .system-card, .latest-card { 
+            flex: 0 0 240px; 
+            scroll-snap-align: start; /* 카드 단위로 딱 맞게 정렬 */
+        }
+
+        /* 시스템 카드 스타일 */
+        .system-card { 
+            height: 300px; 
+            background: #fff; 
+            border: 1px solid #eee; 
+            border-radius: 16px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+        }
         .sys-icon { width: 40px; height: 40px; background: #f0f0f0; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         .sys-title { font-weight: 700; margin-bottom: 8px; }
         .sys-desc { font-size: 0.85rem; color: #666; line-height: 1.5; }
         .sys-btn { padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 0.8rem; display: block; width: 100%; transition: 0.2s; }
         .sys-btn:hover { background: #333; }
         
-        /* 최신 모델 섹션 스타일 */
-        .latest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .latest-card { background: #fff; border: 1px solid #eee; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: transform 0.2s; }
+        /* 최신 모델 카드 스타일 */
+        .latest-card { 
+            height: 280px; 
+            background: #fff; 
+            border: 1px solid #eee; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+            transition: transform 0.2s; 
+        }
         .latest-card:hover { transform: translateY(-5px); }
         .latest-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
         .latest-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -285,8 +320,8 @@
 
 <section class="latest-section">
     <h3>🔥 따끈한 최신 모델</h3>
-    <div class="latest-grid" id="latestModelContainer">
-        <p style="padding: 20px; color:#666;">모델을 불러오는 중입니다...</p>
+    <div class="latest-scroll-container" id="latestModelContainer">
+        <p style="padding: 20px; color:#666; width:100%;">모델을 불러오는 중입니다...</p>
     </div>
 </section>
 
@@ -373,8 +408,10 @@
         }
 
         initSlider();
-        initLatestModels(); // 최신 모델 로드
-        initSystemAutoScroll(); // 시스템 목록 자동 스크롤
+        initLatestModels(); // 최신 모델 로드 및 스크롤 초기화
+        
+        // 시스템 목록 스크롤 초기화 (카드 너비 240 + 간격 15 = 255)
+        setupInfiniteScroll('systemScrollContainer', 255);
         
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('userDropdown');
@@ -512,7 +549,6 @@
             return;
         }
         
-        // 버튼 로딩 상태
         const originalText = btnElement.innerHTML;
         btnElement.innerHTML = '<span class="btn-loading-spinner"></span>';
         btnElement.disabled = true;
@@ -539,7 +575,6 @@
             alert("다운로드 중 오류가 발생했습니다.");
         })
         .finally(() => {
-            // 버튼 상태 복구
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
                 btnElement.disabled = false;
@@ -547,14 +582,11 @@
         });
     }
 
-    // --- 최신 모델 로드 함수 ---
     function initLatestModels() {
         const container = document.getElementById('latestModelContainer');
         fetch(`${BACKEND_URL}/api/models`)
         .then(res => res.json())
         .then(data => {
-            // 최근 모델 5개 (배열을 역순으로 뒤집어서 5개 가져옴)
-            // flask_app.py에 따르면 download_url은 제외되어 있음.
             const latest = data.slice().reverse().slice(0, 5);
             
             if(latest.length === 0) {
@@ -562,9 +594,8 @@
                 return;
             }
 
-            container.innerHTML = ''; // 로딩 텍스트 제거
+            container.innerHTML = ''; 
             latest.forEach(model => {
-                // 모델 이름과 이미지만 사용, 설명은 제외
                 const imgSrc = model.image || 'https://via.placeholder.com/240x160?text=No+Image';
                 const modelName = model.name;
 
@@ -579,6 +610,9 @@
                 `;
                 container.innerHTML += cardHtml;
             });
+
+            // 최신 모델 로드 후 스크롤 로직 적용 (카드 너비 240 + 간격 15 = 255)
+            setupInfiniteScroll('latestModelContainer', 255);
         })
         .catch(err => {
             console.error(err);
@@ -586,60 +620,74 @@
         });
     }
 
-    // --- 시스템 목록 무한 스크롤 및 자동 넘김 함수 ---
-    function initSystemAutoScroll() {
-        const container = document.getElementById('systemScrollContainer');
-        if (!container) return;
+    // --- 통합 무한 스크롤 및 자동 넘김 핸들러 ---
+    function setupInfiniteScroll(containerId, itemWidth) {
+        const container = document.getElementById(containerId);
+        if (!container || container.children.length === 0) return;
 
-        // 1. 무한 루프를 위해 기존 아이템들을 복제해서 뒤에 붙임
-        const children = Array.from(container.children);
-        // 부드러운 연결을 위해 충분히 많이 복제 (예: 2세트 추가)
-        children.forEach(child => {
-            container.appendChild(child.cloneNode(true));
-        });
-        children.forEach(child => {
-            container.appendChild(child.cloneNode(true));
-        });
+        // 1. 무한 루프를 위해 아이템 복제 (충분히 길게 2세트 복제)
+        const items = Array.from(container.children);
+        const originalItemCount = items.length;
+        
+        // 만약 아이템이 너무 적으면 굳이 복제해서 무한스크롤 할 필요가 없을 수도 있지만,
+        // 일관성을 위해 복제합니다.
+        items.forEach(item => container.appendChild(item.cloneNode(true)));
+        items.forEach(item => container.appendChild(item.cloneNode(true)));
 
-        // 2. 자동 스크롤 설정 (4초마다 카드 2개 너비 이동)
-        // 카드 너비(240px) + 간격(15px) = 255px. 2개면 510px.
-        const scrollStep = 510; 
-        const intervalTime = 4000;
+        // 원본 1세트의 전체 너비 계산
+        const oneSetWidth = originalItemCount * itemWidth;
 
+        // 2. 자동 스크롤 (4초마다 2개씩 = 2 * itemWidth)
         setInterval(() => {
-            // 현재 스크롤 위치에서 이동
-            container.scrollBy({ left: scrollStep, behavior: 'smooth' });
+            // 사용자가 터치 중이거나 마우스 호버 중일 땐 멈추고 싶다면 아래 조건 추가
+            if (container.matches(':hover')) return;
 
-            // 스크롤이 복제된 영역의 끝부분에 가까워지면 처음으로 초기화 (무한 루프 착시)
-            // scrollWidth의 절반 지점을 넘어가면 초기화
-            if (container.scrollLeft >= (container.scrollWidth / 2)) {
-                // 부드러운 스크롤 애니메이션이 끝날 즈음에 위치를 리셋해야 튐 현상이 적음
-                // 하지만 setInterval로 단순 구현 시 약간의 타이밍 이슈가 있을 수 있어
-                // scrollBy 직후가 아닌, 위치 체크를 통해 리셋
-                setTimeout(() => {
-                    container.scrollLeft = 0; 
-                    // scrollLeft = 0 으로 보내도 사용자 눈에는 똑같은 컴포넌트가 보여서 끊김없어 보임
-                }, 600); // 0.6초 뒤(smooth scroll 얼추 끝난 뒤) 리셋
+            // 스냅이 걸려있어도 smooth scroll은 작동함
+            container.scrollBy({ left: itemWidth * 2, behavior: 'smooth' });
+        }, 4000);
+
+        // 3. 무한 루프 리셋 로직 (Scroll Event)
+        container.addEventListener('scroll', () => {
+            // 스크롤이 복제된 영역(중간 이상)에 도달하면 앞으로 순간이동
+            if (container.scrollLeft >= oneSetWidth) {
+                // 스냅 때문에 순간이동 시 튀는 현상을 방지하기 위해 일시적으로 스냅 해제 고려 가능하나,
+                // 정확한 배수 위치로 이동하면 크게 문제되지 않음.
+                container.style.scrollBehavior = 'auto'; // 애니메이션 없이 즉시 이동
+                container.scrollLeft -= oneSetWidth;
+                container.style.scrollBehavior = ''; // 다시 smooth 등 기본값으로 복귀
             }
-        }, intervalTime);
+        });
 
-        // 사용자가 드래그할 때도 작동하도록 기존 드래그 이벤트 유지
+        // 4. 드래그 스크롤 (마우스)
         let isDown = false;
         let startX;
         let scrollLeft;
+
         container.addEventListener('mousedown', (e) => {
             isDown = true;
             container.style.cursor = 'grabbing';
             startX = e.pageX - container.offsetLeft;
             scrollLeft = container.scrollLeft;
+            // 드래그 중에는 스냅을 잠시 꺼야 부드럽게 따라옴
+            container.style.scrollSnapType = 'none';
         });
-        container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
-        container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+        
+        const stopDrag = () => {
+            if(!isDown) return;
+            isDown = false;
+            container.style.cursor = 'grab';
+            // 드래그 끝나면 스냅 다시 켜기 -> 가장 가까운 곳으로 착 붙음
+            container.style.scrollSnapType = 'x mandatory';
+        };
+
+        container.addEventListener('mouseleave', stopDrag);
+        container.addEventListener('mouseup', stopDrag);
+        
         container.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - container.offsetLeft;
-            const walk = (x - startX) * 2;
+            const walk = (x - startX) * 1.5; // 드래그 속도 조절
             container.scrollLeft = scrollLeft - walk;
         });
     }
