@@ -92,15 +92,20 @@
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #fff; transform: scale(1.2); }
 
-        .recommend-section, .system-section { padding: 40px; max-width: 1100px; margin: 0 auto; }
-        .recommend-section h3, .system-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
+        /* 여백 줄이고 넓게 쓰기 위해 max-width 수정 */
+        .recommend-section, .system-section, .latest-section { padding: 40px; max-width: 1600px; width: 95%; margin: 0 auto; }
+        
+        .recommend-section h3, .system-section h3, .latest-section h3 { font-size: 1.5rem; margin-bottom: 20px; padding-left: 12px; font-weight: 800; }
         .recommend-section h3 { border-left: 4px solid #5865F2; }
         .system-section h3 { border-left: 4px solid #1a1a1a; }
+        .latest-section h3 { border-left: 4px solid #ff4757; }
+
         .recommend-card { background: #f8f9fa; border: 1px solid #eee; border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 30px; }
         .rec-img-placeholder { width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; flex-shrink: 0; }
         .rec-info h4 { font-size: 1.3rem; margin-bottom: 8px; font-weight: 700; }
         .rec-info p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
         .rec-btn { color: #5865F2; font-weight: 700; }
+        
         .system-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .system-scroll-container::-webkit-scrollbar { display: none; }
         .system-card { flex: 0 0 240px; height: 300px; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
@@ -110,6 +115,16 @@
         .sys-btn { padding: 8px; text-align: center; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 0.8rem; display: block; width: 100%; transition: 0.2s; }
         .sys-btn:hover { background: #333; }
         
+        /* 최신 모델 섹션 스타일 */
+        .latest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .latest-card { background: #fff; border: 1px solid #eee; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: transform 0.2s; }
+        .latest-card:hover { transform: translateY(-5px); }
+        .latest-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .latest-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .latest-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
+        .latest-btn { width: 100%; padding: 10px; background: #f0f0f0; color: #333; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-align: center; transition: 0.2s; }
+        .latest-btn:hover { background: #e0e0e0; }
+
         /* 버튼 로딩 스피너 스타일 */
         .btn-loading-spinner {
             display: inline-block;
@@ -135,7 +150,7 @@
             .login-trigger-btn { padding: 6px 14px; font-size: 0.8rem; }
             .banner-container { height: 180px; } 
             .slide h2 { font-size: 1.8rem; }
-            .recommend-section, .system-section { padding: 30px 20px; }
+            .recommend-section, .system-section, .latest-section { padding: 30px 20px; }
             .recommend-card { flex-direction: column; text-align: center; }
             .contact { border-radius: 30px 30px 0 0; }
             .user-dropdown { right: 20px; width: 240px; }
@@ -268,9 +283,16 @@
     </div>
 </section>
 
+<section class="latest-section">
+    <h3>🔥 따끈한 최신 모델</h3>
+    <div class="latest-grid" id="latestModelContainer">
+        <p style="padding: 20px; color:#666;">모델을 불러오는 중입니다...</p>
+    </div>
+</section>
+
 <section class="system-section">
     <h3>배포 시스템 목록</h3>
-    <div class="system-scroll-container">
+    <div class="system-scroll-container" id="systemScrollContainer">
         <div class="system-card">
             <div>
                 <div class="sys-icon">📦</div>
@@ -351,6 +373,8 @@
         }
 
         initSlider();
+        initLatestModels(); // 최신 모델 로드
+        initSystemAutoScroll(); // 시스템 목록 자동 스크롤
         
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('userDropdown');
@@ -515,11 +539,108 @@
             alert("다운로드 중 오류가 발생했습니다.");
         })
         .finally(() => {
-            // 버튼 상태 복구 (페이지가 이동하지 않을 경우를 대비)
+            // 버튼 상태 복구
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
                 btnElement.disabled = false;
             }, 2000);
+        });
+    }
+
+    // --- 최신 모델 로드 함수 ---
+    function initLatestModels() {
+        const container = document.getElementById('latestModelContainer');
+        fetch(`${BACKEND_URL}/api/models`)
+        .then(res => res.json())
+        .then(data => {
+            // 최근 모델 5개 (배열을 역순으로 뒤집어서 5개 가져옴)
+            // flask_app.py에 따르면 download_url은 제외되어 있음.
+            const latest = data.slice().reverse().slice(0, 5);
+            
+            if(latest.length === 0) {
+                container.innerHTML = '<p style="padding:20px;">등록된 최신 모델이 없습니다.</p>';
+                return;
+            }
+
+            container.innerHTML = ''; // 로딩 텍스트 제거
+            latest.forEach(model => {
+                // 모델 이름과 이미지만 사용, 설명은 제외
+                const imgSrc = model.image || 'https://via.placeholder.com/240x160?text=No+Image';
+                const modelName = model.name;
+
+                const cardHtml = `
+                    <div class="latest-card">
+                        <img src="${imgSrc}" alt="${modelName}" class="latest-img">
+                        <div class="latest-info">
+                            <div class="latest-title">${modelName}</div>
+                            <button class="latest-btn" onclick="checkLoginAndDownload(event, this, '${modelName}')">다운로드</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML = '<p style="padding:20px; color:red;">모델 정보를 불러오는데 실패했습니다.</p>';
+        });
+    }
+
+    // --- 시스템 목록 무한 스크롤 및 자동 넘김 함수 ---
+    function initSystemAutoScroll() {
+        const container = document.getElementById('systemScrollContainer');
+        if (!container) return;
+
+        // 1. 무한 루프를 위해 기존 아이템들을 복제해서 뒤에 붙임
+        const children = Array.from(container.children);
+        // 부드러운 연결을 위해 충분히 많이 복제 (예: 2세트 추가)
+        children.forEach(child => {
+            container.appendChild(child.cloneNode(true));
+        });
+        children.forEach(child => {
+            container.appendChild(child.cloneNode(true));
+        });
+
+        // 2. 자동 스크롤 설정 (4초마다 카드 2개 너비 이동)
+        // 카드 너비(240px) + 간격(15px) = 255px. 2개면 510px.
+        const scrollStep = 510; 
+        const intervalTime = 4000;
+
+        setInterval(() => {
+            // 현재 스크롤 위치에서 이동
+            container.scrollBy({ left: scrollStep, behavior: 'smooth' });
+
+            // 스크롤이 복제된 영역의 끝부분에 가까워지면 처음으로 초기화 (무한 루프 착시)
+            // scrollWidth의 절반 지점을 넘어가면 초기화
+            if (container.scrollLeft >= (container.scrollWidth / 2)) {
+                // 부드러운 스크롤 애니메이션이 끝날 즈음에 위치를 리셋해야 튐 현상이 적음
+                // 하지만 setInterval로 단순 구현 시 약간의 타이밍 이슈가 있을 수 있어
+                // scrollBy 직후가 아닌, 위치 체크를 통해 리셋
+                setTimeout(() => {
+                    container.scrollLeft = 0; 
+                    // scrollLeft = 0 으로 보내도 사용자 눈에는 똑같은 컴포넌트가 보여서 끊김없어 보임
+                }, 600); // 0.6초 뒤(smooth scroll 얼추 끝난 뒤) 리셋
+            }
+        }, intervalTime);
+
+        // 사용자가 드래그할 때도 작동하도록 기존 드래그 이벤트 유지
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        container.addEventListener('mousedown', (e) => {
+            isDown = true;
+            container.style.cursor = 'grabbing';
+            startX = e.pageX - container.offsetLeft;
+            scrollLeft = container.scrollLeft;
+        });
+        container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+        container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+        container.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const walk = (x - startX) * 2;
+            container.scrollLeft = scrollLeft - walk;
         });
     }
 
@@ -557,26 +678,6 @@
             }
         }
         setInterval(nextSlide, 4000);
-
-        const slider = document.querySelector('.system-scroll-container');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.style.cursor = 'grabbing';
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-        slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
-        slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
-            slider.scrollLeft = scrollLeft - walk;
-        });
     }
 </script>
 
