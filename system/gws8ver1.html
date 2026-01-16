@@ -61,9 +61,8 @@
 
         .detail-image-section {
             flex: 1;
-            /* [수정] PC에서 이미지가 너무 크지 않도록 max-width 설정 */
             max-width: 550px; 
-            margin: 0 auto; /* 중앙 정렬 */
+            margin: 0 auto;
         }
 
         .detail-main-img {
@@ -118,13 +117,15 @@
             text-align: center;
         }
 
+        /* [수정] 이용규정 이미지 크기 PC 버전에서 축소 */
         .tos-img {
-            max-width: 100%;
+            max-width: 500px; /* 요청사항 반영 */
+            width: 100%;
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
 
-        /* [추가] 리뷰 및 평점 스타일 */
+        /* 리뷰 및 평점 스타일 */
         .review-section {
             margin-top: 60px;
             border-top: 1px solid #eee;
@@ -135,12 +136,62 @@
             font-weight: 800;
             margin-bottom: 20px;
         }
+
+        /* [수정] 리뷰 리스트 스크롤 처리 및 스타일 */
+        .review-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-bottom: 30px; /* 입력창과 간격 */
+            max-height: 500px; /* 대략 4개 정도 높이 */
+            overflow-y: auto; /* 4개 넘으면 스크롤 */
+            padding-right: 5px; /* 스크롤바 공간 */
+        }
+        
+        /* 스크롤바 커스텀 */
+        .review-list::-webkit-scrollbar { width: 6px; }
+        .review-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+        .review-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        .review-list::-webkit-scrollbar-thumb:hover { background: #bbb; }
+
+        .review-card {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            position: relative;
+        }
+        .review-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        
+        /* [추가] 프로필 이미지와 정보 스타일 */
+        .review-profile-area { display: flex; align-items: center; gap: 12px; }
+        .review-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .review-user-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .review-username { font-weight: 700; font-size: 1rem; color: #1a1a1a; }
+        .review-userid { font-size: 0.8rem; color: #888; }
+        
+        .review-stars { color: #FFD700; letter-spacing: -2px; font-size: 1.1rem; }
+        .review-content { color: #444; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; margin-top: 5px; }
+
+        /* [추가] 수정/삭제 버튼 */
+        .review-actions { display: flex; gap: 8px; font-size: 0.8rem; color: #999; margin-left: auto; }
+        .review-action-btn { cursor: pointer; text-decoration: underline; }
+        .review-action-btn:hover { color: #5865F2; }
+
         .review-input-container {
             background: #f9f9f9;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 30px;
         }
+        .review-input-container.disabled { opacity: 0.6; pointer-events: none; position: relative; }
+        .review-input-container.disabled::after {
+            content: "이미 리뷰를 작성하셨습니다.";
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-weight: 800; color: #333; background: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 8px;
+        }
+
         .star-rating-area {
             display: flex;
             align-items: center;
@@ -150,7 +201,7 @@
         .star-rating-area span { font-weight: 700; color: #555; }
         .stars { display: flex; gap: 5px; cursor: pointer; }
         .star { font-size: 1.5rem; color: #ddd; transition: color 0.2s; }
-        .star.active { color: #FFD700; } /* 금색 */
+        .star.active { color: #FFD700; }
         
         .review-textarea {
             width: 100%;
@@ -176,20 +227,19 @@
             transition: 0.2s;
         }
         .btn-review-submit:hover { background: #4752c4; }
-        .clearfix::after { content: ""; clear: both; display: table; }
-
-        .review-list { display: flex; flex-direction: column; gap: 15px; }
-        .review-card {
-            background: #fff;
-            border: 1px solid #eee;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        .btn-review-cancel {
+            background: #aaa;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            float: right;
+            margin-right: 10px;
+            transition: 0.2s;
+            display: none; /* 기본 숨김 */
         }
-        .review-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .review-user-info { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; }
-        .review-stars { color: #FFD700; letter-spacing: -2px; }
-        .review-content { color: #444; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+        .clearfix::after { content: ""; clear: both; display: table; }
 
         .spinner-container { display: flex; justify-content: center; padding: 50px 0; width: 100%; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #5865F2; border-radius: 50%; animation: spin 1s linear infinite; }
@@ -347,7 +397,10 @@
     <div class="review-section">
         <h3 class="review-header">상품평 및 평점</h3>
         
-        <div class="review-input-container">
+        <div id="reviewList" class="review-list">
+            </div>
+
+        <div class="review-input-container" id="reviewInputContainer">
             <div class="star-rating-area">
                 <span>별점:</span>
                 <div class="stars" id="starRating">
@@ -361,11 +414,9 @@
             <textarea id="reviewContent" class="review-textarea" placeholder="이 모델에 대한 솔직한 평가를 남겨주세요."></textarea>
             <div class="clearfix">
                 <button class="btn-review-submit" id="btnSubmitReview" onclick="submitReview()">등록하기</button>
+                <button class="btn-review-cancel" id="btnCancelEdit" onclick="cancelEditMode()">취소</button>
             </div>
         </div>
-
-        <div id="reviewList" class="review-list">
-            </div>
     </div>
 </div>
 
@@ -374,10 +425,8 @@
 </footer>
 
 <script>
-    // ▼▼▼ 모델 이름과 사이트 고유번호 설정 ▼▼▼
     const TARGET_MODEL_NAME = "갤룩시 워치8 시스템";
-    const SITE_UNIQUE_ID = "GW8_SYS_PAGE_001"; // [추가] 하드코딩된 사이트 고유번호
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    const SITE_UNIQUE_ID = "GW8_SYS_PAGE_001"; 
 
     const CLIENT_ID = '1460856182716502036';
     const REDIRECT_URI = 'https://rocorddev.kro.kr'; 
@@ -385,7 +434,9 @@
 
     let isLoggedIn = false;
     let currentUserToken = null;
-    let currentRating = 0; // 현재 선택된 별점
+    let currentUserId = null; // 로그인한 유저의 Discord ID
+    let currentRating = 0; 
+    let isEditMode = false; // 수정 모드 여부
 
     window.onload = function() {
         const storedToken = localStorage.getItem('discord_token');
@@ -393,7 +444,7 @@
             loginToBackend(storedToken);
         }
         fetchModelDetail();
-        fetchReviews(); // [추가] 페이지 로드시 댓글 불러오기
+        fetchReviews(); // 리뷰 먼저 로드
         
         document.getElementById('loginModalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeLoginModal();
@@ -414,22 +465,26 @@
             }
         });
 
-        // [추가] 별점 클릭 이벤트 설정
         const stars = document.querySelectorAll('#starRating .star');
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 const val = parseInt(this.getAttribute('data-value'));
                 currentRating = val;
-                stars.forEach(s => {
-                    if (parseInt(s.getAttribute('data-value')) <= val) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
+                updateStarVisuals(val);
             });
         });
     };
+
+    function updateStarVisuals(val) {
+        const stars = document.querySelectorAll('#starRating .star');
+        stars.forEach(s => {
+            if (parseInt(s.getAttribute('data-value')) <= val) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    }
 
     function toggleMobileMenu() {
         const btn = document.querySelector('.hamburger-btn');
@@ -448,8 +503,10 @@
         .then(data => {
             if(data.error) throw new Error(data.error);
             currentUserToken = token;
+            currentUserId = data.id; // 유저 ID 저장
             isLoggedIn = true;
             updateUI(data);
+            fetchReviews(); // 로그인 후 내 리뷰 상태 확인 위해 다시 로드
             closeLoginModal();
         })
         .catch(err => {
@@ -527,6 +584,7 @@
         localStorage.removeItem('discord_token');
         isLoggedIn = false;
         currentUserToken = null;
+        currentUserId = null;
         location.reload();
     }
 
@@ -552,7 +610,6 @@
             return;
         }
 
-        // [수정] tos-img의 경로를 '이용규정.png'로 변경
         container.innerHTML = `
             <div class="detail-view">
                 <div class="detail-image-section">
@@ -612,35 +669,96 @@
         });
     }
 
-    // [추가] 리뷰 불러오기
+    // [수정] 리뷰 불러오기 (UI 개선 및 본인 글 확인)
     function fetchReviews() {
         fetch(`${BACKEND_URL}/api/reviews?model_id=${SITE_UNIQUE_ID}`)
         .then(res => res.json())
         .then(data => {
             const list = document.getElementById('reviewList');
+            const inputContainer = document.getElementById('reviewInputContainer');
             list.innerHTML = '';
+            
+            // 1인 1리뷰 체크
+            let myReviewExists = false;
+
             if (data.length === 0) {
-                list.innerHTML = '<div style="text-align:center;color:#888;">아직 작성된 리뷰가 없습니다.</div>';
-                return;
-            }
-            data.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'review-card';
-                const starsStr = '★'.repeat(review.rating);
-                card.innerHTML = `
-                    <div class="review-card-header">
-                        <div class="review-user-info">${review.username}</div>
+                list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">아직 작성된 리뷰가 없습니다.</div>';
+            } else {
+                data.forEach(review => {
+                    // 아바타 처리
+                    let avatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png";
+                    if (review.avatar) {
+                        avatarUrl = `https://cdn.discordapp.com/avatars/${review.user_id}/${review.avatar}.png`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    const starsStr = '★'.repeat(review.rating);
+                    
+                    // 본인 리뷰 확인
+                    let actionButtons = '';
+                    if (isLoggedIn && review.user_id === currentUserId) {
+                        myReviewExists = true;
+                        actionButtons = `
+                            <div class="review-actions">
+                                <span class="review-action-btn" onclick="setEditMode('${review.content}', ${review.rating})">수정</span>
+                                <span class="review-action-btn" onclick="deleteReview()">삭제</span>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="review-card-header">
+                            <div class="review-profile-area">
+                                <img src="${avatarUrl}" class="review-avatar" alt="Avatar">
+                                <div class="review-user-text">
+                                    <div class="review-username">${review.username}</div>
+                                    <div class="review-userid">@${review.username}</div>
+                                </div>
+                            </div>
+                            ${actionButtons}
+                        </div>
                         <div class="review-stars">${starsStr}</div>
-                    </div>
-                    <div class="review-content">${review.content}</div>
-                `;
-                list.appendChild(card);
-            });
+                        <div class="review-content">${review.content}</div>
+                    `;
+                    list.appendChild(card);
+                });
+            }
+
+            // 본인 리뷰가 있고 수정 모드가 아니면 입력창 비활성화
+            if (myReviewExists && !isEditMode) {
+                inputContainer.classList.add('disabled');
+            } else {
+                inputContainer.classList.remove('disabled');
+            }
         })
         .catch(err => console.error("리뷰 로드 실패:", err));
     }
 
-    // [추가] 리뷰 작성하기
+    function setEditMode(content, rating) {
+        isEditMode = true;
+        document.getElementById('reviewInputContainer').classList.remove('disabled');
+        document.getElementById('reviewContent').value = content;
+        currentRating = rating;
+        updateStarVisuals(rating);
+        
+        document.getElementById('btnSubmitReview').innerText = "수정하기";
+        document.getElementById('btnCancelEdit').style.display = 'inline-block';
+        
+        // 입력창으로 스크롤 이동
+        document.getElementById('reviewInputContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEditMode() {
+        isEditMode = false;
+        document.getElementById('reviewContent').value = '';
+        currentRating = 0;
+        updateStarVisuals(0);
+        document.getElementById('btnSubmitReview').innerText = "등록하기";
+        document.getElementById('btnCancelEdit').style.display = 'none';
+        fetchReviews(); // 상태 리셋
+    }
+
     function submitReview() {
         if (!isLoggedIn) {
             alert("로그인이 필요합니다.");
@@ -651,23 +769,22 @@
         if (currentRating === 0) return alert("별점을 선택해주세요.");
         if (!content.trim()) return alert("내용을 입력해주세요.");
 
-        // 현재 로그인한 닉네임 가져오기 (UI에서 추출)
-        const nickname = document.getElementById('dropdownName').innerText;
-
         const btn = document.getElementById('btnSubmitReview');
         const originalText = btn.innerText;
         btn.innerHTML = '<span class="btn-loading-spinner"></span>';
         btn.disabled = true;
 
+        // 수정 모드인 경우 PUT, 아니면 POST
+        const method = isEditMode ? 'PUT' : 'POST';
+
         fetch(`${BACKEND_URL}/api/reviews`, {
-            method: 'POST',
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${currentUserToken}`
             },
             body: JSON.stringify({
                 model_id: SITE_UNIQUE_ID,
-                username: nickname,
                 rating: currentRating,
                 content: content
             })
@@ -675,13 +792,9 @@
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                document.getElementById('reviewContent').value = '';
-                // 별점 초기화
-                currentRating = 0;
-                document.querySelectorAll('#starRating .star').forEach(s => s.classList.remove('active'));
-                fetchReviews(); // 목록 새로고침
+                cancelEditMode(); // 초기화 및 리스트 갱신
             } else {
-                alert("리뷰 등록 실패: " + (data.error || '알 수 없는 오류'));
+                alert("오류 발생: " + (data.error || '알 수 없는 오류'));
             }
         })
         .catch(err => {
@@ -692,6 +805,32 @@
             btn.innerHTML = originalText;
             btn.disabled = false;
         });
+    }
+
+    function deleteReview() {
+        if (!confirm("정말 리뷰를 삭제하시겠습니까?")) return;
+
+        fetch(`${BACKEND_URL}/api/reviews`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentUserToken}`
+            },
+            body: JSON.stringify({
+                model_id: SITE_UNIQUE_ID
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("삭제되었습니다.");
+                isEditMode = false; // 혹시 수정모드였다면 해제
+                cancelEditMode(); // UI 리셋
+            } else {
+                alert("삭제 실패: " + data.error);
+            }
+        })
+        .catch(err => alert("서버 통신 오류"));
     }
 </script>
 
