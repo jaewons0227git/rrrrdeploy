@@ -127,6 +127,10 @@
             <textarea id="mDesc" placeholder="설명을 입력하세요"></textarea>
         </div>
         <div class="input-group">
+            <label>모델 세부정보 페이지 링크</label>
+            <input type="text" id="mDetail" placeholder="예: https://rocord.../detail/123">
+        </div>
+        <div class="input-group">
             <label>다운로드 링크 (외부 URL)</label>
             <input type="text" id="mLink" placeholder="예: https://drive.google.com/...">
         </div>
@@ -204,13 +208,17 @@
         const image = document.getElementById('mImage').value;
         const desc = document.getElementById('mDesc').value;
         const link = document.getElementById('mLink').value;
+        // [수정] 세부정보 링크 값 가져오기
+        const detail = document.getElementById('mDetail').value;
 
-        if(!name || !image || !desc || !link) {
+        // [수정] detail 값 검증 추가
+        if(!name || !image || !desc || !link || !detail) {
             alert("모든 항목을 입력해주세요.");
             return;
         }
 
-        const newModel = { name, image, desc, download_url: link };
+        // [수정] detail_url 필드 추가하여 전송
+        const newModel = { name, image, desc, download_url: link, detail_url: detail };
 
         fetch(`${BACKEND_URL}/api/models`, {
             method: 'POST',
@@ -229,6 +237,8 @@
                 document.getElementById('mImage').value = '';
                 document.getElementById('mDesc').value = '';
                 document.getElementById('mLink').value = '';
+                // [수정] 입력창 초기화
+                document.getElementById('mDetail').value = '';
             } else {
                 alert("추가 실패. 권한을 확인하세요.");
             }
