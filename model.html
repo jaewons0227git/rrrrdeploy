@@ -143,6 +143,19 @@
 
         footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; margin-top: 60px; }
 
+        /* 로딩 오버레이 스타일 (추가됨) */
+        .redirect-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95); z-index: 9999;
+            display: none; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .redirect-overlay.active { display: flex; }
+        .loading-spinner-large {
+            width: 50px; height: 50px; border: 5px solid #f3f3f3;
+            border-top: 5px solid #5865F2; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+
         @media (max-width: 1200px) { .model-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 900px) { .model-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
@@ -274,6 +287,11 @@
     © 2025-2026 Rocord Deploy. All Rights Reserved.
 </footer>
 
+<div class="redirect-overlay" id="redirectOverlay">
+    <div class="loading-spinner-large"></div>
+    <h2 style="font-weight: 700;">로그인 정보 확인 중...</h2>
+</div>
+
 <script>
     const CLIENT_ID = '1460856182716502036';
     const REDIRECT_URI = 'https://rocorddev.kro.kr'; 
@@ -286,6 +304,8 @@
     window.onload = function() {
         const storedToken = localStorage.getItem('discord_token');
         if (storedToken) {
+            // 토큰이 있으면 로딩 화면을 즉시 띄워서 깜빡임 방지
+            document.getElementById('redirectOverlay').classList.add('active');
             loginToBackend(storedToken);
         }
         fetchModels();
@@ -335,6 +355,11 @@
         .catch(err => {
             console.error(err);
             localStorage.removeItem('discord_token');
+            // 에러 시 로딩창은 finally에서 닫힘
+        })
+        .finally(() => {
+            // 통신이 끝나면 로딩 오버레이 끄기
+            document.getElementById('redirectOverlay').classList.remove('active');
         });
     }
 
@@ -399,6 +424,8 @@
     }
 
     function loginWithDiscord() {
+        // 로그인 버튼 클릭 시 현재 페이지 주소를 저장 (돌아오기 위해)
+        localStorage.setItem('prev_login_url', window.location.href);
         const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = oauthUrl;
     }
