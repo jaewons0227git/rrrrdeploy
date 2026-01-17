@@ -97,9 +97,22 @@
         .model-info h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; }
         .model-info p { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
         
+        /* [수정] 상세페이지 버튼 스타일 추가 */
+        .btn-detail {
+            width: 100%; padding: 12px; background: #fff; color: #1a1a1a;
+            border: 2px solid #eee; margin-bottom: 8px;
+            border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s;
+            margin-top: auto; /* 상단 내용과 거리 벌리기 */
+        }
+        .btn-detail:hover:not(:disabled) { border-color: #1a1a1a; background: #f9f9f9; }
+        .btn-detail:disabled {
+            background: #f5f5f5; color: #bbb; border-color: #eee; cursor: not-allowed; opacity: 0.7;
+        }
+
         .btn-download { 
             width: 100%; padding: 12px; background: #1a1a1a; color: #fff; 
-            border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s; margin-top: auto; 
+            border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s; 
+            /* margin-top: auto; 제거 (상세버튼이 밀어줌) */
         }
         .btn-download:hover { background: #333; }
 
@@ -504,12 +517,24 @@
         models.forEach(model => {
             const card = document.createElement('div');
             card.className = 'model-card';
+
+            // [수정] 상세페이지 버튼 생성 로직
+            let detailBtnHtml = '';
+            // detail_url이 존재하고 비어있지 않은지 확인
+            if (model.detail_url && model.detail_url.trim() !== "") {
+                detailBtnHtml = `<button class="btn-detail" onclick="window.location.href='${model.detail_url}'">상세페이지</button>`;
+            } else {
+                // 비활성화 버튼
+                detailBtnHtml = `<button class="btn-detail" disabled>세부페이지가 없습니다</button>`;
+            }
+
             card.innerHTML = `
                 <img src="${model.image}" alt="${model.name}" class="model-img">
                 <div class="model-info">
                     <h3>${model.name}</h3>
                     <p>${model.desc}</p>
                 </div>
+                ${detailBtnHtml}
                 <button class="btn-download" onclick="downloadModel(this, '${model.name}')">다운로드</button>
             `;
             grid.appendChild(card);
