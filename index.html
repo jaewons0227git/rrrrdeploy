@@ -442,17 +442,10 @@
             
             // 3. 1초 대기 후 리다이렉트
             setTimeout(() => {
-                const prevLoginUrl = localStorage.getItem('prev_login_url');
-                
-                if (prevLoginUrl) {
-                    localStorage.removeItem('prev_login_url');
-                    // 수정됨: href 대신 replace를 사용하여 이전 페이지로 확실하게 이동 및 새로고침 효과 적용
-                    window.location.replace(prevLoginUrl);
-                } else {
-                    // 저장된 URL이 없을 경우 기존 방식대로 URL 세탁 후 새로고침
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    window.location.reload();
-                }
+                // 사용자의 요청대로 무조건 전전 페이지(로그인 시도했던 페이지)로 이동
+                // 로그인 전 페이지 -> Discord 로그인 -> Redirect URL(현재)
+                // 따라서 뒤로가기 2번을 수행하여 원래 페이지로 복귀
+                window.history.go(-2);
             }, 1000);
             
             return; // 리다이렉트 중이므로 아래 로직 실행 방지
