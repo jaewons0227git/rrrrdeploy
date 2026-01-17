@@ -446,8 +446,8 @@
                 
                 if (prevLoginUrl) {
                     localStorage.removeItem('prev_login_url');
-                    // 새로고침 느낌으로 해당 URL로 이동 (리다이렉트)
-                    window.location.href = prevLoginUrl;
+                    // 수정됨: href 대신 replace를 사용하여 이전 페이지로 확실하게 이동 및 새로고침 효과 적용
+                    window.location.replace(prevLoginUrl);
                 } else {
                     // 저장된 URL이 없을 경우 기존 방식대로 URL 세탁 후 새로고침
                     window.history.replaceState({}, document.title, window.location.pathname);
