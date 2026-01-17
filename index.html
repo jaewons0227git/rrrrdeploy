@@ -405,6 +405,21 @@
 
         if (accessToken) {
             localStorage.setItem('discord_token', accessToken);
+            
+            // 저장된 이전 페이지 URL이 있다면 해당 페이지로 이동 (가장 우선)
+            const prevLoginUrl = localStorage.getItem('prev_login_url');
+            if (prevLoginUrl) {
+                localStorage.removeItem('prev_login_url');
+                window.location.href = prevLoginUrl;
+                return;
+            }
+
+            // 저장된 URL이 없더라도 이전 페이지(Referrer)가 디스코드라면 뒤로가기 실행 (전전 페이지로 이동)
+            if (document.referrer && document.referrer.includes('discord.com')) {
+                window.history.go(-2);
+                return;
+            }
+
             window.history.replaceState({}, document.title, window.location.pathname);
             loginToBackend(accessToken);
         } else if (storedToken) {
@@ -534,6 +549,7 @@
     }
 
     function loginWithDiscord() {
+        localStorage.setItem('prev_login_url', window.location.href);
         const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = oauthUrl;
     }
