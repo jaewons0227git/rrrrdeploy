@@ -173,6 +173,31 @@
         .btn-large { padding: 15px 40px; background: #fff; color: #5865F2; border-radius: 50px; font-weight: 700; display: inline-block; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         footer { padding: 40px; font-size: 0.75rem; color: #666; text-align: center; background: #050505; }
 
+        /* 로딩 오버레이 스타일 추가 */
+        .redirect-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .redirect-overlay.active { display: flex; }
+        .loading-spinner-large {
+            width: 50px; 
+            height: 50px; 
+            border: 5px solid #f3f3f3; 
+            border-top: 5px solid #5865F2; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
         /* 모바일 반응형 디자인 */
         @media (max-width: 768px) {
             body { padding-top: 55px; }
@@ -390,6 +415,11 @@
     © 2025-2026 Rocord Deploy. All Rights Reserved.
 </footer>
 
+<div class="redirect-overlay" id="redirectOverlay">
+    <div class="loading-spinner-large"></div>
+    <h2 style="font-weight: 700;">로그인 처리 중...</h2>
+</div>
+
 <script>
     const CLIENT_ID = '1460856182716502036';
     const REDIRECT_URI = 'https://rocorddev.kro.kr'; 
@@ -404,24 +434,28 @@
         const storedToken = localStorage.getItem('discord_token');
 
         if (accessToken) {
+            // 1. 토큰이 감지되면 즉시 로딩 오버레이 표시
+            document.getElementById('redirectOverlay').classList.add('active');
+            
+            // 2. 토큰 저장
             localStorage.setItem('discord_token', accessToken);
             
-            // 저장된 이전 페이지 URL이 있다면 해당 페이지로 이동 (가장 우선)
-            const prevLoginUrl = localStorage.getItem('prev_login_url');
-            if (prevLoginUrl) {
-                localStorage.removeItem('prev_login_url');
-                window.location.href = prevLoginUrl;
-                return;
-            }
-
-            // 저장된 URL이 없더라도 이전 페이지(Referrer)가 디스코드라면 뒤로가기 실행 (전전 페이지로 이동)
-            if (document.referrer && document.referrer.includes('discord.com')) {
-                window.history.go(-2);
-                return;
-            }
-
-            window.history.replaceState({}, document.title, window.location.pathname);
-            loginToBackend(accessToken);
+            // 3. 1초 대기 후 리다이렉트
+            setTimeout(() => {
+                const prevLoginUrl = localStorage.getItem('prev_login_url');
+                
+                if (prevLoginUrl) {
+                    localStorage.removeItem('prev_login_url');
+                    // 새로고침 느낌으로 해당 URL로 이동 (리다이렉트)
+                    window.location.href = prevLoginUrl;
+                } else {
+                    // 저장된 URL이 없을 경우 기존 방식대로 URL 세탁 후 새로고침
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    window.location.reload();
+                }
+            }, 1000);
+            
+            return; // 리다이렉트 중이므로 아래 로직 실행 방지
         } else if (storedToken) {
             loginToBackend(storedToken);
         }
@@ -549,6 +583,7 @@
     }
 
     function loginWithDiscord() {
+        // 로그인 버튼 클릭 시 현재 URL 저장 (나중에 돌아오기 위해)
         localStorage.setItem('prev_login_url', window.location.href);
         const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = oauthUrl;
