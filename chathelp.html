@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <style>
-        /* --- 기본 스타일 --- */
+        /* --- 기본 리셋 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F0F2F5; color: #333; min-height: 100vh; }
-        
         .app-container { width: 100%; max-width: 600px; min-height: 100vh; margin: 0 auto; background-color: #F0F2F5; position: relative; padding-bottom: 80px; overflow-x: hidden; }
 
         /* 배너 */
@@ -35,7 +34,7 @@
         .btn-black-cta { width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-black-cta:active { transform: scale(0.97); }
 
-        /* 대화 탭 & 리스트 */
+        /* 채팅 리스트 */
         .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; }
         .chat-card { background-color: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; }
         .chat-card:active { transform: scale(0.98); background-color: #fafafa; }
@@ -71,7 +70,6 @@
         
         .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; -webkit-overflow-scrolling: touch; background-color: #fff; }
         
-        /* 메시지 버블 */
         .message-row { display: flex; width: 100%; }
         .message-row.me { justify-content: flex-end; }
         .message-row.other { justify-content: flex-start; }
@@ -79,6 +77,25 @@
         .me .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
         .other .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
 
+        /* [임베드 스타일] 디스코드 스타일 */
+        .discord-embed {
+            background-color: #F8F9FA;
+            border: 1px solid #E3E5E8;
+            border-left: 4px solid #5865F2; /* 디스코드 블루 */
+            border-radius: 4px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #2E3338;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .embed-title { font-weight: 700; color: #1c1c1e; margin-bottom: 4px; font-size: 14px; }
+        .embed-field { display: flex; flex-direction: column; margin-bottom: 4px; }
+        .embed-label { font-weight: 600; color: #666; font-size: 11px; }
+        .embed-value { color: #333; font-weight: 400; }
+
+        /* 봇 버튼 */
         .bot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; margin-left: 5px; }
         .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
@@ -94,13 +111,12 @@
         .send-btn { width: 32px; height: 32px; background: #BCC8F0; color: #fff; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
         .send-btn.active { background-color: #305BFF; }
 
-        /* 오버레이 */
+        /* 오버레이 & 모달 */
         #login-request-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.95); z-index: 70; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         #login-request-overlay.active { display: flex; }
         .login-btn-discord { width: 100%; max-width: 300px; background-color: #5865F2; color: white; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
         .login-btn-guest { width: 100%; max-width: 300px; background-color: #eee; color: #666; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
 
-        /* 모달 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; }
         .form-modal { background: #fff; width: 85%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
@@ -140,10 +156,7 @@
                 <div class="home-card">
                     <div class="bot-profile">
                         <div class="bot-avatar"><img src="https://i.postimg.cc/zBXbMQkt/geulim1-png7777.png" alt="Bot" referrerpolicy="no-referrer"></div>
-                        <div class="bot-info">
-                            <h3>Rocord Bot</h3>
-                            <p>성장하는 서버를 위한 기록</p>
-                        </div>
+                        <div class="bot-info"><h3>Rocord Bot</h3><p>성장하는 서버를 위한 기록</p></div>
                     </div>
                     <div class="notice-text">
                         <span class="notice-highlight">!</span> 실시간 상담을 원하시면<br>아래 버튼을 눌러 대화를 시작해주세요.
@@ -170,7 +183,7 @@
                     <div class="profile-text"><h4 id="user-name">User</h4><p id="user-id">ID: 0000</p></div>
                 </div>
                 <div class="settings-box">
-                    <div class="setting-row"><span>현재 버전</span><span style="color:#888;">v3.5.0</span></div>
+                    <div class="setting-row"><span>현재 버전</span><span style="color:#888;">v3.6.0</span></div>
                     <div class="setting-row" id="discord-login-btn-settings" onclick="openDiscordLogin()" style="display:none;">
                         <span style="color:#5865F2; font-weight:700;">Discord 로그인</span><i class="fa-brands fa-discord" style="color:#5865F2;"></i>
                     </div>
@@ -273,57 +286,34 @@
             toggleEmojiPicker(); 
         });
 
-        // [핵심] 페이지 로드 시 상태 복구
         window.onload = function() {
-            // 1. 관리자 토큰 체크
             const adminToken = localStorage.getItem('admin_token');
-            if (adminToken) {
-                isAdmin = true;
-                console.log("관리자 자동 로그인");
-            }
+            if (adminToken) { isAdmin = true; console.log("관리자 자동 로그인"); }
 
-            // 2. 유저 정보 체크 (새로고침 시에도 유지)
             const userStr = localStorage.getItem('discord_user');
             if (userStr && !isAdmin) {
                 const user = JSON.parse(userStr);
                 currentSessionId = user.id;
                 localStorage.setItem('isDiscordLoggedIn', 'true');
-                console.log("유저 자동 로그인:", currentSessionId);
             }
-            // 2-1. 게스트 정보 체크
             const guestId = localStorage.getItem('guest_id');
             if (guestId && !currentSessionId && !isAdmin) {
                 currentSessionId = guestId;
                 isGuest = true;
-                console.log("게스트 자동 로그인:", guestId);
             }
 
-            // 3. OAuth 리다이렉트 처리
             const hash = window.location.hash.substring(1);
             const paramsHash = new URLSearchParams(hash);
             const accessToken = paramsHash.get('access_token');
-            const paramsQuery = new URLSearchParams(window.location.search);
-            const error = paramsQuery.get('error');
-
             if (window.opener) {
-                if (accessToken) {
-                    window.opener.handleLoginSuccess(accessToken);
-                    window.close();
-                } else if (error) {
-                    window.close();
-                }
+                if (accessToken) { window.opener.handleLoginSuccess(accessToken); window.close(); }
             } else if (accessToken) {
-                // 현재 창에서 리다이렉트 된 경우
                 window.location.hash = '';
                 handleLoginSuccess(accessToken);
             }
             
             updateSettingsUI();
-            
-            // 만약 대화 탭이 기본이라면 리스트 렌더링
-            if(document.getElementById('tab-chat').classList.contains('active')) {
-                renderChatList();
-            }
+            if(document.getElementById('tab-chat').classList.contains('active')) renderChatList();
         };
 
         function openDiscordLogin() {
@@ -336,18 +326,13 @@
         window.handleLoginSuccess = function(token) {
             localStorage.setItem('discord_token', token);
             localStorage.setItem('isDiscordLoggedIn', 'true');
-            
             document.getElementById('full-loader').style.display = 'flex';
-            
             fetchUserProfile(token).then(() => {
                 document.getElementById('login-request-overlay').classList.remove('active');
                 document.getElementById('full-loader').style.display = 'none';
                 updateSettingsUI();
                 renderChatList();
-                
-                if(document.getElementById('chat-screen').classList.contains('active')) {
-                     initChatFlow();
-                }
+                if(document.getElementById('chat-screen').classList.contains('active')) initChatFlow();
             });
         };
 
@@ -361,7 +346,14 @@
                     localStorage.setItem('discord_user', JSON.stringify(data));
                     currentSessionId = data.id;
                     isGuest = false;
-                    localStorage.removeItem('guest_id'); // 로그인하면 게스트 ID 삭제
+                    localStorage.removeItem('guest_id');
+                    
+                    // DB에 유저 정보 업데이트
+                    fetch(`${API_BASE}/api/login`, {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({access_token: token})
+                    });
                 }
             })
             .catch(err => console.error(err));
@@ -408,17 +400,14 @@
         function switchTab(tabName, element) {
             document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
-
             if(tabName === 'chat') {
                 document.getElementById('chat-screen').classList.remove('active');
                 document.getElementById('bottom-nav').classList.remove('hidden');
-                
                 if (pollingInterval) clearInterval(pollingInterval);
                 renderChatList();
-                pollingInterval = setInterval(renderChatList, 3000); 
+                pollingInterval = setInterval(renderChatList, 1000); 
             } else {
                 if (pollingInterval) clearInterval(pollingInterval);
             }
@@ -428,7 +417,6 @@
             const id = document.getElementById('admin-id').value;
             const pw = document.getElementById('admin-pw').value;
             const autoLogin = document.getElementById('admin-auto-login').checked;
-
             fetch(`${API_BASE}/api/admin/login`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -437,9 +425,7 @@
             .then(r => r.json())
             .then(data => {
                 if(data.success) {
-                    if (autoLogin) localStorage.setItem('admin_token', data.token);
-                    else localStorage.setItem('admin_token', data.token); // 세션유지 편의상 로컬 사용
-                    
+                    localStorage.setItem('admin_token', data.token);
                     isAdmin = true;
                     alert('관리자 로그인 성공');
                     closeModal('modal-admin-login');
@@ -472,12 +458,8 @@
             }
 
             if (!isLoggedIn) {
-                // 비로그인이지만 게스트 ID가 이미 있다면 바로 진행
-                if(localStorage.getItem('guest_id')) {
-                    proceedAsGuest();
-                } else {
-                    document.getElementById('login-request-overlay').classList.add('active');
-                }
+                if(localStorage.getItem('guest_id')) proceedAsGuest();
+                else document.getElementById('login-request-overlay').classList.add('active');
             } else {
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
@@ -501,7 +483,7 @@
         function initChatFlow() {
             loadMessages();
             if(pollingInterval) clearInterval(pollingInterval);
-            pollingInterval = setInterval(loadMessages, 3000);
+            pollingInterval = setInterval(loadMessages, 1000); // 1초마다 폴링
         }
 
         function loadMessages() {
@@ -511,27 +493,55 @@
             .then(msgs => {
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = ''; 
-                
-                msgs.forEach(msg => {
-                    renderMessage(msg);
-                });
-                
-                // 관리자가 아니고, 웰컴 메시지가 없다면(첫 진입) 클라이언트 단에서만 표시
-                if(msgs.length === 0 && !isAdmin) {
-                     // const welcome = "안녕하세요, Rocord 지원팀입니다. 무엇을 도와드릴까요?";
-                     // UI에만 추가 (DB 저장 X)
-                     // const div = document.createElement('div');
-                     // div.className = 'message-row other';
-                     // div.innerHTML = `<div class="message-bubble">${welcome}</div>`;
-                     // container.appendChild(div);
-                }
-                
+                msgs.forEach(msg => { renderMessage(msg, container); });
                 if(!isAdmin) addBotActions();
-                
-                // 스크롤 아래로
-                // container.scrollTop = container.scrollHeight; 
             })
             .catch(e => console.error("채팅 로드 실패:", e));
+        }
+
+        // [핵심] 메시지 렌더링 + 임베드 변환
+        function renderMessage(msg, container) {
+            const div = document.createElement('div');
+            let isMe = false;
+            if (isAdmin) isMe = (msg.sender === 'admin');
+            else isMe = (msg.sender === 'user');
+
+            div.className = isMe ? 'message-row me' : 'message-row other';
+            
+            // 임베드 메시지 감지 및 변환
+            if (msg.text.startsWith('[신청서:') || msg.text.startsWith('[모델 문의]') || msg.text.startsWith('[취소 요청서]')) {
+                div.innerHTML = parseToEmbed(msg.text);
+            } else {
+                div.innerHTML = `<div class="message-bubble">${msg.text.replace(/\n/g, '<br>')}</div>`;
+            }
+            
+            container.appendChild(div);
+        }
+
+        // 텍스트를 디스코드 스타일 임베드로 변환
+        function parseToEmbed(text) {
+            const lines = text.split('\n');
+            const title = lines[0].replace('[', '').replace(']', '');
+            let fieldsHtml = '';
+            
+            for(let i=1; i<lines.length; i++) {
+                if(lines[i].trim() === '') continue;
+                const parts = lines[i].split(':');
+                if(parts.length >= 2) {
+                    const label = parts[0].replace('-', '').trim();
+                    const value = parts.slice(1).join(':').trim();
+                    fieldsHtml += `<div class="embed-field"><span class="embed-label">${label}</span><span class="embed-value">${value}</span></div>`;
+                } else {
+                    fieldsHtml += `<div class="embed-field"><span class="embed-value">${lines[i]}</span></div>`;
+                }
+            }
+
+            return `
+                <div class="discord-embed">
+                    <div class="embed-title">${title}</div>
+                    ${fieldsHtml}
+                </div>
+            `;
         }
 
         function openChatSession(id) {
@@ -559,31 +569,10 @@
             document.getElementById('bottom-nav').classList.remove('hidden');
             document.getElementById('login-request-overlay').classList.remove('active');
             if(pollingInterval) clearInterval(pollingInterval);
-            pollingInterval = setInterval(renderChatList, 3000);
+            pollingInterval = setInterval(renderChatList, 1000);
             renderChatList();
         }
 
-        function renderMessage(msg) {
-            const container = document.getElementById('chat-messages');
-            const div = document.createElement('div');
-            let isMe = false;
-
-            if (isAdmin) {
-                // 관리자: admin이 보낸건 '나', user가 보낸건 '상대'
-                if (msg.sender === 'admin') isMe = true;
-                else isMe = false;
-            } else {
-                // 유저: user가 보낸건 '나', admin이 보낸건 '상대'
-                if (msg.sender === 'user') isMe = true;
-                else isMe = false;
-            }
-
-            div.className = isMe ? 'message-row me' : 'message-row other';
-            div.innerHTML = `<div class="message-bubble">${msg.text.replace(/\n/g, '<br>')}</div>`;
-            container.appendChild(div);
-        }
-
-        // [중요] 시스템 메시지 전송 로직 (DB 저장 필수)
         function submitForm(type) {
             let title="", details={};
             if(type==='partner'){
@@ -603,39 +592,28 @@
                 closeModal('modal-model');
             }
             
-            // 텍스트 변환
-            let text = `[신청서: ${title}]\n`;
+            // 텍스트 변환 및 전송
+            let text = `[${title}]\n`;
             for(let key in details) text += `- ${key}: ${details[key]}\n`;
             
-            // UI에 즉시 반영 (내가 보낸 것처럼)
+            // 낙관적 UI 업데이트 (임베드로 바로 표시)
             const container = document.getElementById('chat-messages');
             const div = document.createElement('div');
             div.className = 'message-row me';
-            div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+            div.innerHTML = parseToEmbed(text);
             container.appendChild(div);
             
-            // 시스템 자동응답
-            setTimeout(() => {
-                 const div2 = document.createElement('div');
-                 div2.className = 'message-row other';
-                 div2.innerHTML = `<div class="message-bubble">문의가 접수되었습니다. (자동응답)</div>`;
-                 container.appendChild(div2);
-            }, 500);
-
-            // [핵심] 백엔드로 전송해서 저장
             sendToBackend(text);
         }
 
         function addBotActions() {
             if(document.getElementById('chat-messages').lastElementChild?.querySelector('.bot-actions')) return;
-            
             let chipsHtml = '';
             if (!isGuest) {
                 chipsHtml += `<div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div>`;
                 chipsHtml += `<div class="action-chip" onclick="openModal('modal-cancel')">협력 취소</div>`;
             }
             chipsHtml += `<div class="action-chip" onclick="openModal('modal-model')">모델 문의</div>`;
-
             const div = document.createElement('div');
             div.className = 'message-row other'; 
             div.innerHTML = `<div class="bot-actions">${chipsHtml}</div>`;
@@ -645,8 +623,7 @@
         function handleInputColor() {
             const val = document.getElementById('user-input').value.trim();
             const btn = document.getElementById('send-btn');
-            if(val.length > 0) btn.classList.add('active');
-            else btn.classList.remove('active');
+            if(val.length > 0) btn.classList.add('active'); else btn.classList.remove('active');
         }
 
         function toggleEmojiPicker() {
@@ -659,32 +636,25 @@
             const text = input.value.trim();
             if(!text) return;
             
-            // UI 추가
             const container = document.getElementById('chat-messages');
             const div = document.createElement('div');
             div.className = 'message-row me';
             div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
             container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
             
             input.value = '';
             handleInputColor();
             document.getElementById('emoji-picker-container').style.display='none';
-
-            // DB 전송
             sendToBackend(text);
         }
 
         function sendToBackend(text) {
             const sender = isAdmin ? 'admin' : 'user';
-            let userName = 'Guest';
-            let userAvatar = '';
-            let guestVal = isGuest ? 1 : 0;
+            let userName = 'Guest', userAvatar = '', guestVal = isGuest ? 1 : 0;
 
-            if (isAdmin) {
-                userName = "Rocord Support";
-                userAvatar = "https://i.postimg.cc/zBXbMQkt/geulim1-png7777.png";
-                guestVal = 0;
-            } else if (!isGuest) {
+            if (isAdmin) { userName="Support"; userAvatar=""; guestVal=0; }
+            else if (!isGuest) {
                 const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
                 userName = user.username || "User";
                 userAvatar = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '';
@@ -704,15 +674,9 @@
             }).catch(e => console.error("전송 실패", e));
         }
 
-        function handleEnter(e) { 
-            if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserTextInput(); }
-        }
-
+        function handleEnter(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserTextInput(); } }
         function openModal(id) { document.getElementById(id).style.display='flex'; setTimeout(()=>document.getElementById(id).classList.add('show'),10); }
-        function closeModal(id) { 
-            const m = document.getElementById(id); m.classList.remove('show'); 
-            setTimeout(()=>{ m.style.display='none'; m.querySelectorAll('input,textarea').forEach(i=>i.value=''); },300); 
-        }
+        function closeModal(id) { const m = document.getElementById(id); m.classList.remove('show'); setTimeout(()=>{ m.style.display='none'; m.querySelectorAll('input,textarea').forEach(i=>i.value=''); },300); }
 
         function renderChatList() {
             const list = document.getElementById('chat-list');
@@ -724,7 +688,6 @@
             empty.style.display = 'none';
             warning.style.display = 'none';
             
-            // 1. 관리자 모드
             if(isAdmin) {
                 fetch(`${API_BASE}/api/chat/rooms`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
@@ -732,24 +695,13 @@
                 .then(r => r.json())
                 .then(rooms => {
                     loading.style.display = 'none';
-                    // 기존 리스트 초기화 (로딩/엠티/워닝 div는 유지하고 싶지만 간단히 innerHTML 덮어쓰기)
-                    // 다시 구조 잡기
-                    list.innerHTML = '';
-                    list.appendChild(loading);
-                    list.appendChild(empty);
-                    list.appendChild(warning);
-
-                    if(rooms.length === 0) {
-                        empty.style.display = 'block';
-                        return;
-                    }
-
+                    list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning);
+                    if(rooms.length === 0) { empty.style.display = 'block'; return; }
                     rooms.forEach(room => {
                         const d = new Date(room.timestamp);
                         const isUnread = room.unread_count > 0;
                         const avatar = room.user_avatar || 'https://i.postimg.cc/zBXbMQkt/geulim1-png7777.png';
                         const name = room.is_guest ? '비로그인 유저 (Guest)' : room.user_name;
-                        
                         const item = document.createElement('div');
                         item.className = 'chat-card';
                         item.onclick = () => openChatSession(room.user_id);
@@ -757,8 +709,7 @@
                             <div class="card-top">
                                 <div class="card-title">
                                     <img src="${avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
-                                    ${name}
-                                    ${isUnread ? '<span class="unread-dot"></span>' : ''}
+                                    ${name} ${isUnread ? '<span class="unread-dot"></span>' : ''}
                                 </div>
                                 <span class="card-date">${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}</span>
                             </div>
@@ -766,25 +717,16 @@
                         list.appendChild(item);
                     });
                 })
-                .catch(e => {
-                    console.error(e);
-                    loading.style.display = 'none';
-                });
+                .catch(() => { loading.style.display = 'none'; });
                 return;
             }
 
-            // 2. 유저 모드
             if(currentSessionId) {
                 fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
                 .then(r => r.json())
                 .then(msgs => {
                     loading.style.display = 'none';
-                    // 리스트 초기화
-                    list.innerHTML = '';
-                    list.appendChild(loading);
-                    list.appendChild(empty);
-                    list.appendChild(warning);
-
+                    list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning);
                     if(msgs.length > 0) {
                         const last = msgs[msgs.length-1];
                         const d = new Date(last.timestamp);
@@ -792,15 +734,10 @@
                         item.className = 'chat-card';
                         item.onclick = () => openChatSession(currentSessionId);
                         item.innerHTML = `
-                            <div class="card-top">
-                                <span class="card-title">Rocord 지원팀</span>
-                                <span class="card-date">${d.getMonth()+1}/${d.getDate()}</span>
-                            </div>
+                            <div class="card-top"><span class="card-title">Rocord 지원팀</span><span class="card-date">${d.getMonth()+1}/${d.getDate()}</span></div>
                             <div class="card-preview">${last.text}</div>`;
                         list.appendChild(item);
-                    } else {
-                        empty.style.display = 'block';
-                    }
+                    } else { empty.style.display = 'block'; }
                 })
                 .catch(() => { loading.style.display = 'none'; });
             } else {
