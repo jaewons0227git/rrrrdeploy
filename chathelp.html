@@ -68,90 +68,99 @@
         /* 채팅 화면 */
         #chat-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 60; display: none; flex-direction: column; }
         #chat-screen.active { display: flex; }
-        .chat-header { padding: 15px 20px; height: 60px; background: #fff; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; flex-shrink: 0; }
-        .chat-back-btn { font-size: 18px; padding: 10px; cursor: pointer; }
-        .chat-title { font-size: 17px; font-weight: 700; }
+        .chat-header { padding: 10px 15px; height: 50px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+        .chat-back-btn { font-size: 16px; padding: 5px; cursor: pointer; }
+        .chat-title { font-size: 15px; font-weight: 700; }
         
-        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 20px; -webkit-overflow-scrolling: touch; background-color: #fff; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; padding-bottom: 15px; -webkit-overflow-scrolling: touch; background-color: #fff; }
         
-        /* 메시지 스타일 개선 */
-        .message-row { display: flex; width: 100%; }
+        /* 메시지 스타일 개선 (소형화 및 메타데이터 하단 이동) */
+        .message-row { display: flex; width: 100%; flex-direction: column; }
         
         /* 내 메시지: 우측 정렬 */
-        .message-row.me { justify-content: flex-end; align-items: center; }
-        .message-row.me .msg-content-wrapper { display: flex; flex-direction: row; align-items: flex-end; max-width: 80%; } 
+        .message-row.me { align-items: flex-end; }
+        .message-row.me .msg-content-wrapper { display: flex; flex-direction: column; align-items: flex-end; max-width: 85%; } 
+        .message-row.me .msg-meta { justify-content: flex-end; }
         
         /* 상대 메시지: 좌측 정렬 */
-        .message-row.other { justify-content: flex-start; align-items: flex-start; gap: 10px; }
-        .message-row.other .msg-profile-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #eee; flex-shrink: 0; margin-top: 0; }
-        .message-row.other .msg-column { display: flex; flex-direction: column; align-items: flex-start; max-width: 75%; }
+        .message-row.other { align-items: flex-start; }
+        .message-row.other .msg-column { display: flex; flex-direction: column; align-items: flex-start; max-width: 85%; }
+        .message-row.other .msg-meta { justify-content: flex-start; }
 
-        .msg-name { font-size: 12px; color: #888; margin-bottom: 4px; padding-left: 2px; }
-        
-        .message-bubble { padding: 12px 16px; font-size: 15px; line-height: 1.5; border-radius: 20px; position: relative; word-break: break-word; }
+        /* 말풍선 스타일 (소형화) */
+        .message-bubble { padding: 8px 12px; font-size: 13px; line-height: 1.4; border-radius: 16px; position: relative; word-break: break-word; }
         .me .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
         .other .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
+        
+        /* 관리자 메시지 (배경 없음) */
+        .other .message-bubble.no-bg { background-color: transparent; color: #333; padding: 0; margin-bottom: 2px; }
 
-        /* 로딩 스피너 (버블 왼쪽) */
+        /* 메타데이터 (프로필, 닉네임) - 말풍선 아래 작게 */
+        .msg-meta { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+        .msg-meta-text { font-size: 10px; color: #aaa; }
+        .msg-meta-img { width: 12px; height: 12px; border-radius: 50%; object-fit: cover; background: #eee; }
+
+        /* 로딩 스피너 */
         .custom-loader {
-            width: 16px; height: 16px;
+            width: 14px; height: 14px;
             border: 2px solid rgba(0, 0, 0, 0.1); border-left-color: #305BFF;
             border-radius: 50%; animation: spin 0.8s linear infinite;
-            margin-right: 8px; flex-shrink: 0; margin-bottom: 4px;
+            margin-right: 6px; flex-shrink: 0; margin-bottom: 2px;
             display: none;
         }
         .message-row.pending .custom-loader { display: block; }
         .message-row.pending .message-bubble { opacity: 0.9; }
 
         /* 비로그인 경고 메시지 */
-        .guest-warning-banner { background-color: #FFF4E5; color: #663C00; font-size: 12px; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; display: none; }
+        .guest-warning-banner { background-color: #FFF4E5; color: #663C00; font-size: 11px; padding: 8px; border-radius: 6px; text-align: center; margin-bottom: 10px; display: none; }
 
         /* [임베드 스타일] */
         .discord-embed {
             background-color: #F8F9FA;
-            border: 1px solid #E3E5E8; border-left: 4px solid #5865F2; 
-            border-radius: 4px; padding: 10px 12px; font-size: 13px; color: #2E3338;
-            display: flex; flex-direction: column; gap: 4px;
+            border: 1px solid #E3E5E8; border-left: 3px solid #5865F2; 
+            border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #2E3338;
+            display: flex; flex-direction: column; gap: 3px;
         }
-        .embed-title { font-weight: 700; color: #1c1c1e; margin-bottom: 4px; font-size: 14px; }
-        .embed-field { display: flex; flex-direction: column; margin-bottom: 4px; }
-        .embed-label { font-weight: 600; color: #666; font-size: 11px; }
+        .embed-title { font-weight: 700; color: #1c1c1e; margin-bottom: 3px; font-size: 13px; }
+        .embed-field { display: flex; flex-direction: column; margin-bottom: 3px; }
+        .embed-label { font-weight: 600; color: #666; font-size: 10px; }
         .embed-value { color: #333; font-weight: 400; }
 
         /* 봇 버튼 */
-        .bot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; margin-left: 0; }
-        .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .bot-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-left: 0; }
+        .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 6px 10px; border-radius: 14px; font-size: 11px; font-weight: 600; cursor: pointer; }
 
-        /* 입력창 */
-        .chat-input-area { width: 100%; background: #fff; padding: 15px 20px 25px; flex-shrink: 0; position: relative; }
-        #emoji-picker-container { display: none; position: absolute; bottom: 100px; left: 20px; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 20px; overflow: hidden; }
-        emoji-picker { width: 300px; height: 350px; }
-        .chat-input-wrapper { background-color: #F2F2F7; border-radius: 25px; padding: 15px 15px 10px 15px; display: flex; flex-direction: column; }
-        .chat-input { background: transparent; border: none; width: 100%; outline: none; font-size: 16px; color: #333; resize: none; height: 24px; margin-bottom: 10px; }
+        /* 입력창 (소형화) */
+        .chat-input-area { width: 100%; background: #fff; padding: 10px 15px 20px; flex-shrink: 0; position: relative; }
+        #emoji-picker-container { display: none; position: absolute; bottom: 80px; left: 15px; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 20px; overflow: hidden; }
+        emoji-picker { width: 280px; height: 300px; }
+        .chat-input-wrapper { background-color: #F2F2F7; border-radius: 20px; padding: 10px 12px 8px 12px; display: flex; flex-direction: column; }
+        .chat-input { background: transparent; border: none; width: 100%; outline: none; font-size: 14px; color: #333; resize: none; height: 20px; margin-bottom: 6px; }
         .input-bottom-row { display: flex; justify-content: space-between; align-items: center; }
-        .input-icons { display: flex; gap: 15px; margin-left: 5px; }
-        .input-icons i { font-size: 20px; color: #999; cursor: pointer; }
-        .send-btn { width: 32px; height: 32px; background: #BCC8F0; color: #fff; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .input-icons { display: flex; gap: 12px; margin-left: 5px; }
+        .input-icons i { font-size: 18px; color: #999; cursor: pointer; }
+        .send-btn { width: 28px; height: 28px; background: #BCC8F0; color: #fff; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .send-btn i { font-size: 12px; }
         .send-btn.active { background-color: #305BFF; }
 
         /* 오버레이 & 모달 */
-        #login-request-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.95); z-index: 70; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        #login-request-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.98); z-index: 70; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         #login-request-overlay.active { display: flex; }
-        .login-btn-discord { width: 100%; max-width: 300px; background-color: #5865F2; color: white; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
-        .login-btn-guest { width: 100%; max-width: 300px; background-color: #fff; border: 1px solid #ddd; color: #666; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .login-btn-discord { width: 100%; max-width: 280px; background-color: #5865F2; color: white; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
+        .login-btn-guest { width: 100%; max-width: 280px; background-color: #fff; border: 1px solid #ddd; color: #666; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .login-btn-guest:active { background-color: #f5f5f5; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; }
-        .form-modal { background: #fff; width: 85%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
+        .form-modal { background: #fff; width: 85%; max-width: 360px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
         .modal-overlay.show .form-modal { transform: scale(1); }
-        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
-        .input-group { margin-bottom: 12px; }
-        .input-label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
-        .modal-input { width: 100%; padding: 12px; background: #f9f9f9; border: 1px solid #eee; border-radius: 12px; outline: none; }
-        textarea.modal-input { resize: none; height: 80px; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-cancel, .btn-submit { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; }
+        .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
+        .input-group { margin-bottom: 10px; }
+        .input-label { display: block; font-size: 11px; color: #888; margin-bottom: 4px; }
+        .modal-input { width: 100%; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 10px; outline: none; font-size: 13px; }
+        textarea.modal-input { resize: none; height: 70px; }
+        .modal-btns { display: flex; gap: 8px; margin-top: 18px; }
+        .btn-cancel, .btn-submit { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 600; font-size: 13px; cursor: pointer; }
         .btn-cancel { background: #f2f2f7; color: #666; }
         .btn-submit { background: #1c1c1e; color: #fff; }
 
@@ -272,7 +281,10 @@
 
             <div id="login-request-overlay">
                 <h2 style="margin-bottom:10px;">로그인 필요</h2>
-                <p style="color:#666; margin-bottom:30px; text-align:center; font-size:14px;">원활한 상담을 위해 디스코드 로그인이 필요합니다.</p>
+                <p style="color:#666; margin-bottom:10px; text-align:center; font-size:13px;">원활한 상담을 위해<br>로그인 또는 비로그인 문의를 선택해주세요.</p>
+                <div class="guest-warning-banner" style="display:block; margin-bottom:20px; width:100%; max-width:280px;">
+                    <i class="fa-solid fa-circle-exclamation"></i> 비로그인 시 대화 기록이 저장되지 않습니다.
+                </div>
                 <button class="login-btn-discord" onclick="openDiscordLogin()"><i class="fa-brands fa-discord"></i> Discord로 로그인</button>
                 <button class="login-btn-guest" onclick="proceedAsGuest()">비로그인으로 문의</button>
             </div>
@@ -541,7 +553,6 @@
             document.getElementById('chat-screen').classList.add('active-session');
             document.getElementById('bottom-nav').classList.add('hidden');
             document.getElementById('chat-messages').innerHTML = '';
-            document.getElementById('guest-warning').style.display = 'none'; // 초기화
             document.getElementById('room-title-text').innerText = "Rocord 지원팀";
             
             if (isAdmin) {
@@ -550,13 +561,16 @@
                 return;
             }
 
-            // [수정] 비로그인 상태면 무조건 오버레이 표시 (게스트 ID 있어도 무시)
+            // [수정] 비로그인이면 무조건 오버레이 표시
             if (!isLoggedIn) {
                 document.getElementById('login-request-overlay').classList.add('active');
+                document.getElementById('guest-warning').style.display = 'block';
             } else {
+                // 로그인 상태면 바로 진입
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
                 isGuest = false;
+                document.getElementById('guest-warning').style.display = 'none';
                 initChatFlow();
             }
         }
@@ -587,7 +601,9 @@
 
         function scrollToBottom() {
             const container = document.getElementById('chat-messages');
-            container.scrollTop = container.scrollHeight;
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 50); // 약간의 딜레이를 주어 렌더링 후 스크롤
         }
 
         function loadMessages() {
@@ -600,7 +616,10 @@
                 
                 const warningBanner = document.getElementById('guest-warning');
                 const warningHTML = warningBanner ? warningBanner.outerHTML : '';
-                const showWarning = warningBanner && warningBanner.style.display !== 'none';
+                
+                // [수정] 로그인 상태 체크하여 경고 배너 표시 여부 결정
+                const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
+                const showWarning = !isLoggedIn && !isAdmin;
 
                 const tempContainer = document.createElement('div');
                 msgs.forEach(msg => { renderMessage(msg, tempContainer); });
@@ -628,11 +647,8 @@
                    }
 
                    pendingElements.forEach(el => container.appendChild(el));
-                   
-                   // [추가] 항상 스크롤 맨 아래로 이동
                    scrollToBottom();
                 } else if(!chatInitialized) {
-                    // 메시지는 동일하지만 최초 로드 시점일 경우 스크롤 이동 보장
                     scrollToBottom();
                 }
                 chatInitialized = true;
@@ -645,23 +661,37 @@
             let isMe = false;
             let avatarUrl = "";
             let senderName = "";
+            let isAdminMsg = false;
 
             if (isAdmin) {
+                // 관리자 입장: 내가 보낸건 admin, 상대는 user
                 isMe = (msg.sender === 'admin');
                 if(isMe) {
                     avatarUrl = BOT_AVATAR_URL; 
                     senderName = "Rocord Bot";
+                    isAdminMsg = true;
                 } else {
                     avatarUrl = msg.user_avatar || GUEST_AVATAR_URL;
                     senderName = msg.user_name || "User";
                 }
             } else {
+                // 유저 입장: 내가 보낸건 user, 상대는 admin
                 isMe = (msg.sender === 'user');
                 if(isMe) {
-                    // 유저(나)
+                    // [수정] 유저 본인의 디스코드 프로필 가져오기
+                    const userStr = localStorage.getItem('discord_user');
+                    if(userStr) {
+                         const u = JSON.parse(userStr);
+                         avatarUrl = getProfileImage(u);
+                         senderName = u.username || "User";
+                    } else {
+                         avatarUrl = GUEST_AVATAR_URL;
+                         senderName = "Guest";
+                    }
                 } else {
                     avatarUrl = BOT_AVATAR_URL;
                     senderName = "Rocord Bot";
+                    isAdminMsg = true;
                 }
             }
 
@@ -671,8 +701,18 @@
             if (msg.text.startsWith('[신청서:') || msg.text.startsWith('[모델 문의]') || msg.text.startsWith('[취소 요청서]')) {
                 contentHtml = parseToEmbed(msg.text);
             } else {
-                contentHtml = `<div class="message-bubble">${msg.text.replace(/\n/g, '<br>')}</div>`;
+                // [수정] 관리자 메시지는 말풍선 배경 제거 클래스 추가
+                const bubbleClass = isAdminMsg ? 'message-bubble no-bg' : 'message-bubble';
+                contentHtml = `<div class="${bubbleClass}">${msg.text.replace(/\n/g, '<br>')}</div>`;
             }
+
+            // [수정] 레이아웃 변경: 말풍선 아래에 프로필/이름 표시
+            let metaHtml = `
+                <div class="msg-meta">
+                    <img src="${avatarUrl}" class="msg-meta-img" onerror="this.src='${GUEST_AVATAR_URL}'">
+                    <span class="msg-meta-text">${senderName}</span>
+                </div>
+            `;
 
             let inner = '';
             if(isMe) {
@@ -680,14 +720,14 @@
                     <div class="msg-content-wrapper">
                         <div class="custom-loader"></div>
                         ${contentHtml}
+                        ${metaHtml}
                     </div>
                 `;
             } else {
                 inner = `
-                    <img src="${avatarUrl}" class="msg-profile-img" onerror="this.src='${GUEST_AVATAR_URL}'">
                     <div class="msg-column">
-                        <span class="msg-name">${senderName}</span>
                         ${contentHtml}
+                        ${metaHtml}
                     </div>
                 `;
             }
@@ -707,10 +747,12 @@
             const div = document.createElement('div');
             div.className = 'message-row other'; 
             div.innerHTML = `
-                <img src="${BOT_AVATAR_URL}" class="msg-profile-img">
                 <div class="msg-column">
-                    <span class="msg-name">Rocord Bot</span>
                     <div class="bot-actions">${chipsHtml}</div>
+                    <div class="msg-meta">
+                        <img src="${BOT_AVATAR_URL}" class="msg-meta-img">
+                        <span class="msg-meta-text">Rocord Bot</span>
+                    </div>
                 </div>
             `;
             container.appendChild(div);
@@ -812,23 +854,46 @@
             
             const container = document.getElementById('chat-messages');
             
+            // [수정] 본인 프로필 정보 가져오기
+            let avatarUrl = GUEST_AVATAR_URL;
+            let userName = "Guest";
+            if(!isAdmin && !isGuest) {
+                const u = JSON.parse(localStorage.getItem('discord_user') || '{}');
+                avatarUrl = getProfileImage(u);
+                userName = u.username || "User";
+            } else if(isAdmin) {
+                avatarUrl = BOT_AVATAR_URL;
+                userName = "Rocord Bot";
+            }
+
             const div = document.createElement('div');
             div.className = 'message-row me pending';
             
-            let bubbleContent = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+            let bubbleContent = '';
+            // [수정] 관리자일 경우 말풍선 배경 없음
+            if(isAdmin) {
+                bubbleContent = `<div class="message-bubble no-bg">${text.replace(/\n/g, '<br>')}</div>`;
+            } else {
+                bubbleContent = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+            }
+
              if (text.startsWith('[신청서:') || text.startsWith('[모델 문의]') || text.startsWith('[취소 요청서]')) {
                 bubbleContent = parseToEmbed(text);
             }
 
+            // [수정] 메타데이터 하단 배치
             div.innerHTML = `
                 <div class="msg-content-wrapper">
                     <div class="custom-loader"></div>
                     ${bubbleContent}
+                    <div class="msg-meta">
+                        <img src="${avatarUrl}" class="msg-meta-img">
+                        <span class="msg-meta-text">${userName}</span>
+                    </div>
                 </div>
             `;
             
             container.appendChild(div);
-            // [수정] 메시지 전송 직후 스크롤 내림
             scrollToBottom();
             
             if(!manualText) input.value = '';
