@@ -9,7 +9,37 @@
     <style>
         /* --- 기본 리셋 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #F0F2F5; color: #333; min-height: 100vh; overflow: hidden; } 
+        
+        /* [수정] 스크롤바 완전 숨김 (채팅창 제외) */
+        /* IE and Edge */
+        .chat-list-container, .main-content, body { -ms-overflow-style: none; }
+        /* Firefox */
+        .chat-list-container, .main-content, body { scrollbar-width: none; }
+        /* Chrome, Safari, Opera */
+        .chat-list-container::-webkit-scrollbar, 
+        .main-content::-webkit-scrollbar, 
+        body::-webkit-scrollbar { display: none; }
+
+        /* [수정] 채팅창 내부만 스크롤바 표시 */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+            display: block; /* 강제 표시 */
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        /* [수정] 전체 페이지 스크롤 방지 */
+        body { 
+            background-color: #F0F2F5; 
+            color: #333; 
+            height: 100vh; 
+            overflow: hidden; /* 페이지 전체 스크롤 막음 */
+        } 
         
         /* PC 및 모바일 공통 레이아웃 */
         .app-container { width: 100%; height: 100vh; background-color: #F0F2F5; position: relative; display: flex; flex-direction: column; overflow: hidden; }
@@ -41,7 +71,7 @@
         .btn-black-cta { width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-black-cta:active { transform: scale(0.97); }
 
-        /* 채팅 리스트 (스크롤 수정) */
+        /* 채팅 리스트 */
         .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; flex-shrink: 0; }
         
         .chat-list-container {
@@ -87,6 +117,8 @@
         /* 채팅 화면 */
         #chat-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 60; display: none; flex-direction: column; }
         #chat-screen.active { display: flex; }
+        
+        /* 헤더 스타일 */
         .chat-header { padding: 10px 15px; height: 50px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; flex-shrink: 0; }
         .chat-back-btn { font-size: 16px; padding: 5px; cursor: pointer; }
         .chat-title { font-size: 15px; font-weight: 700; }
@@ -316,10 +348,21 @@
                 <button class="login-btn-discord" onclick="openDiscordLogin()"><i class="fa-brands fa-discord"></i> Discord로 로그인</button>
                 <button class="login-btn-guest" onclick="proceedAsGuest()">비로그인으로 문의</button>
             </div>
+            
             <div class="chat-header">
                 <div class="chat-back-btn" onclick="closeChat()"><i class="fa-solid fa-chevron-left"></i></div>
                 <span class="chat-title" id="room-title-text">Rocord 지원팀</span>
+                
+                <div style="margin-left:auto; position:relative;">
+                    <i class="fa-solid fa-ellipsis-vertical" onclick="toggleMenu()" style="padding:10px; cursor:pointer; color:#333;"></i>
+                    <div id="header-menu" style="display:none; position:absolute; right:0; top:40px; background:#fff; box-shadow:0 5px 15px rgba(0,0,0,0.1); border-radius:10px; overflow:hidden; width:120px; z-index:100;">
+                        <div onclick="deleteChat()" style="padding:12px; font-size:13px; color:#FF3B30; font-weight:600; cursor:pointer; text-align:center;">
+                            <i class="fa-regular fa-trash-can"></i> 대화 삭제
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="chat-messages" id="chat-messages">
                 <div class="guest-warning-banner" id="guest-warning">
                     <i class="fa-solid fa-circle-exclamation"></i> 비로그인 상태입니다. 대화 기록이 저장되지 않으며, 페이지를 나가면 복구할 수 없습니다.
@@ -399,6 +442,42 @@
             handleInputColor();
             toggleEmojiPicker(); 
         });
+
+        // [수정] 메뉴 토글 함수
+        function toggleMenu() {
+            const menu = document.getElementById('header-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // [수정] 외부 클릭 시 메뉴 닫기
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.fa-ellipsis-vertical') && !e.target.closest('#header-menu')) {
+                document.getElementById('header-menu').style.display = 'none';
+            }
+        });
+
+        // [수정] 대화 삭제 함수
+        function deleteChat() {
+            if(!currentSessionId) return;
+            if(!confirm("정말 이 대화를 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+
+            fetch(`${API_BASE}/api/chat/delete`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: currentSessionId })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    alert("대화가 삭제되었습니다.");
+                    document.getElementById('header-menu').style.display = 'none';
+                    closeChat();
+                } else {
+                    alert("삭제 실패: " + data.error);
+                }
+            })
+            .catch(e => alert("오류 발생: " + e));
+        }
 
         window.onload = function() {
             const adminToken = localStorage.getItem('admin_token');
@@ -625,28 +704,23 @@
                 return;
             }
 
-            // [기능: 로그인 상태에서 기존 문의 확인 후 이동]
             if (isLoggedIn) {
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
                 isGuest = false;
                 document.getElementById('guest-warning').style.display = 'none';
                 
-                // 기존 대화 내역 확인
                 fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
                 .then(r => r.json())
                 .then(msgs => {
                     if (msgs.length > 0) {
-                        // 기존 문의가 있으면 바로 채팅 세션 열기
                         openChatSession(currentSessionId);
                     } else {
-                        // 없으면 채팅 초기화 (빈 화면)
                         initChatFlow();
                     }
                 })
                 .catch(() => initChatFlow());
             } else {
-                // 비로그인이면 오버레이 표시
                 document.getElementById('login-request-overlay').classList.add('active');
                 document.getElementById('guest-warning').style.display = 'block';
             }
@@ -680,7 +754,7 @@
             const container = document.getElementById('chat-messages');
             setTimeout(() => {
                 container.scrollTop = container.scrollHeight;
-            }, 50); // 약간의 딜레이를 주어 렌더링 후 스크롤
+            }, 50); 
         }
 
         function loadMessages() {
@@ -740,7 +814,6 @@
             let isAdminMsg = false;
 
             if (isAdmin) {
-                // 관리자 입장: 내가 보낸건 admin, 상대는 user
                 isMe = (msg.sender === 'admin');
                 if(isMe) {
                     avatarUrl = BOT_AVATAR_URL; 
@@ -751,7 +824,6 @@
                     senderName = msg.user_name || "User";
                 }
             } else {
-                // 유저 입장: 내가 보낸건 user, 상대는 admin
                 isMe = (msg.sender === 'user');
                 if(isMe) {
                     const userStr = localStorage.getItem('discord_user');
@@ -878,7 +950,8 @@
             chatScreen.classList.remove('active-session');
             document.getElementById('bottom-nav').classList.remove('hidden');
             document.getElementById('login-request-overlay').classList.remove('active');
-            
+            document.getElementById('header-menu').style.display = 'none'; // 메뉴 닫기
+
             if(pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(renderChatList, 3000);
             renderChatList();
@@ -981,7 +1054,7 @@
             else if (!isGuest) {
                 const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
                 userName = user.username || "User";
-                userAvatar = getProfileImage(user); // 실제 아바타 URL 전송
+                userAvatar = getProfileImage(user); 
             }
 
             fetch(`${API_BASE}/api/chat/send`, {
@@ -1041,7 +1114,7 @@
                     rooms.forEach(room => {
                         const d = new Date(room.timestamp);
                         const isUnread = room.unread_count > 0;
-                        const avatar = room.user_avatar || GUEST_AVATAR_URL; // [수정] DB에 저장된 실제 프로필 사진 사용
+                        const avatar = room.user_avatar || GUEST_AVATAR_URL; 
                         const name = room.is_guest ? '비로그인 유저 (Guest)' : room.user_name;
                         
                         const item = document.createElement('div');
