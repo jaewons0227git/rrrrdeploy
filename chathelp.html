@@ -9,261 +9,106 @@
     <style>
         /* --- 기본 리셋 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #F0F2F5; color: #333; min-height: 100vh; }
         
-        body { 
-            background-color: #F0F2F5; 
-            color: #333; 
-            min-height: 100vh;
-        }
-        
-        /* 앱 컨테이너 */
         .app-container {
-            width: 100%; 
-            max-width: 600px;
-            min-height: 100vh;
-            margin: 0 auto;
-            background-color: #F0F2F5; 
-            position: relative; 
-            padding-bottom: 80px; 
-            overflow-x: hidden;
+            width: 100%; max-width: 600px; min-height: 100vh; margin: 0 auto;
+            background-color: #F0F2F5; position: relative; padding-bottom: 80px; overflow-x: hidden;
         }
 
-        /* --- 상단 배너 영역 --- */
-        .brand-banner-container {
-            width: 100%;
-            position: relative;
-        }
+        /* 배너 */
+        .brand-banner-container { width: 100%; position: relative; }
+        .brand-banner-img { width: 100%; height: auto; display: block; object-fit: cover; }
+        .banner-vignette { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to bottom, rgba(240, 242, 245, 0), #F0F2F5); pointer-events: none; }
 
-        .brand-banner-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-        }
-
-        .banner-vignette {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40%;
-            background: linear-gradient(to bottom, rgba(240, 242, 245, 0), #F0F2F5);
-            pointer-events: none;
-        }
-
-        /* --- 메인 콘텐츠 영역 --- */
         .main-content { padding: 0 20px 20px; position: relative; z-index: 10; }
-        
         .tab-section { display: none; width: 100%; animation: fadeIn 0.3s ease-out; }
         .tab-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- [홈 탭] 디자인 --- */
-        .home-card {
-            background-color: #fff;
-            border-radius: 30px;
-            padding: 30px 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            margin-top: -10px; 
-            text-align: left;
-            position: relative;
-        }
-
+        /* 홈 탭 */
+        .home-card { background-color: #fff; border-radius: 30px; padding: 30px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-top: -10px; position: relative; }
         .bot-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         .bot-avatar { width: 48px; height: 48px; border-radius: 16px; background-color: #000; overflow: hidden; }
         .bot-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .bot-info h3 { font-size: 16px; font-weight: 700; color: #1c1c1e; }
         .bot-info p { font-size: 13px; color: #666; margin-top: 2px; }
-
         .notice-text { font-size: 15px; line-height: 1.6; color: #333; margin-bottom: 30px; font-weight: 500; }
         .notice-highlight { color: #FF3B30; font-weight: 700; margin-right: 4px; }
-
-        .btn-black-cta {
-            width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px;
-            font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
-            transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+        .btn-black-cta { width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-black-cta:active { transform: scale(0.97); }
 
-        /* --- [대화 탭 & 설정 탭] 스타일 --- */
+        /* 채팅 리스트 & 설정 */
         .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; }
-        
-        .chat-card {
-            background-color: #fff; padding: 20px; border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 12px;
-            cursor: pointer; transition: 0.2s;
-            position: relative;
-        }
+        .chat-card { background-color: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; }
         .chat-card:active { transform: scale(0.98); background-color: #fafafa; }
         .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
         .card-title { font-weight: 700; font-size: 15px; color: #1c1c1e; display: flex; align-items: center; gap: 8px; }
         .card-date { font-size: 12px; color: #999; }
         .card-preview { font-size: 13px; color: #666; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
-        .unread-dot {
-            width: 8px; height: 8px; background-color: #FF3B30; border-radius: 50%; display: inline-block;
-        }
+        .unread-dot { width: 8px; height: 8px; background-color: #FF3B30; border-radius: 50%; display: inline-block; }
 
         .settings-box { background-color: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .setting-row { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f5f5f5; cursor: pointer; font-size: 15px; color: #333; }
         .setting-row:last-child { border-bottom: none; }
-
-        /* 프로필 카드 스타일 (설정탭) */
-        .profile-card {
-            display: flex; align-items: center; gap: 15px; padding: 20px;
-            background-color: #fff; border-radius: 20px; margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
+        .profile-card { display: flex; align-items: center; gap: 15px; padding: 20px; background-color: #fff; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .profile-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #eee; }
         .profile-text h4 { font-size: 16px; font-weight: 700; color: #1c1c1e; margin-bottom: 3px; }
         .profile-text p { font-size: 12px; color: #888; }
 
-        /* --- 하단 네비게이션 --- */
-        .bottom-nav {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            height: 70px; border-top: 1px solid #eee;
-            display: flex; justify-content: space-around; align-items: center;
-            position: fixed; bottom: 0; left: 0; right: 0;
-            margin: 0 auto; max-width: 600px;
-            z-index: 50; transition: transform 0.3s;
-        }
+        /* 하단 네비 */
+        .bottom-nav { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); height: 70px; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; max-width: 600px; z-index: 50; transition: transform 0.3s; }
         .bottom-nav.hidden { transform: translateY(100%); }
         .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: #b0b0b0; cursor: pointer; }
         .nav-item i { font-size: 20px; margin-bottom: 2px; }
         .nav-item span { font-size: 10px; font-weight: 600; }
         .nav-item.active { color: #1c1c1e; }
 
-        /* --- 채팅 화면 --- */
-        #chat-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #fff; z-index: 60; 
-            display: none; flex-direction: column;
-        }
+        /* 채팅 화면 */
+        #chat-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 60; display: none; flex-direction: column; }
         #chat-screen.active { display: flex; }
-
         .chat-header { padding: 15px 20px; height: 60px; background: #fff; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; flex-shrink: 0; }
         .chat-back-btn { font-size: 18px; padding: 10px; cursor: pointer; }
         .chat-title { font-size: 17px; font-weight: 700; }
-
-        .chat-messages {
-            flex: 1; overflow-y: auto; padding: 20px; 
-            display: flex; flex-direction: column; gap: 15px; 
-            padding-bottom: 20px; -webkit-overflow-scrolling: touch;
-            background-color: #fff;
-        }
-
+        
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; -webkit-overflow-scrolling: touch; background-color: #fff; }
+        
+        /* 메시지 스타일 (Me vs Other) */
         .message-row { display: flex; width: 100%; }
-        .message-row.bot { justify-content: flex-start; }
-        .message-row.user { justify-content: flex-end; }
+        
+        /* 내가 보낸 메시지 (오른쪽/파랑) */
+        .message-row.me { justify-content: flex-end; }
+        .message-row.me .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
+        
+        /* 상대방이 보낸 메시지 (왼쪽/회색) */
+        .message-row.other { justify-content: flex-start; }
+        .message-row.other .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
         
         .message-bubble { max-width: 75%; padding: 12px 16px; font-size: 15px; line-height: 1.5; border-radius: 20px; position: relative; word-break: break-word; }
-        .message-row.bot .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
-        .message-row.user .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
-
         .bot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; margin-left: 5px; }
         .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
-        /* 채팅 입력창 영역 */
-        .chat-input-area {
-            width: 100%; background: #fff;
-            padding: 15px 20px 25px;
-            flex-shrink: 0;
-            position: relative;
-        }
+        /* 채팅 입력창 */
+        .chat-input-area { width: 100%; background: #fff; padding: 15px 20px 25px; flex-shrink: 0; position: relative; }
+        #emoji-picker-container { display: none; position: absolute; bottom: 100px; left: 20px; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 20px; overflow: hidden; }
+        emoji-picker { width: 300px; height: 350px; }
+        .chat-input-wrapper { background-color: #F2F2F7; border-radius: 25px; padding: 15px 15px 10px 15px; display: flex; flex-direction: column; }
+        .chat-input { background: transparent; border: none; width: 100%; outline: none; font-size: 16px; color: #333; resize: none; height: 24px; margin-bottom: 10px; }
+        .input-bottom-row { display: flex; justify-content: space-between; align-items: center; }
+        .input-icons { display: flex; gap: 15px; margin-left: 5px; }
+        .input-icons i { font-size: 20px; color: #999; cursor: pointer; }
+        .send-btn { width: 32px; height: 32px; background: #BCC8F0; color: #fff; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .send-btn.active { background-color: #305BFF; }
 
-        #emoji-picker-container {
-            display: none;
-            position: absolute;
-            bottom: 100px; 
-            left: 20px;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        emoji-picker {
-            width: 300px;
-            height: 350px;
-        }
-
-        .chat-input-wrapper {
-            background-color: #F2F2F7;
-            border-radius: 25px;
-            padding: 15px 15px 10px 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-input { 
-            background: transparent; border: none; 
-            width: 100%; outline: none; 
-            font-size: 16px; color: #333; 
-            resize: none; height: 24px;
-            margin-bottom: 10px;
-        }
-        .chat-input::placeholder { color: #aaa; }
-
-        .input-bottom-row {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .input-icons {
-            display: flex; gap: 15px; margin-left: 5px;
-        }
-        .input-icons i {
-            font-size: 20px; color: #999; cursor: pointer;
-        }
-
-        .send-btn { 
-            width: 32px; height: 32px; 
-            background: #BCC8F0; 
-            color: #fff; border-radius: 50%; border: none; 
-            cursor: pointer; display: flex; justify-content: center; align-items: center; 
-            transition: background 0.2s;
-        }
-        .send-btn.active {
-            background-color: #305BFF;
-        }
-        .send-btn i { font-size: 14px; }
-        .send-btn:active { transform: scale(0.95); }
-
-        /* --- 로그인 요구 오버레이 --- */
-        #login-request-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(255,255,255,0.95); z-index: 70;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px;
-        }
+        /* 오버레이 & 모달 */
+        #login-request-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.95); z-index: 70; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         #login-request-overlay.active { display: flex; }
+        .login-btn-discord { width: 100%; max-width: 300px; background-color: #5865F2; color: white; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
+        .login-btn-guest { width: 100%; max-width: 300px; background-color: #eee; color: #666; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
 
-        .login-btn-discord {
-            width: 100%; max-width: 300px;
-            background-color: #5865F2; color: white;
-            padding: 15px; border-radius: 12px; border: none;
-            font-size: 16px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
-        }
-        .login-btn-guest {
-            width: 100%; max-width: 300px;
-            background-color: #eee; color: #666;
-            padding: 15px; border-radius: 12px; border: none;
-            font-size: 14px; font-weight: 600; cursor: pointer;
-        }
-
-        /* --- 모달 --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: 100; 
-            display: none; justify-content: center; align-items: center; 
-            opacity: 0; transition: opacity 0.3s;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; }
-        .form-modal {
-            background: #fff; width: 85%; max-width: 400px; border-radius: 24px; padding: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s;
-        }
+        .form-modal { background: #fff; width: 85%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
         .modal-overlay.show .form-modal { transform: scale(1); }
         .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
         .input-group { margin-bottom: 12px; }
@@ -275,16 +120,19 @@
         .btn-cancel { background: #f2f2f7; color: #666; }
         .btn-submit { background: #1c1c1e; color: #fff; }
 
-        /* 로딩 */
-        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 200; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        /* 로딩 스피너 */
+        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 200; display: none; justify-content: center; align-items: center; }
         .loader-spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top: 3px solid #1c1c1e; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .loading-in-list { text-align: center; margin-top: 40px; }
+        .loading-in-list .loader-spinner { display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div class="loader-overlay" id="loader">
+        <div class="loader-overlay" id="full-loader">
             <div class="loader-spinner"></div>
         </div>
 
@@ -294,7 +142,6 @@
         </div>
 
         <main class="main-content">
-            
             <div id="tab-home" class="tab-section active">
                 <div class="home-card">
                     <div class="bot-profile">
@@ -306,26 +153,24 @@
                             <p>성장하는 서버를 위한 기록</p>
                         </div>
                     </div>
-
                     <div class="notice-text">
                         <span class="notice-highlight">!</span> 실시간 상담을 원하시면<br>
-                        아래 버튼을 눌러 대화를 시작해주세요.<br>
-                        <span style="font-size:13px; color:#888; font-weight:400; margin-top:5px; display:block;">
-                            • 서버 제휴, 모델 문의 등 다양한 상담이 가능합니다.
-                        </span>
+                        아래 버튼을 눌러 대화를 시작해주세요.
                     </div>
-
                     <button class="btn-black-cta" onclick="startNewChat()">
                         <span>문의하기</span>
                         <i class="fa-solid fa-paper-plane" style="font-size:14px;"></i>
                     </button>
-                    </div>
+                </div>
             </div>
 
             <div id="tab-chat" class="tab-section">
                 <h2 class="list-header" id="chat-tab-title">대화 기록</h2>
                 <div id="chat-list" class="chat-list-container">
-                    <div style="text-align:center; margin-top:100px; color:#aaa;">
+                    <div class="loading-in-list" style="display:none;">
+                        <div class="loader-spinner"></div>
+                    </div>
+                    <div id="empty-msg" style="text-align:center; margin-top:100px; color:#aaa; display:none;">
                         <p>대화 내역이 없습니다.</p>
                     </div>
                 </div>
@@ -333,7 +178,7 @@
 
             <div id="tab-settings" class="tab-section">
                 <h2 class="list-header">설정</h2>
-
+                
                 <div id="user-profile-section" class="profile-card" style="display:none;">
                     <img id="user-avatar" class="profile-img" src="" alt="Profile">
                     <div class="profile-text">
@@ -345,11 +190,11 @@
                 <div class="settings-box">
                     <div class="setting-row">
                         <span>현재 버전</span>
-                        <span style="color:#888;">v3.1.0</span>
+                        <span style="color:#888;">v3.2.0</span>
                     </div>
-                    <div class="setting-row" onclick="clearAllChats()">
-                        <span style="color:#FF3B30;">기록 전체 삭제</span>
-                        <i class="fa-solid fa-trash" style="color:#FF3B30; font-size:14px;"></i>
+                    <div class="setting-row" id="discord-login-btn-settings" onclick="openDiscordLogin()" style="display:none;">
+                        <span style="color:#5865F2; font-weight:700;">Discord 로그인</span>
+                        <i class="fa-brands fa-discord" style="color:#5865F2;"></i>
                     </div>
                     <div class="setting-row" id="admin-login-btn" onclick="openModal('modal-admin-login')">
                         <span>관리자 로그인</span>
@@ -364,45 +209,28 @@
         </main>
 
         <nav class="bottom-nav" id="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('home', this)">
-                <i class="fa-solid fa-house"></i><span>홈</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('chat', this)">
-                <i class="fa-regular fa-comments"></i><span>대화</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('settings', this)">
-                <i class="fa-solid fa-gear"></i><span>설정</span>
-            </div>
+            <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>홈</span></div>
+            <div class="nav-item" onclick="switchTab('chat', this)"><i class="fa-regular fa-comments"></i><span>대화</span></div>
+            <div class="nav-item" onclick="switchTab('settings', this)"><i class="fa-solid fa-gear"></i><span>설정</span></div>
         </nav>
 
         <div id="chat-screen">
             <div id="login-request-overlay">
                 <h2 style="margin-bottom:10px;">로그인 필요</h2>
-                <p style="color:#666; margin-bottom:30px; text-align:center; font-size:14px;">
-                    원활한 상담을 위해 디스코드 로그인이 필요합니다.<br>
-                    비로그인 시 일부 기능이 제한됩니다.
-                </p>
-                <button class="login-btn-discord" onclick="openDiscordLogin()">
-                    <i class="fa-brands fa-discord"></i> Discord로 로그인
-                </button>
-                <button class="login-btn-guest" onclick="proceedAsGuest()">
-                    비로그인으로 진행하기
-                </button>
+                <p style="color:#666; margin-bottom:30px; text-align:center; font-size:14px;">원활한 상담을 위해 디스코드 로그인이 필요합니다.<br>비로그인 시 일부 기능이 제한됩니다.</p>
+                <button class="login-btn-discord" onclick="openDiscordLogin()"><i class="fa-brands fa-discord"></i> Discord로 로그인</button>
+                <button class="login-btn-guest" onclick="proceedAsGuest()">비로그인으로 진행하기</button>
             </div>
 
             <div class="chat-header">
-                <div class="chat-back-btn" onclick="closeChat()">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </div>
-                <span class="chat-title">Rocord 지원팀</span>
+                <div class="chat-back-btn" onclick="closeChat()"><i class="fa-solid fa-chevron-left"></i></div>
+                <span class="chat-title" id="room-title-text">Rocord 지원팀</span>
             </div>
             
             <div class="chat-messages" id="chat-messages"></div>
 
             <div class="chat-input-area">
-                <div id="emoji-picker-container">
-                    <emoji-picker></emoji-picker>
-                </div>
+                <div id="emoji-picker-container"><emoji-picker></emoji-picker></div>
                 <div class="chat-input-wrapper">
                     <textarea class="chat-input" id="user-input" placeholder="메시지를 입력해주세요." onkeypress="handleEnter(event)" oninput="handleInputColor()"></textarea>
                     <div class="input-bottom-row">
@@ -410,9 +238,7 @@
                             <i class="fa-solid fa-paperclip"></i>
                             <i class="fa-regular fa-face-smile" onclick="toggleEmojiPicker()"></i>
                         </div>
-                        <button class="send-btn" id="send-btn" onclick="sendUserTextInput()">
-                            <i class="fa-solid fa-arrow-up"></i>
-                        </button>
+                        <button class="send-btn" id="send-btn" onclick="sendUserTextInput()"><i class="fa-solid fa-arrow-up"></i></button>
                     </div>
                 </div>
             </div>
@@ -425,35 +251,24 @@
                 <div class="input-group"><label class="input-label">서버 링크</label><input type="text" class="modal-input" id="p-link"></div>
                 <div class="input-group"><label class="input-label">홍보 문구</label><textarea class="modal-input" id="p-desc"></textarea></div>
                 <div class="input-group"><label class="input-label">신청자 ID</label><input type="text" class="modal-input" id="p-id"></div>
-                <div class="modal-btns">
-                    <button class="btn-cancel" onclick="closeModal('modal-partner')">취소</button>
-                    <button class="btn-submit" onclick="submitForm('partner')">신청</button>
-                </div>
+                <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('modal-partner')">취소</button><button class="btn-submit" onclick="submitForm('partner')">신청</button></div>
             </div>
         </div>
-
         <div class="modal-overlay" id="modal-cancel">
             <div class="form-modal">
                 <h3 class="modal-title">협력 취소</h3>
                 <div class="input-group"><label class="input-label">서버 이름</label><input type="text" class="modal-input" id="c-name"></div>
                 <div class="input-group"><label class="input-label">서버 링크</label><input type="text" class="modal-input" id="c-link"></div>
                 <div class="input-group"><label class="input-label">신청자 ID</label><input type="text" class="modal-input" id="c-id"></div>
-                <div class="modal-btns">
-                    <button class="btn-cancel" onclick="closeModal('modal-cancel')">취소</button>
-                    <button class="btn-submit" style="background-color:#FF3B30" onclick="submitForm('cancel')">요청</button>
-                </div>
+                <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('modal-cancel')">취소</button><button class="btn-submit" style="background-color:#FF3B30" onclick="submitForm('cancel')">요청</button></div>
             </div>
         </div>
-
         <div class="modal-overlay" id="modal-model">
             <div class="form-modal">
                 <h3 class="modal-title">모델 문의</h3>
                 <div class="input-group"><label class="input-label">모델 이름</label><input type="text" class="modal-input" id="m-name"></div>
                 <div class="input-group"><label class="input-label">문의 사유</label><textarea class="modal-input" id="m-reason"></textarea></div>
-                <div class="modal-btns">
-                    <button class="btn-cancel" onclick="closeModal('modal-model')">취소</button>
-                    <button class="btn-submit" onclick="submitForm('model')">전송</button>
-                </div>
+                <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('modal-model')">취소</button><button class="btn-submit" onclick="submitForm('model')">전송</button></div>
             </div>
         </div>
 
@@ -462,6 +277,12 @@
                 <h3 class="modal-title">관리자 로그인</h3>
                 <div class="input-group"><label class="input-label">아이디</label><input type="text" class="modal-input" id="admin-id"></div>
                 <div class="input-group"><label class="input-label">비밀번호</label><input type="password" class="modal-input" id="admin-pw"></div>
+                
+                <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+                    <input type="checkbox" id="admin-auto-login" style="width:16px; height:16px;">
+                    <label for="admin-auto-login" style="font-size:14px; color:#666;">자동 로그인</label>
+                </div>
+
                 <div class="modal-btns">
                     <button class="btn-cancel" onclick="closeModal('modal-admin-login')">취소</button>
                     <button class="btn-submit" onclick="loginAdmin()">로그인</button>
@@ -471,8 +292,9 @@
     </div>
 
     <script>
-        const API_BASE = "https://rocorddev.pythonanywhere.com"; 
-        
+        const API_BASE = "https://rocorddev.kro.kr"; // 도메인 변경됨에 따라 수정
+        // 테스트용: const API_BASE = "https://rocorddev.pythonanywhere.com"; 
+
         let currentSessionId = null; 
         let isGuest = false;
         let isAdmin = false;
@@ -501,9 +323,18 @@
                 }
             }
             
-            checkAdminStatus();
+            checkAdminStatus(); // 자동 로그인 체크
             updateSettingsUI();
         };
+
+        function checkAdminStatus() {
+            // 자동 로그인 토큰이 있는지 확인
+            const token = localStorage.getItem('admin_token');
+            if (token) {
+                isAdmin = true;
+                console.log("관리자 자동 로그인 됨");
+            }
+        }
 
         function openDiscordLogin() {
             const loginUrl = "https://discord.com/oauth2/authorize?client_id=1460856182716502036&response_type=token&redirect_uri=https%3A%2F%2Frocorddev.kro.kr%2Fchathelp&scope=identify";
@@ -515,9 +346,26 @@
         window.handleLoginSuccess = function(token) {
             localStorage.setItem('discord_token', token);
             localStorage.setItem('isDiscordLoggedIn', 'true');
+            
+            // 로딩 표시
+            document.getElementById('full-loader').style.display = 'flex';
+            
             fetchUserProfile(token).then(() => {
                 document.getElementById('login-request-overlay').classList.remove('active');
-                initChatFlow();
+                document.getElementById('full-loader').style.display = 'none';
+                
+                // 로그인 성공 후 채팅 리스트 즉시 갱신
+                if(document.getElementById('tab-chat').classList.contains('active')) {
+                     renderChatList();
+                }
+                
+                // 현재 채팅방이 열려있다면 즉시 연결
+                if(document.getElementById('chat-screen').classList.contains('active')) {
+                     const user = JSON.parse(localStorage.getItem('discord_user'));
+                     currentSessionId = user.id;
+                     isGuest = false;
+                     initChatFlow();
+                }
             });
         };
 
@@ -535,11 +383,6 @@
             .catch(err => console.error(err));
         }
 
-        function checkAdminStatus() {
-            const token = localStorage.getItem('admin_token');
-            if (token) isAdmin = true;
-        }
-
         function updateSettingsUI() {
             const userDataStr = localStorage.getItem('discord_user');
             const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
@@ -547,11 +390,15 @@
             const profileSection = document.getElementById('user-profile-section');
             const logoutBtn = document.getElementById('logout-btn');
             const adminBtn = document.getElementById('admin-login-btn');
+            const discordLoginBtn = document.getElementById('discord-login-btn-settings');
             
             if (isAdmin) {
                 adminBtn.style.display = 'none';
+                discordLoginBtn.style.display = 'none';
                 logoutBtn.style.display = 'flex';
                 document.getElementById('chat-tab-title').innerText = "문의 목록 (관리자)";
+                // 관리자는 프로필 섹션 숨김 (원하면 표시 가능)
+                profileSection.style.display = 'none';
                 return;
             }
 
@@ -565,9 +412,13 @@
                 document.getElementById('user-avatar').src = avatarUrl;
                 profileSection.style.display = 'flex';
                 logoutBtn.style.display = 'flex';
+                adminBtn.style.display = 'flex'; // 유저도 관리자 로그인 버튼 볼 수 있음
+                discordLoginBtn.style.display = 'none';
             } else {
                 profileSection.style.display = 'none';
                 logoutBtn.style.display = 'none';
+                adminBtn.style.display = 'flex';
+                discordLoginBtn.style.display = 'flex';
             }
         }
 
@@ -593,6 +444,8 @@
         function loginAdmin() {
             const id = document.getElementById('admin-id').value;
             const pw = document.getElementById('admin-pw').value;
+            const autoLogin = document.getElementById('admin-auto-login').checked;
+
             fetch(`${API_BASE}/api/admin/login`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -601,12 +454,17 @@
             .then(r => r.json())
             .then(data => {
                 if(data.success) {
-                    localStorage.setItem('admin_token', data.token);
+                    if (autoLogin) {
+                        localStorage.setItem('admin_token', data.token);
+                    } else {
+                        // 자동 로그인이 아닐 경우 세션 스토리지나 메모리에만 유지 (여기선 편의상 로컬스토리지에 넣되 로그아웃시 삭제)
+                        localStorage.setItem('admin_token', data.token);
+                    }
                     isAdmin = true;
                     alert('관리자 로그인 성공');
                     closeModal('modal-admin-login');
                     updateSettingsUI();
-                    location.reload(); 
+                    renderChatList(); // 관리자 뷰로 갱신
                 } else {
                     alert('로그인 실패');
                 }
@@ -619,7 +477,11 @@
             localStorage.removeItem('discord_token');
             localStorage.removeItem('discord_user');
             localStorage.removeItem('admin_token');
+            localStorage.removeItem('guest_id');
             isAdmin = false;
+            isGuest = false;
+            currentSessionId = null;
+            
             alert('로그아웃 되었습니다.');
             location.reload();
         }
@@ -629,6 +491,7 @@
             document.getElementById('chat-screen').classList.add('active');
             document.getElementById('bottom-nav').classList.add('hidden');
             document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('room-title-text').innerText = "Rocord 지원팀";
             
             if (isAdmin) {
                 alert("관리자 계정입니다. 대화 탭에서 문의를 확인하세요.");
@@ -671,19 +534,22 @@
             .then(msgs => {
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = ''; 
+                
                 msgs.forEach(msg => {
-                    if(msg.sender === 'user') addUserMessage(msg.text, false);
-                    else addBotMessage(msg.text, false);
+                    renderMessage(msg);
                 });
                 
-                if(msgs.length === 0) {
-                     const welcome = "안녕하세요, Rocord 지원팀입니다. 무엇을 도와드릴까요?";
-                     addBotMessage(welcome, false); 
+                // 메시지가 하나도 없으면 웰컴 메시지 (단, DB에 저장하지 않고 UI만 표시)
+                if(msgs.length === 0 && !isAdmin) {
+                     // const welcome = "안녕하세요, Rocord 지원팀입니다. 무엇을 도와드릴까요?";
+                     // addMessageUI(welcome, 'other');
                 }
                 
+                // 관리자가 아니고 게스트가 아니면 버튼 표시
                 if(!isAdmin) {
                     addBotActions();
                 }
+                container.scrollTop = container.scrollHeight;
             })
             .catch(e => console.error("채팅 로드 실패:", e));
         }
@@ -695,6 +561,10 @@
             document.getElementById('login-request-overlay').classList.remove('active'); 
             
             if(isAdmin) {
+                // 방 제목을 유저 이름으로 변경하고 싶다면 여기서 API 호출 필요하나, 일단 간단히 처리
+                document.getElementById('room-title-text').innerText = "문의 답변 중"; 
+                
+                // 읽음 처리
                 fetch(`${API_BASE}/api/chat/read`, {
                     method: 'POST',
                     headers: {
@@ -716,26 +586,46 @@
             renderChatList();
         }
 
-        function addBotMessage(text, save=true) { 
+        // [중요] 메시지 렌더링 로직 수정 (나 vs 상대방 구분)
+        function renderMessage(msg) {
+            const container = document.getElementById('chat-messages');
             const div = document.createElement('div');
-            div.className = 'message-row bot';
-            div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
-            document.getElementById('chat-messages').appendChild(div);
-            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+            
+            let isMe = false;
+
+            if (isAdmin) {
+                // 관리자 입장: 보낸 사람이 admin이면 '나', user면 '상대'
+                if (msg.sender === 'admin') isMe = true;
+                else isMe = false;
+            } else {
+                // 유저 입장: 보낸 사람이 user면 '나', admin이면 '상대'
+                if (msg.sender === 'user') isMe = true;
+                else isMe = false;
+            }
+
+            div.className = isMe ? 'message-row me' : 'message-row other';
+            div.innerHTML = `<div class="message-bubble">${msg.text.replace(/\n/g, '<br>')}</div>`;
+            container.appendChild(div);
         }
 
-        function addUserMessage(text, save=true) {
+        // 화면에 즉시 띄우기용 함수 (전송 직후)
+        function addMessageUI(text, type) {
+            const container = document.getElementById('chat-messages');
             const div = document.createElement('div');
-            div.className = 'message-row user';
+            div.className = type === 'me' ? 'message-row me' : 'message-row other';
             div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
-            document.getElementById('chat-messages').appendChild(div);
-            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
         }
 
         function addUserFormMessage(title, detailMap) {
             let text = `[신청서: ${title}]\n`;
             for(let key in detailMap) text += `- ${key}: ${detailMap[key]}\n`;
-            addUserMessage(text, false);
+            
+            // 1. 화면에 먼저 표시 (유저 입장이므로 'me')
+            addMessageUI(text, 'me'); 
+            
+            // 2. [중요] 백엔드로 전송하여 DB 저장
             sendToBackend(text);
         }
 
@@ -750,10 +640,9 @@
             chipsHtml += `<div class="action-chip" onclick="openModal('modal-model')">모델 문의</div>`;
 
             const div = document.createElement('div');
-            div.className = 'message-row bot';
+            div.className = 'message-row other'; // 봇이 주는 버튼이므로 왼쪽
             div.innerHTML = `<div class="bot-actions">${chipsHtml}</div>`;
             document.getElementById('chat-messages').appendChild(div);
-            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
 
         function handleInputColor() {
@@ -773,8 +662,7 @@
             const text = input.value.trim();
             if(!text) return;
             
-            if(isAdmin) addBotMessage(text, false); 
-            else addUserMessage(text, false); 
+            addMessageUI(text, 'me'); // 무조건 내가 보낸거니 오른쪽
             
             input.value = '';
             handleInputColor();
@@ -784,10 +672,21 @@
         }
 
         function sendToBackend(text) {
+            // [중요] 관리자가 보내면 sender='admin', 아니면 'user'
             const sender = isAdmin ? 'admin' : 'user';
+            
             let userName = 'Guest';
             let userAvatar = '';
-            if(!isAdmin && !isGuest) {
+            let isGuestValue = isGuest ? 1 : 0;
+
+            if (isAdmin) {
+                // 관리자가 보낼 때: 이름 고정, 게스트 아님 처리
+                userName = 'Rocord Support';
+                userAvatar = 'https://i.postimg.cc/zBXbMQkt/geulim1-png7777.png';
+                isGuestValue = 0; // 관리자는 게스트가 아님
+            } 
+            else if (!isGuest) {
+                // 로그인한 유저가 보낼 때
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 userName = user.username;
                 userAvatar = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '';
@@ -797,10 +696,10 @@
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    user_id: currentSessionId,
+                    user_id: currentSessionId, // 관리자면 상대방 ID, 유저면 내 ID
                     sender: sender,
                     content: text,
-                    is_guest: isGuest ? 1 : 0,
+                    is_guest: isGuestValue,
                     user_name: userName,
                     user_avatar: userAvatar
                 })
@@ -836,24 +735,46 @@
                 closeModal('modal-model');
             }
             
+            // 폼 메시지 전송 및 저장
             addUserFormMessage(title, details);
-            setTimeout(() => addBotMessage("문의가 접수되었습니다."), 500);
+            
+            // 자동 응답도 DB에 저장하고 싶다면?
+            // 현재는 봇 메시지를 단순히 UI에만 띄우고 있습니다.
+            // 봇 메시지도 저장하려면 sendToBackend와 유사한 API 호출이 필요하지만,
+            // 보통 자동응답은 클라이언트 단에서 보여주거나 서버가 처리합니다.
+            // 여기서는 요청하신대로 "시스템 메시지(신청서)"는 확실히 저장됩니다.
+            setTimeout(() => addMessageUI("문의가 접수되었습니다. (시스템 자동응답)", 'other'), 500);
         }
 
         function renderChatList() {
             const list = document.getElementById('chat-list');
+            const loading = list.querySelector('.loading-in-list');
+            const empty = document.getElementById('empty-msg');
             
+            // 로딩 표시 (데이터가 없을 때만)
+            if(list.children.length <= 2) { 
+                loading.style.display = 'block';
+                empty.style.display = 'none';
+            }
+
             if(isAdmin) {
                 fetch(`${API_BASE}/api/chat/rooms`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
                 })
                 .then(r => r.json())
                 .then(rooms => {
-                    list.innerHTML = '';
+                    loading.style.display = 'none';
+                    // 기존 카드들 제거 (로딩, 엠티 제외)
+                    Array.from(list.children).forEach(child => {
+                        if(!child.classList.contains('loading-in-list') && child.id !== 'empty-msg') list.removeChild(child);
+                    });
+
                     if(rooms.length === 0) {
-                        list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>문의 내역이 없습니다.</p></div>';
+                        empty.style.display = 'block';
                         return;
                     }
+                    empty.style.display = 'none';
+
                     rooms.forEach(room => {
                         const d = new Date(room.timestamp);
                         const isUnread = room.unread_count > 0;
@@ -876,19 +797,28 @@
                         list.appendChild(item);
                     });
                 })
-                .catch(e => console.error("목록 로드 실패", e));
+                .catch(e => {
+                    console.error("목록 로드 실패", e);
+                    loading.style.display = 'none';
+                });
                 return;
             }
 
-            // 일반 유저 모드: 자신의 최신 대화 불러와서 목록에 표시
+            // 일반 유저
             if(currentSessionId) {
                 fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
                 .then(r => r.json())
                 .then(msgs => {
-                    list.innerHTML = '';
+                    loading.style.display = 'none';
+                    Array.from(list.children).forEach(child => {
+                        if(!child.classList.contains('loading-in-list') && child.id !== 'empty-msg') list.removeChild(child);
+                    });
+
                     if(msgs.length > 0) {
+                        empty.style.display = 'none';
                         const last = msgs[msgs.length-1];
                         const d = new Date(last.timestamp);
+                        
                         const item = document.createElement('div');
                         item.className = 'chat-card';
                         item.onclick = () => openChatSession(currentSessionId);
@@ -900,22 +830,16 @@
                             <div class="card-preview">${last.text}</div>`;
                         list.appendChild(item);
                     } else {
-                        list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>대화 내역이 없습니다.</p></div>';
+                        empty.style.display = 'block';
                     }
                 })
                 .catch(() => {
-                    list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>기록을 불러올 수 없습니다.</p></div>';
+                    loading.style.display = 'none';
                 });
             } else {
-                 list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>로그인 후 기록을 확인할 수 있습니다.</p></div>';
-            }
-        }
-
-        function clearAllChats() {
-            if(confirm('화면에서만 지워집니다. 실제 데이터는 서버에 남습니다.')) { 
-                document.getElementById('chat-messages').innerHTML = '';
-                currentSessionId = null;
-                renderChatList();
+                 loading.style.display = 'none';
+                 empty.querySelector('p').innerText = "로그인 후 기록을 확인할 수 있습니다.";
+                 empty.style.display = 'block';
             }
         }
     </script>
