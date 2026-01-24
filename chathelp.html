@@ -7,70 +7,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <style>
-        /* --- 기본 리셋 --- */
+        /* --- 기본 스타일 (변경 없음) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* [수정] 스크롤바 완전 숨김 (채팅창 제외) */
-        /* IE and Edge */
-        .chat-list-container, .main-content, body, #tab-home, #tab-settings { -ms-overflow-style: none; }
-        /* Firefox */
-        .chat-list-container, .main-content, body, #tab-home, #tab-settings { scrollbar-width: none; }
-        /* Chrome, Safari, Opera */
-        .chat-list-container::-webkit-scrollbar, 
-        .main-content::-webkit-scrollbar, 
-        body::-webkit-scrollbar,
-        #tab-home::-webkit-scrollbar,
-        #tab-settings::-webkit-scrollbar { display: none; }
+        .chat-list-container, .main-content, body, #tab-home, #tab-settings { -ms-overflow-style: none; scrollbar-width: none; }
+        .chat-list-container::-webkit-scrollbar, .main-content::-webkit-scrollbar, body::-webkit-scrollbar, #tab-home::-webkit-scrollbar, #tab-settings::-webkit-scrollbar { display: none; }
+        .chat-messages::-webkit-scrollbar { width: 6px; display: block; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.2); border-radius: 3px; }
 
-        /* [수정] 채팅창 내부만 스크롤바 표시 */
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-            display: block; /* 강제 표시 */
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-
-        /* [수정] 전체 페이지 스크롤 방지 */
-        body { 
-            background-color: #F0F2F5; 
-            color: #333; 
-            height: 100vh; 
-            overflow: hidden; /* 페이지 전체 스크롤 막음 */
-        } 
-        
-        /* PC 및 모바일 공통 레이아웃 */
+        body { background-color: #F0F2F5; color: #333; height: 100vh; overflow: hidden; } 
         .app-container { width: 100%; height: 100vh; background-color: #F0F2F5; position: relative; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* 모바일 기본 */
-        /* [수정] main-content는 스크롤되지 않고 flex container 역할만 함 */
         .main-content { flex: 1; overflow: hidden; padding: 0 0 80px 0; position: relative; z-index: 10; display: flex; flex-direction: column; }
-        
-        /* 배너 */
         .brand-banner-container { width: 100%; position: relative; flex-shrink: 0; }
         .brand-banner-img { width: 100%; height: auto; display: block; object-fit: cover; }
         .banner-vignette { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to bottom, rgba(240, 242, 245, 0), #F0F2F5); pointer-events: none; }
 
-        /* [수정] 탭 섹션들이 개별적으로 스크롤을 가짐 */
         .tab-section { display: none; width: 100%; height: 100%; animation: fadeIn 0.3s ease-out; display: flex; flex-direction: column; }
         .tab-section:not(.active) { display: none !important; }
-        
-        /* [수정] 홈, 설정 탭은 내부 스크롤 허용 + 패딩 추가(잘림 방지) */
         #tab-home, #tab-settings { overflow-y: auto; padding: 20px; }
-        
-        /* [수정] 대화 탭은 스크롤 없이 꽉 채움 (내부 리스트가 스크롤) */
         #tab-chat { overflow: hidden; padding: 0 20px; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 홈 탭 */
         #tab-home { display: block; }
-        #tab-home:not(.active) { display: none; }
-        /* [수정] 마진 제거하여 상단 잘림 방지 */
+
         .home-card { background-color: #fff; border-radius: 30px; padding: 30px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-top: 0; position: relative; }
         .bot-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         .bot-avatar { width: 48px; height: 48px; border-radius: 16px; background-color: #000; overflow: hidden; }
@@ -82,16 +41,8 @@
         .btn-black-cta { width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-black-cta:active { transform: scale(0.97); }
 
-        /* 채팅 리스트 */
         .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; flex-shrink: 0; }
-        
-        .chat-list-container {
-            flex: 1; 
-            overflow-y: auto; 
-            padding-bottom: 20px; 
-            -webkit-overflow-scrolling: touch;
-        }
-
+        .chat-list-container { flex: 1; overflow-y: auto; padding-bottom: 20px; -webkit-overflow-scrolling: touch; }
         .chat-card { background-color: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; }
         .chat-card:active { transform: scale(0.98); background-color: #fafafa; }
         .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
@@ -100,7 +51,6 @@
         .card-preview { font-size: 13px; color: #666; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .unread-dot { width: 8px; height: 8px; background-color: #FF3B30; border-radius: 50%; display: inline-block; }
 
-        /* 설정 탭 */
         .settings-box { background-color: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .setting-row { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f5f5f5; cursor: pointer; font-size: 15px; color: #333; }
         .setting-row:last-child { border-bottom: none; }
@@ -109,7 +59,6 @@
         .profile-text h4 { font-size: 16px; font-weight: 700; color: #1c1c1e; margin-bottom: 3px; }
         .profile-text p { font-size: 12px; color: #888; }
         
-        /* 토글 스위치 */
         .toggle-switch { position: relative; display: inline-block; width: 40px; height: 24px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -117,7 +66,6 @@
         input:checked + .slider { background-color: #305BFF; }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* 하단 네비 */
         .bottom-nav { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); height: 70px; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; max-width: 100%; z-index: 50; transition: transform 0.3s; }
         .bottom-nav.hidden { transform: translateY(100%); }
         .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: #b0b0b0; cursor: pointer; }
@@ -125,74 +73,40 @@
         .nav-item span { font-size: 10px; font-weight: 600; }
         .nav-item.active { color: #1c1c1e; }
 
-        /* 채팅 화면 */
         #chat-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #fff; z-index: 60; display: none; flex-direction: column; }
         #chat-screen.active { display: flex; }
-        
-        /* 헤더 스타일 */
         .chat-header { padding: 10px 15px; height: 50px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; flex-shrink: 0; }
         .chat-back-btn { font-size: 16px; padding: 5px; cursor: pointer; }
         .chat-title { font-size: 15px; font-weight: 700; }
         
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; padding-bottom: 15px; -webkit-overflow-scrolling: touch; background-color: #fff; }
-        
-        /* 메시지 스타일 개선 (소형화 및 메타데이터 하단 이동) */
         .message-row { display: flex; width: 100%; flex-direction: column; }
-        
-        /* 내 메시지: 우측 정렬 */
         .message-row.me { align-items: flex-end; }
         .message-row.me .msg-content-wrapper { display: flex; flex-direction: column; align-items: flex-end; max-width: 85%; } 
         .message-row.me .msg-meta { justify-content: flex-end; }
-        
-        /* 상대 메시지: 좌측 정렬 */
         .message-row.other { align-items: flex-start; }
         .message-row.other .msg-column { display: flex; flex-direction: column; align-items: flex-start; max-width: 85%; }
         .message-row.other .msg-meta { justify-content: flex-start; }
-
-        /* 말풍선 스타일 (소형화) */
         .message-bubble { padding: 8px 12px; font-size: 13px; line-height: 1.4; border-radius: 16px; position: relative; word-break: break-word; }
         .me .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
         .other .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
-        
-        /* 관리자 메시지 (배경 없음) */
         .other .message-bubble.no-bg { background-color: transparent; color: #333; padding: 0; margin-bottom: 2px; }
-
-        /* 메타데이터 (프로필, 닉네임) - 말풍선 아래 작게 */
         .msg-meta { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
         .msg-meta-text { font-size: 10px; color: #aaa; }
         .msg-meta-img { width: 12px; height: 12px; border-radius: 50%; object-fit: cover; background: #eee; }
-
-        /* 로딩 스피너 */
-        .custom-loader {
-            width: 14px; height: 14px;
-            border: 2px solid rgba(0, 0, 0, 0.1); border-left-color: #305BFF;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            margin-right: 6px; flex-shrink: 0; margin-bottom: 2px;
-            display: none;
-        }
+        .custom-loader { width: 14px; height: 14px; border: 2px solid rgba(0, 0, 0, 0.1); border-left-color: #305BFF; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; flex-shrink: 0; margin-bottom: 2px; display: none; }
         .message-row.pending .custom-loader { display: block; }
         .message-row.pending .message-bubble { opacity: 0.9; }
 
-        /* 비로그인 경고 메시지 */
         .guest-warning-banner { background-color: #FFF4E5; color: #663C00; font-size: 11px; padding: 8px; border-radius: 6px; text-align: center; margin-bottom: 10px; display: none; }
-
-        /* [임베드 스타일] */
-        .discord-embed {
-            background-color: #F8F9FA;
-            border: 1px solid #E3E5E8; border-left: 3px solid #5865F2; 
-            border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #2E3338;
-            display: flex; flex-direction: column; gap: 3px;
-        }
+        .discord-embed { background-color: #F8F9FA; border: 1px solid #E3E5E8; border-left: 3px solid #5865F2; border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #2E3338; display: flex; flex-direction: column; gap: 3px; }
         .embed-title { font-weight: 700; color: #1c1c1e; margin-bottom: 3px; font-size: 13px; }
         .embed-field { display: flex; flex-direction: column; margin-bottom: 3px; }
         .embed-label { font-weight: 600; color: #666; font-size: 10px; }
         .embed-value { color: #333; font-weight: 400; }
-
-        /* 봇 버튼 */
         .bot-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-left: 0; }
         .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 6px 10px; border-radius: 14px; font-size: 11px; font-weight: 600; cursor: pointer; }
 
-        /* 입력창 (소형화) */
         .chat-input-area { width: 100%; background: #fff; padding: 10px 15px 20px; flex-shrink: 0; position: relative; }
         #emoji-picker-container { display: none; position: absolute; bottom: 80px; left: 15px; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 20px; overflow: hidden; }
         emoji-picker { width: 280px; height: 300px; }
@@ -205,7 +119,6 @@
         .send-btn i { font-size: 12px; }
         .send-btn.active { background-color: #305BFF; }
 
-        /* 오버레이 & 모달 */
         #login-request-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.98); z-index: 70; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         #login-request-overlay.active { display: flex; }
         .login-btn-discord { width: 100%; max-width: 280px; background-color: #5865F2; color: white; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
@@ -226,35 +139,25 @@
         .btn-cancel { background: #f2f2f7; color: #666; }
         .btn-submit { background: #1c1c1e; color: #fff; }
 
-        /* 로딩 */
         .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 200; display: none; justify-content: center; align-items: center; }
         .loader-spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top: 3px solid #1c1c1e; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-in-list { text-align: center; margin-top: 40px; }
         .loading-in-list .loader-spinner { display: inline-block; }
 
-        /* PC 분할 화면 스타일 */
         .pc-placeholder { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; color: #ccc; background-color: #fff; }
         
         @media (min-width: 768px) {
             .app-container { max-width: 1400px; margin: 0 auto; flex-direction: row; box-shadow: 0 0 30px rgba(0,0,0,0.05); }
-            
-            /* 왼쪽 사이드바 */
             .main-content { width: 400px; flex-shrink: 0; border-right: 1px solid #eee; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
             .brand-banner-container { display: none; }
             .tab-section { padding: 0; flex: 1; height: auto; }
-            
-            /* 오른쪽 채팅창 */
             #chat-screen { position: relative; flex: 1; display: flex !important; z-index: 1; height: 100%; }
             .chat-back-btn { display: none; } 
             .bottom-nav { display: none; } 
-            
-            /* PC용 네비게이션 */
             .pc-nav-wrapper { display: flex; margin-bottom: 20px; background: #f2f2f7; padding: 5px; border-radius: 16px; flex-shrink: 0; }
             .pc-nav-item { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; font-size: 14px; border-radius: 12px; color: #888; transition: 0.2s; }
             .pc-nav-item.active { background: #fff; color: #1c1c1e; shadow: 0 2px 5px rgba(0,0,0,0.05); }
-
-            /* 채팅 미선택시 플레이스홀더 */
             #chat-screen:not(.active-session) .chat-header,
             #chat-screen:not(.active-session) .chat-messages,
             #chat-screen:not(.active-session) .chat-input-area { display: none; }
@@ -316,7 +219,6 @@
                 </div>
                 <div class="settings-box">
                     <div class="setting-row"><span>현재 버전</span><span style="color:#888;">v3.6.0</span></div>
-                    
                     <div class="setting-row" id="admin-status-row" style="display:none; cursor:default;">
                         <span>영업 상태 (온라인)</span>
                         <label class="toggle-switch">
@@ -324,7 +226,6 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-
                     <div class="setting-row" id="discord-login-btn-settings" onclick="openDiscordLogin()" style="display:none;">
                         <span style="color:#5865F2; font-weight:700;">Discord 로그인</span><i class="fa-brands fa-discord" style="color:#5865F2;"></i>
                     </div>
@@ -363,7 +264,6 @@
             <div class="chat-header">
                 <div class="chat-back-btn" onclick="closeChat()"><i class="fa-solid fa-chevron-left"></i></div>
                 <span class="chat-title" id="room-title-text">Rocord 지원팀</span>
-                
                 <div style="margin-left:auto; position:relative;">
                     <i class="fa-solid fa-ellipsis-vertical" onclick="toggleMenu()" style="padding:10px; cursor:pointer; color:#333;"></i>
                     <div id="header-menu" style="display:none; position:absolute; right:0; top:40px; background:#fff; box-shadow:0 5px 15px rgba(0,0,0,0.1); border-radius:10px; overflow:hidden; width:120px; z-index:100;">
@@ -393,7 +293,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="modal-overlay" id="modal-partner">
             <div class="form-modal">
                 <h3 class="modal-title">협력서버 신청</h3>
@@ -454,20 +354,16 @@
             toggleEmojiPicker(); 
         });
 
-        // [수정] 메뉴 토글 함수
         function toggleMenu() {
             const menu = document.getElementById('header-menu');
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
-
-        // [수정] 외부 클릭 시 메뉴 닫기
         window.addEventListener('click', function(e) {
             if (!e.target.closest('.fa-ellipsis-vertical') && !e.target.closest('#header-menu')) {
                 document.getElementById('header-menu').style.display = 'none';
             }
         });
 
-        // [수정] 대화 삭제 함수
         function deleteChat() {
             if(!currentSessionId) return;
             if(!confirm("정말 이 대화를 삭제하시겠습니까? 복구할 수 없습니다.")) return;
@@ -483,9 +379,7 @@
                     alert("대화가 삭제되었습니다.");
                     document.getElementById('header-menu').style.display = 'none';
                     closeChat();
-                } else {
-                    alert("삭제 실패: " + data.error);
-                }
+                } else { alert("삭제 실패: " + data.error); }
             })
             .catch(e => alert("오류 발생: " + e));
         }
@@ -517,15 +411,10 @@
             }
             
             updateSettingsUI();
-            
-            // 관리자일 경우 상태 로드
             if(isAdmin) loadAdminStatus();
-
-            if(window.innerWidth >= 768) {
+            if(window.innerWidth >= 768 || document.getElementById('tab-chat').classList.contains('active')) {
                 renderChatList();
-                pollingInterval = setInterval(renderChatList, 3000); 
-            } else if(document.getElementById('tab-chat').classList.contains('active')) {
-                renderChatList();
+                if(window.innerWidth >= 768) pollingInterval = setInterval(renderChatList, 3000); 
             }
         };
 
@@ -545,14 +434,15 @@
                 document.getElementById('full-loader').style.display = 'none';
                 updateSettingsUI();
                 renderChatList();
-                if(document.getElementById('chat-screen').classList.contains('active')) initChatFlow();
+                // 로그인 직후 대화 세션 준비
+                if(document.getElementById('chat-screen').classList.contains('active')) {
+                     prepareChatSession(currentSessionId, false);
+                }
             });
         };
 
         function fetchUserProfile(token) {
-            return fetch('https://discord.com/api/users/@me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            return fetch('https://discord.com/api/users/@me', { headers: { 'Authorization': `Bearer ${token}` } })
             .then(res => res.json())
             .then(data => {
                 if(data.id) {
@@ -560,15 +450,13 @@
                     currentSessionId = data.id;
                     isGuest = false;
                     localStorage.removeItem('guest_id');
-                    
                     fetch(`${API_BASE}/api/login`, {
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({access_token: token})
                     });
                 }
-            })
-            .catch(err => console.error(err));
+            }).catch(err => console.error(err));
         }
 
         function getProfileImage(user) {
@@ -580,7 +468,6 @@
         function updateSettingsUI() {
             const userDataStr = localStorage.getItem('discord_user');
             const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
-            
             const profileSection = document.getElementById('user-profile-section');
             const logoutBtn = document.getElementById('logout-btn');
             const adminBtn = document.getElementById('admin-login-btn');
@@ -588,59 +475,32 @@
             const adminStatusRow = document.getElementById('admin-status-row');
             
             if (isAdmin) {
-                adminBtn.style.display = 'none';
-                discordLoginBtn.style.display = 'none';
-                logoutBtn.style.display = 'flex';
-                adminStatusRow.style.display = 'flex'; // 관리자 상태 토글 표시
-                document.getElementById('chat-tab-title').innerText = "문의 목록 (관리자)";
-                profileSection.style.display = 'none';
-                return;
-            } else {
-                adminStatusRow.style.display = 'none';
-            }
+                adminBtn.style.display = 'none'; discordLoginBtn.style.display = 'none'; logoutBtn.style.display = 'flex';
+                adminStatusRow.style.display = 'flex'; document.getElementById('chat-tab-title').innerText = "문의 목록 (관리자)";
+                profileSection.style.display = 'none'; return;
+            } else { adminStatusRow.style.display = 'none'; }
 
             if (isLoggedIn && userDataStr) {
                 const user = JSON.parse(userDataStr);
                 document.getElementById('user-name').innerText = user.global_name || user.username;
                 document.getElementById('user-id').innerText = `ID: ${user.id}`;
                 document.getElementById('user-avatar').src = getProfileImage(user);
-                profileSection.style.display = 'flex';
-                logoutBtn.style.display = 'flex';
-                adminBtn.style.display = 'flex';
-                discordLoginBtn.style.display = 'none';
+                profileSection.style.display = 'flex'; logoutBtn.style.display = 'flex'; adminBtn.style.display = 'flex'; discordLoginBtn.style.display = 'none';
             } else {
-                profileSection.style.display = 'none';
-                logoutBtn.style.display = 'none';
-                adminBtn.style.display = 'flex';
-                discordLoginBtn.style.display = 'flex';
+                profileSection.style.display = 'none'; logoutBtn.style.display = 'none'; adminBtn.style.display = 'flex'; discordLoginBtn.style.display = 'flex';
             }
         }
 
         function loadAdminStatus() {
-            fetch(`${API_BASE}/api/admin/status`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
-            })
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('admin-status-toggle').checked = data.online;
-            });
+            fetch(`${API_BASE}/api/admin/status`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` } })
+            .then(r => r.json()).then(data => { document.getElementById('admin-status-toggle').checked = data.online; });
         }
-
         function toggleAdminStatus() {
             const isOnline = document.getElementById('admin-status-toggle').checked;
             fetch(`${API_BASE}/api/admin/status`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
                 body: JSON.stringify({ online: isOnline })
-            })
-            .then(r => r.json())
-            .then(data => {
-                if(data.success) {
-                    console.log('Status updated:', data.online);
-                }
             });
         }
 
@@ -649,21 +509,15 @@
                 document.querySelectorAll('.pc-nav-item').forEach(el => el.classList.remove('active'));
                 if(element.classList.contains('pc-nav-item')) element.classList.add('active');
             }
-
             document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if(element.classList.contains('nav-item')) element.classList.add('active');
 
             if(tabName === 'chat') {
-                if(window.innerWidth < 768) {
-                    document.getElementById('chat-screen').classList.remove('active');
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-                }
+                if(window.innerWidth < 768) { document.getElementById('chat-screen').classList.remove('active'); document.getElementById('bottom-nav').classList.remove('hidden'); }
                 if (pollingInterval) clearInterval(pollingInterval);
-                listInitialized = false; 
-                renderChatList();
+                listInitialized = false; renderChatList();
                 pollingInterval = setInterval(renderChatList, 2000); 
             } else {
                 if (pollingInterval && window.innerWidth < 768) clearInterval(pollingInterval);
@@ -678,68 +532,50 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({id, pw})
             })
-            .then(r => r.json())
-            .then(data => {
+            .then(r => r.json()).then(data => {
                 if(data.success) {
-                    localStorage.setItem('admin_token', data.token);
-                    isAdmin = true;
-                    alert('관리자 로그인 성공');
-                    closeModal('modal-admin-login');
-                    updateSettingsUI();
-                    loadAdminStatus(); // 로그인 후 상태 로드
-                    renderChatList(); 
-                } else {
-                    alert('로그인 실패');
-                }
-            })
-            .catch(e => alert("서버 통신 오류: " + e));
+                    localStorage.setItem('admin_token', data.token); isAdmin = true;
+                    alert('관리자 로그인 성공'); closeModal('modal-admin-login'); updateSettingsUI(); loadAdminStatus(); renderChatList(); 
+                } else { alert('로그인 실패'); }
+            }).catch(e => alert("서버 통신 오류: " + e));
         }
 
-        function logout() {
-            localStorage.clear();
-            alert('로그아웃 되었습니다.');
-            location.href = location.pathname; 
-        }
+        function logout() { localStorage.clear(); alert('로그아웃 되었습니다.'); location.href = location.pathname; }
 
+        // [수정] 문의하기 버튼 시작 로직
         function startNewChat() {
-            const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
-            document.getElementById('chat-screen').classList.add('active');
-            document.getElementById('chat-screen').classList.add('active-session');
-            document.getElementById('bottom-nav').classList.add('hidden');
-            document.getElementById('chat-messages').innerHTML = '';
-            document.getElementById('room-title-text').innerText = "Rocord 지원팀";
-            
             if (isAdmin) {
                 alert("관리자 계정입니다. 대화 탭에서 문의를 확인하세요.");
-                closeChat();
                 return;
             }
+
+            // 1. 전체 로더 띄움
+            document.getElementById('full-loader').style.display = 'flex';
+
+            // 2. 로그인 상태 확인
+            const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
 
             if (isLoggedIn) {
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
                 isGuest = false;
-                document.getElementById('guest-warning').style.display = 'none';
-                
-                // [수정] 채팅방 초기화/생성 요청 (존재하면 유지, 없으면 생성)
-                fetch(`${API_BASE}/api/chat/init`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ user_id: currentSessionId, is_guest: 0 })
-                })
-                .then(r => r.json())
-                .then(data => {
-                    openChatSession(currentSessionId);
-                })
-                .catch(() => initChatFlow());
-                
+                // 기존 채팅방 확인 및 진입
+                prepareChatSession(currentSessionId, false);
             } else {
+                // 비로그인 상태 -> 오버레이 표시를 위해 로더만 끄고 오버레이 활성화
+                document.getElementById('full-loader').style.display = 'none';
+                document.getElementById('chat-screen').classList.add('active'); // 화면은 띄우되 내용은 오버레이로 가림
                 document.getElementById('login-request-overlay').classList.add('active');
+                document.getElementById('bottom-nav').classList.add('hidden');
                 document.getElementById('guest-warning').style.display = 'block';
             }
         }
 
+        // [수정] 비로그인(게스트) 진행 로직
         function proceedAsGuest() {
+            // 로더 다시 띄움
+            document.getElementById('full-loader').style.display = 'flex';
+            
             isGuest = true;
             let guestId = localStorage.getItem('guest_id');
             if(!guestId) {
@@ -747,23 +583,34 @@
                 localStorage.setItem('guest_id', guestId);
             }
             currentSessionId = guestId;
-            document.getElementById('login-request-overlay').classList.remove('active');
             
-            const warning = document.getElementById('guest-warning');
-            warning.style.display = 'block';
-            document.getElementById('chat-messages').appendChild(warning);
-            
-            // [수정] 채팅방 초기화/생성 요청
+            // 게스트 세션 준비
+            prepareChatSession(currentSessionId, true);
+        }
+
+        // [핵심 로직 추가] 채팅방 준비 (검증 후 진입)
+        function prepareChatSession(userId, guestFlag) {
+            // 백엔드에 채팅방 초기화 요청 (있으면 유지, 없으면 생성)
             fetch(`${API_BASE}/api/chat/init`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ user_id: currentSessionId, is_guest: 1 })
+                body: JSON.stringify({ user_id: userId, is_guest: guestFlag ? 1 : 0 })
             })
             .then(r => r.json())
             .then(data => {
-                 initChatFlow();
+                // 검증 완료 후 UI 진입
+                document.getElementById('full-loader').style.display = 'none';
+                document.getElementById('login-request-overlay').classList.remove('active');
+                document.getElementById('room-title-text').innerText = "Rocord 지원팀";
+                document.getElementById('guest-warning').style.display = guestFlag ? 'block' : 'none';
+                
+                openChatSession(userId);
             })
-            .catch(() => initChatFlow());
+            .catch(err => {
+                console.error(err);
+                document.getElementById('full-loader').style.display = 'none';
+                alert("채팅방 연결에 실패했습니다. 다시 시도해주세요.");
+            });
         }
 
         function initChatFlow() {
@@ -775,9 +622,7 @@
 
         function scrollToBottom() {
             const container = document.getElementById('chat-messages');
-            setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 50); 
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50); 
         }
 
         function loadMessages() {
@@ -788,9 +633,9 @@
                 const container = document.getElementById('chat-messages');
                 const pendingElements = Array.from(container.querySelectorAll('.message-row.pending'));
                 
+                // 경고창 유지 로직
                 const warningBanner = document.getElementById('guest-warning');
                 const warningHTML = warningBanner ? warningBanner.outerHTML : '';
-                
                 const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
                 const showWarning = !isLoggedIn && !isAdmin;
 
@@ -803,7 +648,6 @@
 
                 if (currentContentWithoutPending.length !== newContent.length || pendingElements.length > 0) {
                    container.innerHTML = newContent;
-                   
                    if(showWarning) {
                        const newWarning = document.createElement('div');
                        newWarning.className = 'guest-warning-banner';
@@ -818,12 +662,9 @@
                        hiddenWarning.style.display = 'none';
                        container.appendChild(hiddenWarning);
                    }
-
                    pendingElements.forEach(el => container.appendChild(el));
                    scrollToBottom();
-                } else if(!chatInitialized) {
-                    scrollToBottom();
-                }
+                } else if(!chatInitialized) { scrollToBottom(); }
                 chatInitialized = true;
             })
             .catch(e => console.error("채팅 로드 실패:", e));
@@ -831,42 +672,22 @@
 
         function renderMessage(msg, container) {
             const div = document.createElement('div');
-            let isMe = false;
-            let avatarUrl = "";
-            let senderName = "";
-            let isAdminMsg = false;
+            let isMe = false, avatarUrl = "", senderName = "", isAdminMsg = false;
 
             if (isAdmin) {
                 isMe = (msg.sender === 'admin');
-                if(isMe) {
-                    avatarUrl = BOT_AVATAR_URL; 
-                    senderName = "Rocord Bot";
-                    isAdminMsg = true;
-                } else {
-                    avatarUrl = msg.user_avatar || GUEST_AVATAR_URL;
-                    senderName = msg.user_name || "User";
-                }
+                if(isMe) { avatarUrl = BOT_AVATAR_URL; senderName = "Rocord Bot"; isAdminMsg = true; }
+                else { avatarUrl = msg.user_avatar || GUEST_AVATAR_URL; senderName = msg.user_name || "User"; }
             } else {
                 isMe = (msg.sender === 'user');
                 if(isMe) {
                     const userStr = localStorage.getItem('discord_user');
-                    if(userStr) {
-                         const u = JSON.parse(userStr);
-                         avatarUrl = getProfileImage(u);
-                         senderName = u.username || "User";
-                    } else {
-                         avatarUrl = GUEST_AVATAR_URL;
-                         senderName = "Guest";
-                    }
-                } else {
-                    avatarUrl = BOT_AVATAR_URL;
-                    senderName = "Rocord Bot";
-                    isAdminMsg = true;
-                }
+                    if(userStr) { const u = JSON.parse(userStr); avatarUrl = getProfileImage(u); senderName = u.username || "User"; }
+                    else { avatarUrl = GUEST_AVATAR_URL; senderName = "Guest"; }
+                } else { avatarUrl = BOT_AVATAR_URL; senderName = "Rocord Bot"; isAdminMsg = true; }
             }
 
             div.className = isMe ? 'message-row me' : 'message-row other';
-            
             let contentHtml = '';
             if (msg.text.startsWith('[신청서:') || msg.text.startsWith('[모델 문의]') || msg.text.startsWith('[취소 요청서]')) {
                 contentHtml = parseToEmbed(msg.text);
@@ -875,54 +696,19 @@
                 contentHtml = `<div class="${bubbleClass}">${msg.text.replace(/\n/g, '<br>')}</div>`;
             }
 
-            let metaHtml = `
-                <div class="msg-meta">
-                    <img src="${avatarUrl}" class="msg-meta-img" onerror="this.src='${GUEST_AVATAR_URL}'">
-                    <span class="msg-meta-text">${senderName}</span>
-                </div>
-            `;
-
-            let inner = '';
-            if(isMe) {
-                inner = `
-                    <div class="msg-content-wrapper">
-                        <div class="custom-loader"></div>
-                        ${contentHtml}
-                        ${metaHtml}
-                    </div>
-                `;
-            } else {
-                inner = `
-                    <div class="msg-column">
-                        ${contentHtml}
-                        ${metaHtml}
-                    </div>
-                `;
-            }
-            
-            div.innerHTML = inner;
+            let metaHtml = `<div class="msg-meta"><img src="${avatarUrl}" class="msg-meta-img" onerror="this.src='${GUEST_AVATAR_URL}'"><span class="msg-meta-text">${senderName}</span></div>`;
+            div.innerHTML = isMe ? `<div class="msg-content-wrapper"><div class="custom-loader"></div>${contentHtml}${metaHtml}</div>` : `<div class="msg-column">${contentHtml}${metaHtml}</div>`;
             container.appendChild(div);
         }
 
         function addBotActions(container) {
             let chipsHtml = '';
-            if (!isGuest) {
-                chipsHtml += `<div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div>`;
-                chipsHtml += `<div class="action-chip" onclick="openModal('modal-cancel')">협력 취소</div>`;
-            }
+            if (!isGuest) { chipsHtml += `<div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div><div class="action-chip" onclick="openModal('modal-cancel')">협력 취소</div>`; }
             chipsHtml += `<div class="action-chip" onclick="openModal('modal-model')">모델 문의</div>`;
             
             const div = document.createElement('div');
             div.className = 'message-row other'; 
-            div.innerHTML = `
-                <div class="msg-column">
-                    <div class="bot-actions">${chipsHtml}</div>
-                    <div class="msg-meta">
-                        <img src="${BOT_AVATAR_URL}" class="msg-meta-img">
-                        <span class="msg-meta-text">Rocord Bot</span>
-                    </div>
-                </div>
-            `;
+            div.innerHTML = `<div class="msg-column"><div class="bot-actions">${chipsHtml}</div><div class="msg-meta"><img src="${BOT_AVATAR_URL}" class="msg-meta-img"><span class="msg-meta-text">Rocord Bot</span></div></div>`;
             container.appendChild(div);
         }
 
@@ -937,9 +723,7 @@
                     const label = parts[0].replace('-', '').trim();
                     const value = parts.slice(1).join(':').trim();
                     fieldsHtml += `<div class="embed-field"><span class="embed-label">${label}</span><span class="embed-value">${value}</span></div>`;
-                } else {
-                    fieldsHtml += `<div class="embed-field"><span class="embed-value">${lines[i]}</span></div>`;
-                }
+                } else { fieldsHtml += `<div class="embed-field"><span class="embed-value">${lines[i]}</span></div>`; }
             }
             return `<div class="discord-embed"><div class="embed-title">${title}</div>${fieldsHtml}</div>`;
         }
@@ -947,20 +731,16 @@
         function openChatSession(id) {
             currentSessionId = id;
             const chatScreen = document.getElementById('chat-screen');
-            chatScreen.classList.add('active');
-            chatScreen.classList.add('active-session');
-            
+            chatScreen.classList.add('active'); chatScreen.classList.add('active-session');
             document.getElementById('bottom-nav').classList.add('hidden');
             document.getElementById('login-request-overlay').classList.remove('active'); 
             
+            // 기존 메시지 지우지 않고 로드 (깜빡임 방지)
             if(isAdmin) {
                 document.getElementById('room-title-text').innerText = "문의 답변 중"; 
                 fetch(`${API_BASE}/api/chat/read`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` },
                     body: JSON.stringify({ user_id: id })
                 });
             }
@@ -969,11 +749,10 @@
 
         function closeChat() {
             const chatScreen = document.getElementById('chat-screen');
-            chatScreen.classList.remove('active');
-            chatScreen.classList.remove('active-session');
+            chatScreen.classList.remove('active'); chatScreen.classList.remove('active-session');
             document.getElementById('bottom-nav').classList.remove('hidden');
             document.getElementById('login-request-overlay').classList.remove('active');
-            document.getElementById('header-menu').style.display = 'none'; // 메뉴 닫기
+            document.getElementById('header-menu').style.display = 'none';
 
             if(pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(renderChatList, 3000);
@@ -985,23 +764,19 @@
             if(type==='partner'){
                 const name=document.getElementById('p-name').value, link=document.getElementById('p-link').value, desc=document.getElementById('p-desc').value, id=document.getElementById('p-id').value;
                 if(!name || !link || !desc || !id) return alert('모두 입력해주세요.');
-                title="협력 신청서"; details={서버명:name, 링크:link, ID:id, 설명:desc};
-                closeModal('modal-partner');
+                title="협력 신청서"; details={서버명:name, 링크:link, ID:id, 설명:desc}; closeModal('modal-partner');
             } else if(type==='cancel'){
                 const name=document.getElementById('c-name').value, link=document.getElementById('c-link').value, id=document.getElementById('c-id').value;
                 if(!name || !link || !id) return alert('모두 입력해주세요.');
-                title="취소 요청서"; details={서버명:name, 링크:link, ID:id};
-                closeModal('modal-cancel');
+                title="취소 요청서"; details={서버명:name, 링크:link, ID:id}; closeModal('modal-cancel');
             } else if(type==='model'){
                 const name=document.getElementById('m-name').value, reason=document.getElementById('m-reason').value;
                 if(!name || !reason) return alert('모두 입력해주세요.');
-                title="모델 문의"; details={모델:name, 사유:reason};
-                closeModal('modal-model');
+                title="모델 문의"; details={모델:name, 사유:reason}; closeModal('modal-model');
             }
             
             let text = `[${title}]\n`;
             for(let key in details) text += `- ${key}: ${details[key]}\n`;
-            
             sendUserTextInput(text); 
         }
 
@@ -1022,81 +797,45 @@
             if(!text) return;
             
             const container = document.getElementById('chat-messages');
-            
-            let avatarUrl = GUEST_AVATAR_URL;
-            let userName = "Guest";
+            let avatarUrl = GUEST_AVATAR_URL, userName = "Guest";
             if(!isAdmin && !isGuest) {
                 const u = JSON.parse(localStorage.getItem('discord_user') || '{}');
-                avatarUrl = getProfileImage(u);
-                userName = u.username || "User";
-            } else if(isAdmin) {
-                avatarUrl = BOT_AVATAR_URL;
-                userName = "Rocord Bot";
-            }
+                avatarUrl = getProfileImage(u); userName = u.username || "User";
+            } else if(isAdmin) { avatarUrl = BOT_AVATAR_URL; userName = "Rocord Bot"; }
 
             const div = document.createElement('div');
             div.className = 'message-row me pending';
-            
             let bubbleContent = '';
-            if(isAdmin) {
-                bubbleContent = `<div class="message-bubble no-bg">${text.replace(/\n/g, '<br>')}</div>`;
-            } else {
-                bubbleContent = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
-            }
+            if(isAdmin) bubbleContent = `<div class="message-bubble no-bg">${text.replace(/\n/g, '<br>')}</div>`;
+            else bubbleContent = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
 
-             if (text.startsWith('[신청서:') || text.startsWith('[모델 문의]') || text.startsWith('[취소 요청서]')) {
-                bubbleContent = parseToEmbed(text);
-            }
+             if (text.startsWith('[신청서:') || text.startsWith('[모델 문의]') || text.startsWith('[취소 요청서]')) { bubbleContent = parseToEmbed(text); }
 
-            div.innerHTML = `
-                <div class="msg-content-wrapper">
-                    <div class="custom-loader"></div>
-                    ${bubbleContent}
-                    <div class="msg-meta">
-                        <img src="${avatarUrl}" class="msg-meta-img">
-                        <span class="msg-meta-text">${userName}</span>
-                    </div>
-                </div>
-            `;
-            
+            div.innerHTML = `<div class="msg-content-wrapper"><div class="custom-loader"></div>${bubbleContent}<div class="msg-meta"><img src="${avatarUrl}" class="msg-meta-img"><span class="msg-meta-text">${userName}</span></div></div>`;
             container.appendChild(div);
             scrollToBottom();
             
             if(!manualText) input.value = '';
             handleInputColor();
             document.getElementById('emoji-picker-container').style.display='none';
-            
             sendToBackend(text, div);
         }
 
         function sendToBackend(text, msgElement) {
             const sender = isAdmin ? 'admin' : 'user';
             let userName = 'Guest', userAvatar = '', guestVal = isGuest ? 1 : 0;
-
             if (isAdmin) { userName="Support"; userAvatar=BOT_AVATAR_URL; guestVal=0; }
             else if (!isGuest) {
                 const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
-                userName = user.username || "User";
-                userAvatar = getProfileImage(user); 
+                userName = user.username || "User"; userAvatar = getProfileImage(user); 
             }
 
             fetch(`${API_BASE}/api/chat/send`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    user_id: currentSessionId,
-                    sender: sender,
-                    content: text,
-                    is_guest: guestVal,
-                    user_name: userName,
-                    user_avatar: userAvatar
-                })
+                body: JSON.stringify({ user_id: currentSessionId, sender: sender, content: text, is_guest: guestVal, user_name: userName, user_avatar: userAvatar })
             })
-            .then(() => {
-                if(msgElement) {
-                    msgElement.classList.remove('pending');
-                }
-            })
+            .then(() => { if(msgElement) msgElement.classList.remove('pending'); })
             .catch(e => console.error("전송 실패", e));
         }
 
@@ -1110,86 +849,48 @@
             const empty = document.getElementById('empty-msg');
             const warning = document.getElementById('login-warning-msg');
             
-            if(!listInitialized) {
-                loading.style.display = 'block';
-                empty.style.display = 'none';
-                warning.style.display = 'none';
-            }
+            if(!listInitialized) { loading.style.display = 'block'; empty.style.display = 'none'; warning.style.display = 'none'; }
             
             if(isAdmin) {
-                fetch(`${API_BASE}/api/chat/rooms`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
-                })
-                .then(r => r.json())
-                .then(rooms => {
-                    if(!listInitialized) loading.style.display = 'none';
-                    listInitialized = true;
+                fetch(`${API_BASE}/api/chat/rooms`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` } })
+                .then(r => r.json()).then(rooms => {
+                    if(!listInitialized) loading.style.display = 'none'; listInitialized = true;
+                    if(rooms.length === 0) { list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning); empty.style.display = 'block'; return; }
                     
                     const fragment = document.createDocumentFragment();
-                    if(rooms.length === 0) { 
-                        list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning);
-                        empty.style.display = 'block'; 
-                        return; 
-                    }
-
                     rooms.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
                     rooms.forEach(room => {
                         const d = new Date(room.timestamp);
                         const isUnread = room.unread_count > 0;
                         const avatar = room.user_avatar || GUEST_AVATAR_URL; 
                         const name = room.is_guest ? '비로그인 유저 (Guest)' : room.user_name;
-                        
                         const item = document.createElement('div');
                         item.className = 'chat-card';
                         item.onclick = () => openChatSession(room.user_id);
-                        item.innerHTML = `
-                            <div class="card-top">
-                                <div class="card-title">
-                                    <img src="${avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" onerror="this.src='${GUEST_AVATAR_URL}'">
-                                    ${name} ${isUnread ? '<span class="unread-dot"></span>' : ''}
-                                </div>
-                                <span class="card-date">${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}</span>
-                            </div>
-                            <div class="card-preview">${room.last_message}</div>`;
+                        item.innerHTML = `<div class="card-top"><div class="card-title"><img src="${avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" onerror="this.src='${GUEST_AVATAR_URL}'">${name} ${isUnread ? '<span class="unread-dot"></span>' : ''}</div><span class="card-date">${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}</span></div><div class="card-preview">${room.last_message}</div>`;
                         fragment.appendChild(item);
                     });
-                    
-                    list.innerHTML = ''; 
-                    list.appendChild(loading); list.appendChild(empty); list.appendChild(warning); 
-                    list.appendChild(fragment);
-                })
-                .catch(() => { loading.style.display = 'none'; });
+                    list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning); list.appendChild(fragment);
+                }).catch(() => { loading.style.display = 'none'; });
                 return;
             }
 
             if(currentSessionId) {
                 fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
-                .then(r => r.json())
-                .then(msgs => {
-                    if(!listInitialized) loading.style.display = 'none';
-                    listInitialized = true;
-                    
+                .then(r => r.json()).then(msgs => {
+                    if(!listInitialized) loading.style.display = 'none'; listInitialized = true;
                     list.innerHTML = ''; list.appendChild(loading); list.appendChild(empty); list.appendChild(warning);
-                    
                     if(msgs.length > 0) {
                         const last = msgs[msgs.length-1];
                         const d = new Date(last.timestamp);
                         const item = document.createElement('div');
                         item.className = 'chat-card';
                         item.onclick = () => openChatSession(currentSessionId);
-                        item.innerHTML = `
-                            <div class="card-top"><span class="card-title">Rocord 지원팀</span><span class="card-date">${d.getMonth()+1}/${d.getDate()}</span></div>
-                            <div class="card-preview">${last.text}</div>`;
+                        item.innerHTML = `<div class="card-top"><span class="card-title">Rocord 지원팀</span><span class="card-date">${d.getMonth()+1}/${d.getDate()}</span></div><div class="card-preview">${last.text}</div>`;
                         list.appendChild(item);
                     } else { empty.style.display = 'block'; }
-                })
-                .catch(() => { loading.style.display = 'none'; });
-            } else {
-                 if(!listInitialized) loading.style.display = 'none';
-                 listInitialized = true;
-                 warning.style.display = 'block';
-            }
+                }).catch(() => { loading.style.display = 'none'; });
+            } else { if(!listInitialized) loading.style.display = 'none'; listInitialized = true; warning.style.display = 'block'; }
         }
     </script>
 </body>
