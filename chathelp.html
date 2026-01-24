@@ -172,11 +172,10 @@
             position: relative;
         }
 
-        /* 이모지 피커 팝업 */
         #emoji-picker-container {
             display: none;
             position: absolute;
-            bottom: 100px; /* 입력창 위 */
+            bottom: 100px; 
             left: 20px;
             z-index: 100;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
@@ -216,15 +215,13 @@
             font-size: 20px; color: #999; cursor: pointer;
         }
 
-        /* 전송 버튼 */
         .send-btn { 
             width: 32px; height: 32px; 
-            background: #BCC8F0; /* 기본 연한색 */
+            background: #BCC8F0; 
             color: #fff; border-radius: 50%; border: none; 
             cursor: pointer; display: flex; justify-content: center; align-items: center; 
             transition: background 0.2s;
         }
-        /* 입력값이 있을 때 활성화 */
         .send-btn.active {
             background-color: #305BFF;
         }
@@ -282,11 +279,6 @@
         .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 200; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .loader-spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top: 3px solid #1c1c1e; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* 접이식 메시지 */
-        .message-bubble.expandable { cursor: pointer; }
-        .message-details { display: none; margin-top: 10px; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; }
-        .message-bubble.expanded .message-details { display: block; }
     </style>
 </head>
 <body>
@@ -479,23 +471,21 @@
     </div>
 
     <script>
-        const API_BASE = "https://rocorddev.pythonanywhere.com"; // 배포 환경에 맞게 수정 필요
+        const API_BASE = "https://rocorddev.pythonanywhere.com"; 
         
-        let currentSessionId = null; // 채팅방 ID (User ID)
+        let currentSessionId = null; 
         let isGuest = false;
         let isAdmin = false;
         let pollingInterval = null;
 
-        // 이모지 피커 이벤트
         document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
             const input = document.getElementById('user-input');
             input.value += event.detail.unicode;
             handleInputColor();
-            toggleEmojiPicker(); // 선택 후 닫기
+            toggleEmojiPicker(); 
         });
 
         window.onload = function() {
-            // Discord Login Token
             const hash = window.location.hash.substring(1);
             const paramsHash = new URLSearchParams(hash);
             const accessToken = paramsHash.get('access_token');
@@ -558,7 +548,6 @@
             const logoutBtn = document.getElementById('logout-btn');
             const adminBtn = document.getElementById('admin-login-btn');
             
-            // 관리자면 관리자 버튼 숨기고 로그아웃 표시
             if (isAdmin) {
                 adminBtn.style.display = 'none';
                 logoutBtn.style.display = 'flex';
@@ -593,7 +582,6 @@
                 document.getElementById('chat-screen').classList.remove('active');
                 document.getElementById('bottom-nav').classList.remove('hidden');
                 
-                // 탭 전환 시 폴링 시작
                 if (pollingInterval) clearInterval(pollingInterval);
                 renderChatList();
                 pollingInterval = setInterval(renderChatList, 3000); 
@@ -602,11 +590,10 @@
             }
         }
 
-        // --- 관리자 로그인 ---
         function loginAdmin() {
             const id = document.getElementById('admin-id').value;
             const pw = document.getElementById('admin-pw').value;
-            fetch('/api/admin/login', {
+            fetch(`${API_BASE}/api/admin/login`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({id, pw})
@@ -619,11 +606,12 @@
                     alert('관리자 로그인 성공');
                     closeModal('modal-admin-login');
                     updateSettingsUI();
-                    location.reload(); // UI 갱신을 위해 리로드
+                    location.reload(); 
                 } else {
                     alert('로그인 실패');
                 }
-            });
+            })
+            .catch(e => alert("서버 통신 오류: " + e));
         }
 
         function logout() {
@@ -636,7 +624,6 @@
             location.reload();
         }
 
-        // --- 채팅 시작 & 목록 ---
         function startNewChat() {
             const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
             document.getElementById('chat-screen').classList.add('active');
@@ -652,7 +639,6 @@
             if (!isLoggedIn) {
                 document.getElementById('login-request-overlay').classList.add('active');
             } else {
-                // 로그인 유저는 디스코드 ID 사용
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
                 isGuest = false;
@@ -662,7 +648,6 @@
 
         function proceedAsGuest() {
             isGuest = true;
-            // 게스트는 로컬스토리지에 임시 ID 저장하거나 생성
             let guestId = localStorage.getItem('guest_id');
             if(!guestId) {
                 guestId = 'guest_' + Date.now();
@@ -674,32 +659,33 @@
         }
 
         function initChatFlow() {
-            // 기존 대화 불러오기
             loadMessages();
-            // 폴링 시작 (채팅방 내부)
             if(pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(loadMessages, 3000);
         }
 
         function loadMessages() {
             if(!currentSessionId) return;
-            fetch(`/api/chat/history?user_id=${currentSessionId}`)
+            fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
             .then(r => r.json())
             .then(msgs => {
                 const container = document.getElementById('chat-messages');
-                container.innerHTML = ''; // 전체 다시 렌더링 (간단 구현)
+                container.innerHTML = ''; 
                 msgs.forEach(msg => {
                     if(msg.sender === 'user') addUserMessage(msg.text, false);
                     else addBotMessage(msg.text, false);
                 });
                 
-                // 메시지가 하나도 없으면 웰컴 메시지
                 if(msgs.length === 0) {
                      const welcome = "안녕하세요, Rocord 지원팀입니다. 무엇을 도와드릴까요?";
                      addBotMessage(welcome, false); 
-                     addBotActions();
                 }
-            });
+                
+                if(!isAdmin) {
+                    addBotActions();
+                }
+            })
+            .catch(e => console.error("채팅 로드 실패:", e));
         }
 
         function openChatSession(id) {
@@ -708,9 +694,8 @@
             document.getElementById('bottom-nav').classList.add('hidden');
             document.getElementById('login-request-overlay').classList.remove('active'); 
             
-            // 관리자가 방에 들어오면 읽음 처리
             if(isAdmin) {
-                fetch('/api/chat/read', {
+                fetch(`${API_BASE}/api/chat/read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -719,7 +704,6 @@
                     body: JSON.stringify({ user_id: id })
                 });
             }
-
             initChatFlow();
         }
 
@@ -728,16 +712,14 @@
             document.getElementById('bottom-nav').classList.remove('hidden');
             document.getElementById('login-request-overlay').classList.remove('active');
             if(pollingInterval) clearInterval(pollingInterval);
-            // 목록 탭으로 돌아왔으니 목록 폴링 재개
             pollingInterval = setInterval(renderChatList, 3000);
             renderChatList();
         }
 
-        // --- 메시지 UI 추가 ---
-        function addBotMessage(text, save=true) { // save param is unused in DB ver but kept for compat
+        function addBotMessage(text, save=true) { 
             const div = document.createElement('div');
             div.className = 'message-row bot';
-            div.innerHTML = `<div class="message-bubble">${text}</div>`;
+            div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
             document.getElementById('chat-messages').appendChild(div);
             document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
@@ -745,23 +727,21 @@
         function addUserMessage(text, save=true) {
             const div = document.createElement('div');
             div.className = 'message-row user';
-            div.innerHTML = `<div class="message-bubble">${text}</div>`;
+            div.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
             document.getElementById('chat-messages').appendChild(div);
             document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
 
         function addUserFormMessage(title, detailMap) {
-            // 폼 메시지도 DB에 텍스트 형태로 저장하는게 좋지만, 일단 UI만 표시
-            // DB구조상 복잡해지므로 여기선 텍스트로 치환해서 보낸것으로 가정
-            let text = `[폼] ${title}\n`;
-            for(let key in detailMap) text += `${key}: ${detailMap[key]}\n`;
+            let text = `[신청서: ${title}]\n`;
+            for(let key in detailMap) text += `- ${key}: ${detailMap[key]}\n`;
+            addUserMessage(text, false);
             sendToBackend(text);
         }
 
         function addBotActions() {
             if(document.getElementById('chat-messages').lastElementChild?.querySelector('.bot-actions')) return;
-            if(isAdmin) return; // 관리자에겐 안보임
-
+            
             let chipsHtml = '';
             if (!isGuest) {
                 chipsHtml += `<div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div>`;
@@ -776,7 +756,6 @@
             document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
 
-        // --- 입력창 로직 ---
         function handleInputColor() {
             const val = document.getElementById('user-input').value.trim();
             const btn = document.getElementById('send-btn');
@@ -794,8 +773,7 @@
             const text = input.value.trim();
             if(!text) return;
             
-            // 즉시 UI 반영
-            if(isAdmin) addBotMessage(text, false); // 관리자는 봇(왼쪽)처럼 보이지 않지만, DB상 sender='admin'이므로 UI에선 오른쪽/왼쪽 구분 필요. 보통 관리자도 '나'니까 오른쪽.
+            if(isAdmin) addBotMessage(text, false); 
             else addUserMessage(text, false); 
             
             input.value = '';
@@ -807,8 +785,6 @@
 
         function sendToBackend(text) {
             const sender = isAdmin ? 'admin' : 'user';
-            
-            // 유저 정보 준비
             let userName = 'Guest';
             let userAvatar = '';
             if(!isAdmin && !isGuest) {
@@ -817,7 +793,7 @@
                 userAvatar = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '';
             }
 
-            fetch('/api/chat/send', {
+            fetch(`${API_BASE}/api/chat/send`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -828,14 +804,13 @@
                     user_name: userName,
                     user_avatar: userAvatar
                 })
-            });
+            }).catch(e => console.error("전송 실패", e));
         }
 
         function handleEnter(e) { 
             if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserTextInput(); }
         }
 
-        // --- 모달 & 폼 제출 ---
         function openModal(id) { document.getElementById(id).style.display='flex'; setTimeout(()=>document.getElementById(id).classList.add('show'),10); }
         function closeModal(id) { 
             const m = document.getElementById(id); m.classList.remove('show'); 
@@ -843,14 +818,11 @@
         }
 
         function submitForm(type) {
-            // (기존 로직 유지하되 백엔드 전송 추가)
-            // ... (생략: 기존 코드의 폼 데이터 수집 부분) 
-            // 편의상 이 부분은 기존 코드와 동일하게 유지하되 메시지 전송만 sendToBackend 호출로 변경합니다.
             let title="", details={};
             if(type==='partner'){
                 const name=document.getElementById('p-name').value, link=document.getElementById('p-link').value, desc=document.getElementById('p-desc').value, id=document.getElementById('p-id').value;
                 if(!name || !link || !desc || !id) return alert('모두 입력해주세요.');
-                title="협력 신청서"; details={서버명:name, 링크:link, ID:id};
+                title="협력 신청서"; details={서버명:name, 링크:link, ID:id, 설명:desc};
                 closeModal('modal-partner');
             } else if(type==='cancel'){
                 const name=document.getElementById('c-name').value, link=document.getElementById('c-link').value, id=document.getElementById('c-id').value;
@@ -868,13 +840,11 @@
             setTimeout(() => addBotMessage("문의가 접수되었습니다."), 500);
         }
 
-        // --- 목록 렌더링 ---
         function renderChatList() {
             const list = document.getElementById('chat-list');
             
-            // 관리자 모드
             if(isAdmin) {
-                fetch('/api/chat/rooms', {
+                fetch(`${API_BASE}/api/chat/rooms`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
                 })
                 .then(r => r.json())
@@ -896,7 +866,7 @@
                         item.innerHTML = `
                             <div class="card-top">
                                 <div class="card-title">
-                                    <img src="${avatar}" style="width:24px;height:24px;border-radius:50%;">
+                                    <img src="${avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
                                     ${name}
                                     ${isUnread ? '<span class="unread-dot"></span>' : ''}
                                 </div>
@@ -905,24 +875,39 @@
                             <div class="card-preview">${room.last_message}</div>`;
                         list.appendChild(item);
                     });
-                });
+                })
+                .catch(e => console.error("목록 로드 실패", e));
                 return;
             }
 
-            // 일반 유저 모드 (자신의 기록 1개만 표시하거나 없으면 없음 표시)
-            // 이번 로직 변경으로 '기록' 탭은 사실상 '지난 대화 이어하기' 버튼 역할이 됨
-            // 현재 세션이 있다면 표시
-            list.innerHTML = '';
+            // 일반 유저 모드: 자신의 최신 대화 불러와서 목록에 표시
             if(currentSessionId) {
-                const item = document.createElement('div');
-                item.className = 'chat-card';
-                item.onclick = () => openChatSession(currentSessionId);
-                item.innerHTML = `
-                    <div class="card-top"><span class="card-title">내 문의 내역</span></div>
-                    <div class="card-preview">대화 이어하기</div>`;
-                list.appendChild(item);
+                fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
+                .then(r => r.json())
+                .then(msgs => {
+                    list.innerHTML = '';
+                    if(msgs.length > 0) {
+                        const last = msgs[msgs.length-1];
+                        const d = new Date(last.timestamp);
+                        const item = document.createElement('div');
+                        item.className = 'chat-card';
+                        item.onclick = () => openChatSession(currentSessionId);
+                        item.innerHTML = `
+                            <div class="card-top">
+                                <span class="card-title">Rocord 지원팀</span>
+                                <span class="card-date">${d.getMonth()+1}/${d.getDate()}</span>
+                            </div>
+                            <div class="card-preview">${last.text}</div>`;
+                        list.appendChild(item);
+                    } else {
+                        list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>대화 내역이 없습니다.</p></div>';
+                    }
+                })
+                .catch(() => {
+                    list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>기록을 불러올 수 없습니다.</p></div>';
+                });
             } else {
-                 list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>대화 내역이 없습니다.</p></div>';
+                 list.innerHTML = '<div style="text-align:center; margin-top:100px; color:#aaa;"><p>로그인 후 기록을 확인할 수 있습니다.</p></div>';
             }
         }
 
