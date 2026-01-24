@@ -22,11 +22,14 @@
         .brand-banner-img { width: 100%; height: auto; display: block; object-fit: cover; }
         .banner-vignette { position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to bottom, rgba(240, 242, 245, 0), #F0F2F5); pointer-events: none; }
 
-        .tab-section { display: none; width: 100%; animation: fadeIn 0.3s ease-out; padding: 0 20px; }
-        .tab-section.active { display: block; }
+        .tab-section { display: none; width: 100%; height: 100%; animation: fadeIn 0.3s ease-out; padding: 0 20px; display: flex; flex-direction: column; }
+        .tab-section:not(.active) { display: none !important; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 홈 탭 */
+        #tab-home { display: block; }
+        #tab-home:not(.active) { display: none; }
         .home-card { background-color: #fff; border-radius: 30px; padding: 30px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-top: -10px; position: relative; }
         .bot-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         .bot-avatar { width: 48px; height: 48px; border-radius: 16px; background-color: #000; overflow: hidden; }
@@ -38,8 +41,16 @@
         .btn-black-cta { width: 100%; background-color: #1c1c1e; color: #fff; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-black-cta:active { transform: scale(0.97); }
 
-        /* 채팅 리스트 */
-        .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; }
+        /* 채팅 리스트 (스크롤 수정) */
+        .list-header { font-size: 20px; font-weight: 700; margin: 20px 0 20px; padding-left: 5px; color: #1c1c1e; flex-shrink: 0; }
+        
+        .chat-list-container {
+            flex: 1; 
+            overflow-y: auto; 
+            padding-bottom: 20px; 
+            -webkit-overflow-scrolling: touch;
+        }
+
         .chat-card { background-color: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; }
         .chat-card:active { transform: scale(0.98); background-color: #fafafa; }
         .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
@@ -56,6 +67,14 @@
         .profile-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #eee; }
         .profile-text h4 { font-size: 16px; font-weight: 700; color: #1c1c1e; margin-bottom: 3px; }
         .profile-text p { font-size: 12px; color: #888; }
+        
+        /* 토글 스위치 */
+        .toggle-switch { position: relative; display: inline-block; width: 40px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #305BFF; }
+        input:checked + .slider:before { transform: translateX(16px); }
 
         /* 하단 네비 */
         .bottom-nav { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); height: 70px; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; max-width: 100%; z-index: 50; transition: transform 0.3s; }
@@ -180,7 +199,7 @@
             /* 왼쪽 사이드바 */
             .main-content { width: 400px; flex-shrink: 0; border-right: 1px solid #eee; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
             .brand-banner-container { display: none; }
-            .tab-section { padding: 0; }
+            .tab-section { padding: 0; flex: 1; height: auto; }
             
             /* 오른쪽 채팅창 */
             #chat-screen { position: relative; flex: 1; display: flex !important; z-index: 1; height: 100%; }
@@ -188,7 +207,7 @@
             .bottom-nav { display: none; } 
             
             /* PC용 네비게이션 */
-            .pc-nav-wrapper { display: flex; margin-bottom: 20px; background: #f2f2f7; padding: 5px; border-radius: 16px; }
+            .pc-nav-wrapper { display: flex; margin-bottom: 20px; background: #f2f2f7; padding: 5px; border-radius: 16px; flex-shrink: 0; }
             .pc-nav-item { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; font-size: 14px; border-radius: 12px; color: #888; transition: 0.2s; }
             .pc-nav-item.active { background: #fff; color: #1c1c1e; shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
@@ -254,6 +273,15 @@
                 </div>
                 <div class="settings-box">
                     <div class="setting-row"><span>현재 버전</span><span style="color:#888;">v3.6.0</span></div>
+                    
+                    <div class="setting-row" id="admin-status-row" style="display:none; cursor:default;">
+                        <span>영업 상태 (온라인)</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="admin-status-toggle" onchange="toggleAdminStatus()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                     <div class="setting-row" id="discord-login-btn-settings" onclick="openDiscordLogin()" style="display:none;">
                         <span style="color:#5865F2; font-weight:700;">Discord 로그인</span><i class="fa-brands fa-discord" style="color:#5865F2;"></i>
                     </div>
@@ -400,6 +428,9 @@
             
             updateSettingsUI();
             
+            // 관리자일 경우 상태 로드
+            if(isAdmin) loadAdminStatus();
+
             if(window.innerWidth >= 768) {
                 renderChatList();
                 pollingInterval = setInterval(renderChatList, 3000); 
@@ -464,14 +495,18 @@
             const logoutBtn = document.getElementById('logout-btn');
             const adminBtn = document.getElementById('admin-login-btn');
             const discordLoginBtn = document.getElementById('discord-login-btn-settings');
+            const adminStatusRow = document.getElementById('admin-status-row');
             
             if (isAdmin) {
                 adminBtn.style.display = 'none';
                 discordLoginBtn.style.display = 'none';
                 logoutBtn.style.display = 'flex';
+                adminStatusRow.style.display = 'flex'; // 관리자 상태 토글 표시
                 document.getElementById('chat-tab-title').innerText = "문의 목록 (관리자)";
                 profileSection.style.display = 'none';
                 return;
+            } else {
+                adminStatusRow.style.display = 'none';
             }
 
             if (isLoggedIn && userDataStr) {
@@ -489,6 +524,34 @@
                 adminBtn.style.display = 'flex';
                 discordLoginBtn.style.display = 'flex';
             }
+        }
+
+        function loadAdminStatus() {
+            fetch(`${API_BASE}/api/admin/status`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('admin-status-toggle').checked = data.online;
+            });
+        }
+
+        function toggleAdminStatus() {
+            const isOnline = document.getElementById('admin-status-toggle').checked;
+            fetch(`${API_BASE}/api/admin/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                },
+                body: JSON.stringify({ online: isOnline })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    console.log('Status updated:', data.online);
+                }
+            });
         }
 
         function switchTab(tabName, element) {
@@ -533,6 +596,7 @@
                     alert('관리자 로그인 성공');
                     closeModal('modal-admin-login');
                     updateSettingsUI();
+                    loadAdminStatus(); // 로그인 후 상태 로드
                     renderChatList(); 
                 } else {
                     alert('로그인 실패');
@@ -561,17 +625,30 @@
                 return;
             }
 
-            // [수정] 비로그인이면 무조건 오버레이 표시
-            if (!isLoggedIn) {
-                document.getElementById('login-request-overlay').classList.add('active');
-                document.getElementById('guest-warning').style.display = 'block';
-            } else {
-                // 로그인 상태면 바로 진입
+            // [기능: 로그인 상태에서 기존 문의 확인 후 이동]
+            if (isLoggedIn) {
                 const user = JSON.parse(localStorage.getItem('discord_user'));
                 currentSessionId = user.id;
                 isGuest = false;
                 document.getElementById('guest-warning').style.display = 'none';
-                initChatFlow();
+                
+                // 기존 대화 내역 확인
+                fetch(`${API_BASE}/api/chat/history?user_id=${currentSessionId}`)
+                .then(r => r.json())
+                .then(msgs => {
+                    if (msgs.length > 0) {
+                        // 기존 문의가 있으면 바로 채팅 세션 열기
+                        openChatSession(currentSessionId);
+                    } else {
+                        // 없으면 채팅 초기화 (빈 화면)
+                        initChatFlow();
+                    }
+                })
+                .catch(() => initChatFlow());
+            } else {
+                // 비로그인이면 오버레이 표시
+                document.getElementById('login-request-overlay').classList.add('active');
+                document.getElementById('guest-warning').style.display = 'block';
             }
         }
 
@@ -617,7 +694,6 @@
                 const warningBanner = document.getElementById('guest-warning');
                 const warningHTML = warningBanner ? warningBanner.outerHTML : '';
                 
-                // [수정] 로그인 상태 체크하여 경고 배너 표시 여부 결정
                 const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
                 const showWarning = !isLoggedIn && !isAdmin;
 
@@ -678,7 +754,6 @@
                 // 유저 입장: 내가 보낸건 user, 상대는 admin
                 isMe = (msg.sender === 'user');
                 if(isMe) {
-                    // [수정] 유저 본인의 디스코드 프로필 가져오기
                     const userStr = localStorage.getItem('discord_user');
                     if(userStr) {
                          const u = JSON.parse(userStr);
@@ -701,12 +776,10 @@
             if (msg.text.startsWith('[신청서:') || msg.text.startsWith('[모델 문의]') || msg.text.startsWith('[취소 요청서]')) {
                 contentHtml = parseToEmbed(msg.text);
             } else {
-                // [수정] 관리자 메시지는 말풍선 배경 제거 클래스 추가
                 const bubbleClass = isAdminMsg ? 'message-bubble no-bg' : 'message-bubble';
                 contentHtml = `<div class="${bubbleClass}">${msg.text.replace(/\n/g, '<br>')}</div>`;
             }
 
-            // [수정] 레이아웃 변경: 말풍선 아래에 프로필/이름 표시
             let metaHtml = `
                 <div class="msg-meta">
                     <img src="${avatarUrl}" class="msg-meta-img" onerror="this.src='${GUEST_AVATAR_URL}'">
@@ -854,7 +927,6 @@
             
             const container = document.getElementById('chat-messages');
             
-            // [수정] 본인 프로필 정보 가져오기
             let avatarUrl = GUEST_AVATAR_URL;
             let userName = "Guest";
             if(!isAdmin && !isGuest) {
@@ -870,7 +942,6 @@
             div.className = 'message-row me pending';
             
             let bubbleContent = '';
-            // [수정] 관리자일 경우 말풍선 배경 없음
             if(isAdmin) {
                 bubbleContent = `<div class="message-bubble no-bg">${text.replace(/\n/g, '<br>')}</div>`;
             } else {
@@ -881,7 +952,6 @@
                 bubbleContent = parseToEmbed(text);
             }
 
-            // [수정] 메타데이터 하단 배치
             div.innerHTML = `
                 <div class="msg-content-wrapper">
                     <div class="custom-loader"></div>
@@ -911,7 +981,7 @@
             else if (!isGuest) {
                 const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
                 userName = user.username || "User";
-                userAvatar = getProfileImage(user);
+                userAvatar = getProfileImage(user); // 실제 아바타 URL 전송
             }
 
             fetch(`${API_BASE}/api/chat/send`, {
@@ -971,7 +1041,7 @@
                     rooms.forEach(room => {
                         const d = new Date(room.timestamp);
                         const isUnread = room.unread_count > 0;
-                        const avatar = room.user_avatar || GUEST_AVATAR_URL;
+                        const avatar = room.user_avatar || GUEST_AVATAR_URL; // [수정] DB에 저장된 실제 프로필 사진 사용
                         const name = room.is_guest ? '비로그인 유저 (Guest)' : room.user_name;
                         
                         const item = document.createElement('div');
