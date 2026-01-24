@@ -27,33 +27,30 @@
             overflow-x: hidden;
         }
 
-        /* --- [수정됨] 상단 배너 영역 --- */
+        /* --- 상단 배너 영역 --- */
         .brand-banner-container {
             width: 100%;
             position: relative;
-            /* 배너 이미지 비율에 맞춰 자연스럽게 높이 잡힘 */
         }
 
         .brand-banner-img {
             width: 100%;
             height: auto;
-            display: block; /* 이미지 하단 여백 제거 */
+            display: block;
             object-fit: cover;
         }
 
-        /* 비네팅 효과 (이미지 하단에서 배경색으로 자연스럽게 그라데이션) */
         .banner-vignette {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 40%; /* 이미지 하단 40% 정도부터 시작 */
+            height: 40%;
             background: linear-gradient(to bottom, rgba(240, 242, 245, 0), #F0F2F5);
-            pointer-events: none; /* 클릭 통과 */
+            pointer-events: none;
         }
 
         /* --- 메인 콘텐츠 영역 --- */
-        /* 배너 바로 아래 자연스럽게 이어지도록 패딩 조절 */
         .main-content { padding: 0 20px 20px; position: relative; z-index: 10; }
         
         .tab-section { display: none; width: 100%; animation: fadeIn 0.3s ease-out; }
@@ -66,7 +63,6 @@
             border-radius: 30px;
             padding: 30px 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            /* 배너와 살짝 겹치지 않고 자연스럽게 떨어지도록 마진 설정 (필요시 조정) */
             margin-top: -10px; 
             text-align: left;
             position: relative;
@@ -125,7 +121,7 @@
         /* --- 채팅 화면 --- */
         #chat-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #F2F2F7; z-index: 60; 
+            background-color: #fff; z-index: 60; 
             display: none; flex-direction: column;
         }
         #chat-screen.active { display: flex; }
@@ -137,7 +133,8 @@
         .chat-messages {
             flex: 1; overflow-y: auto; padding: 20px; 
             display: flex; flex-direction: column; gap: 15px; 
-            padding-bottom: 80px; -webkit-overflow-scrolling: touch;
+            padding-bottom: 20px; -webkit-overflow-scrolling: touch;
+            background-color: #fff;
         }
 
         .message-row { display: flex; width: 100%; }
@@ -145,18 +142,81 @@
         .message-row.user { justify-content: flex-end; }
         
         .message-bubble { max-width: 75%; padding: 12px 16px; font-size: 15px; line-height: 1.5; border-radius: 20px; position: relative; word-break: break-word; }
-        .message-row.bot .message-bubble { background-color: #fff; color: #333; border-top-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .message-row.bot .message-bubble { background-color: #F2F2F7; color: #333; border-top-left-radius: 4px; }
         .message-row.user .message-bubble { background-color: #305BFF; color: white; border-top-right-radius: 4px; }
 
         .bot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; margin-left: 5px; }
         .action-chip { background-color: #fff; border: 1px solid #ddd; color: #333; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
+        /* 채팅 입력창 영역 */
         .chat-input-area {
-            position: absolute; bottom: 0; width: 100%; background: #fff;
-            padding: 10px 15px 20px; border-top: 1px solid #eee; display: flex; gap: 10px;
+            width: 100%; background: #fff;
+            padding: 15px 20px 25px;
+            flex-shrink: 0;
         }
-        .chat-input { flex: 1; background: #f2f2f7; border: none; padding: 12px 16px; border-radius: 25px; font-size: 15px; outline: none; }
-        .send-btn { width: 40px; height: 40px; background: #1c1c1e; color: #fff; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        .chat-input-wrapper {
+            background-color: #F2F2F7;
+            border-radius: 25px;
+            padding: 15px 15px 10px 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-input { 
+            background: transparent; border: none; 
+            width: 100%; outline: none; 
+            font-size: 16px; color: #333; 
+            resize: none; height: 24px;
+            margin-bottom: 10px;
+        }
+        .chat-input::placeholder { color: #aaa; }
+
+        .input-bottom-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .input-icons {
+            display: flex; gap: 15px; margin-left: 5px;
+        }
+        .input-icons i {
+            font-size: 20px; color: #999; cursor: pointer;
+        }
+
+        /* 전송 버튼 */
+        .send-btn { 
+            width: 32px; height: 32px; 
+            background: #BCC8F0;
+            color: #fff; border-radius: 50%; border: none; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center; 
+            transition: background 0.2s;
+        }
+        .send-btn i { font-size: 14px; }
+        .send-btn:active { transform: scale(0.95); }
+
+        /* --- 로그인 요구 오버레이 --- */
+        #login-request-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255,255,255,0.95); z-index: 70;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        #login-request-overlay.active { display: flex; }
+
+        .login-btn-discord {
+            width: 100%; max-width: 300px;
+            background-color: #5865F2; color: white;
+            padding: 15px; border-radius: 12px; border: none;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+        }
+        .login-btn-guest {
+            width: 100%; max-width: 300px;
+            background-color: #eee; color: #666;
+            padding: 15px; border-radius: 12px; border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+        }
 
         /* --- 모달 --- */
         .modal-overlay {
@@ -253,6 +313,10 @@
                         <span style="color:#FF3B30;">기록 전체 삭제</span>
                         <i class="fa-solid fa-trash" style="color:#FF3B30; font-size:14px;"></i>
                     </div>
+                    <div class="setting-row" onclick="logout()">
+                        <span style="color:#333;">로그아웃</span>
+                        <i class="fa-solid fa-right-from-bracket" style="color:#333; font-size:14px;"></i>
+                    </div>
                 </div>
             </div>
         </main>
@@ -270,6 +334,20 @@
         </nav>
 
         <div id="chat-screen">
+            <div id="login-request-overlay">
+                <h2 style="margin-bottom:10px;">로그인 필요</h2>
+                <p style="color:#666; margin-bottom:30px; text-align:center; font-size:14px;">
+                    원활한 상담을 위해 디스코드 로그인이 필요합니다.<br>
+                    비로그인 시 일부 기능이 제한됩니다.
+                </p>
+                <button class="login-btn-discord" onclick="openDiscordLogin()">
+                    <i class="fa-brands fa-discord"></i> Discord로 로그인
+                </button>
+                <button class="login-btn-guest" onclick="proceedAsGuest()">
+                    비로그인으로 진행하기
+                </button>
+            </div>
+
             <div class="chat-header">
                 <div class="chat-back-btn" onclick="closeChat()">
                     <i class="fa-solid fa-chevron-left"></i>
@@ -280,10 +358,18 @@
             <div class="chat-messages" id="chat-messages"></div>
 
             <div class="chat-input-area">
-                <input type="text" class="chat-input" id="user-input" placeholder="메시지 입력..." onkeypress="handleEnter(event)">
-                <button class="send-btn" onclick="sendUserTextInput()">
-                    <i class="fa-solid fa-arrow-up"></i>
-                </button>
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="user-input" placeholder="메시지를 입력해주세요." onkeypress="handleEnter(event)"></textarea>
+                    <div class="input-bottom-row">
+                        <div class="input-icons">
+                            <i class="fa-solid fa-paperclip"></i>
+                            <i class="fa-regular fa-face-smile"></i>
+                        </div>
+                        <button class="send-btn" onclick="sendUserTextInput()">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -332,6 +418,49 @@
         
         let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
         let currentSessionId = null;
+        let isGuest = false;
+
+        // --- 초기 로드 & 팝업 로그인 핸들링 ---
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+
+            // 1. 팝업창으로 열렸고 코드가 있다면 (로그인 성공 후 리다이렉트된 상황)
+            if (code && window.opener) {
+                // 부모 창의 로그인 완료 함수 호출
+                window.opener.handleLoginSuccess(code);
+                // 팝업 닫기
+                window.close();
+                return;
+            }
+
+            // 2. 혹시 메인 창에서 바로 리다이렉트 된 경우 (기존 호환성)
+            if (code) {
+                localStorage.setItem('isDiscordLoggedIn', 'true');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        };
+
+        // 디스코드 로그인 팝업 열기
+        function openDiscordLogin() {
+            const loginUrl = "https://discord.com/oauth2/authorize?client_id=1460856182716502036&response_type=code&redirect_uri=https%3A%2F%2Frocorddev.kro.kr%2Fchathelp&scope=identify";
+            // 팝업 크기 및 위치 지정
+            const width = 500;
+            const height = 800;
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
+            
+            window.open(loginUrl, 'DiscordLogin', `width=${width},height=${height},top=${top},left=${left}`);
+        }
+
+        // 팝업창에서 호출할 로그인 성공 처리 함수
+        window.handleLoginSuccess = function(code) {
+            localStorage.setItem('isDiscordLoggedIn', 'true');
+            // 로그인 오버레이 제거
+            document.getElementById('login-request-overlay').classList.remove('active');
+            // 채팅 시작 로직 진행
+            initChatFlow();
+        };
 
         function switchTab(tabName, element) {
             document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
@@ -357,12 +486,37 @@
             bottomNav.classList.add('hidden');
             msgContainer.innerHTML = '';
             
+            // 로그인 체크 로직
+            const isLoggedIn = localStorage.getItem('isDiscordLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                // 비로그인 상태면 오버레이 표시
+                document.getElementById('login-request-overlay').classList.add('active');
+            } else {
+                // 로그인 상태면 바로 챗 시작
+                initChatFlow();
+            }
+        }
+
+        function proceedAsGuest() {
+            isGuest = true;
+            document.getElementById('login-request-overlay').classList.remove('active');
+            initChatFlow();
+        }
+
+        function initChatFlow() {
             setTimeout(() => {
                 const welcome = "안녕하세요, Rocord 지원팀입니다. 무엇을 도와드릴까요?";
-                addBotMessage(welcome);
+                // addBotMessage는 기본적으로 save=true이므로 여기서 saveMessage를 또 호출할 필요 없음
+                addBotMessage(welcome); 
                 addBotActions();
-                saveMessage(currentSessionId, 'bot', welcome);
             }, 300);
+        }
+
+        function logout() {
+            localStorage.removeItem('isDiscordLoggedIn');
+            alert('로그아웃 되었습니다.');
+            location.reload();
         }
 
         function openChatSession(id) {
@@ -372,6 +526,7 @@
 
             chatScreen.classList.add('active');
             bottomNav.classList.add('hidden');
+            document.getElementById('login-request-overlay').classList.remove('active'); 
             msgContainer.innerHTML = '';
 
             session.messages.forEach(msg => {
@@ -382,12 +537,14 @@
                     else addUserMessage(msg.text, false);
                 }
             });
-            addBotActions(false);
+            addBotActions(false); 
         }
 
         function closeChat() {
             chatScreen.classList.remove('active');
             bottomNav.classList.remove('hidden');
+            document.getElementById('login-request-overlay').classList.remove('active');
+            isGuest = false; 
             renderChatList();
         }
 
@@ -429,14 +586,18 @@
 
         function addBotActions(save=false) {
             if(msgContainer.lastElementChild?.querySelector('.bot-actions')) return;
+            
+            let chipsHtml = '';
+            
+            if (!isGuest) {
+                chipsHtml += `<div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div>`;
+                chipsHtml += `<div class="action-chip" onclick="openModal('modal-cancel')">협력 취소</div>`;
+            }
+            chipsHtml += `<div class="action-chip" onclick="openModal('modal-model')">모델 문의</div>`;
+
             const div = document.createElement('div');
             div.className = 'message-row bot';
-            div.innerHTML = `
-                <div class="bot-actions">
-                    <div class="action-chip" onclick="openModal('modal-partner')">협력 신청</div>
-                    <div class="action-chip" onclick="openModal('modal-cancel')">협력 취소</div>
-                    <div class="action-chip" onclick="openModal('modal-model')">모델 문의</div>
-                </div>`;
+            div.innerHTML = `<div class="bot-actions">${chipsHtml}</div>`;
             msgContainer.appendChild(div);
             msgContainer.scrollTop = msgContainer.scrollHeight;
         }
@@ -449,7 +610,6 @@
             addUserMessage(text);
             input.value = '';
 
-            // 웹훅 전송 (임베드)
             const embed = {
                 title: "💬 일반 문의",
                 color: 10921638,
@@ -459,7 +619,12 @@
 
             setTimeout(() => addBotMessage("확인했습니다. 곧 답변드리겠습니다."), 800);
         }
-        function handleEnter(e) { if(e.key === 'Enter') sendUserTextInput(); }
+        function handleEnter(e) { 
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                sendUserTextInput(); 
+            }
+        }
 
         function openModal(id) { document.getElementById(id).style.display='flex'; setTimeout(()=>document.getElementById(id).classList.add('show'),10); }
         function closeModal(id) { 
